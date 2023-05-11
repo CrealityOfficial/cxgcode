@@ -40,6 +40,11 @@ set(SRCS
   cxgcode/us/usetting.cpp
   cxgcode/us/usettings.h
   cxgcode/us/usettings.cpp
+  
+  cxgcode/render/gcodevieweffect.h
+  cxgcode/render/gcodevieweffect.cpp
+  cxgcode/render/gcodeviewentity.h
+  cxgcode/render/gcodeviewentity.cpp
 )
 
 set(LIBS
