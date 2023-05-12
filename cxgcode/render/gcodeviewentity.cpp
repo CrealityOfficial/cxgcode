@@ -8,7 +8,7 @@ namespace cxgcode
 	{
 		setEffect(new GCodeViewEffect(this));
 
-		m_clipValue = setParameter("clipValue", QVector4D(0.0f, 200.0f, 0.0f, 300.0f));
+		m_clipValue = setParameter("clipValue", QVector4D(0.0f, 20000.0f, 0.0f, 30000.0f));
 		m_showType = setParameter("showType", 1);
 		m_animation = setParameter("animation", 0);
 		m_layerShow = setParameter("layershow", QVector2D(-1.0f, 9999999.0f));
@@ -16,7 +16,7 @@ namespace cxgcode
 
 		QMatrix4x4 m;
 		m.setToIdentity();
-		//m_modelMatrix = setParameter("modelMatrix", m);
+		m_modelMatrix = setParameter("modelMatrix", m);
 
 		QVariantList values;
 		values << QVector4D(0.5f, 0.5f, 0.5f, 1.0f)
@@ -55,6 +55,7 @@ namespace cxgcode
 		m_speedColors = setParameter("speedcolors[0]", m_speedColorValues);
 		setParameter("speedcolorSize", (float)(m_speedColorValues.size() - 1));
 
+		values.clear();
 		values
 			<< QVector4D(1.0f, 0.5f, 0.5f, 1.0f)
 			<< QVector4D(0.5f, 1.0f, 0.5f, 1.0f)
