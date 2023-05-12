@@ -9,7 +9,7 @@ namespace cxgcode
 		setEffect(new GCodeViewEffect(this));
 
 		m_clipValue = setParameter("clipValue", QVector4D(0.0f, 20000.0f, 0.0f, 30000.0f));
-		m_showType = setParameter("showType", 1);
+		m_showType = setParameter("showType", 0);
 		m_animation = setParameter("animation", 0);
 		m_layerShow = setParameter("layershow", QVector2D(-1.0f, 9999999.0f));
 		m_layerStartFlagShow = setParameter("layerstartflag_show", 1);

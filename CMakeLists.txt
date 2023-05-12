@@ -21,6 +21,10 @@ set(SRCS
   cxgcode/gcodebuilder.cpp
   cxgcode/slicemodelbuilder.h
   cxgcode/slicemodelbuilder.cpp
+  cxgcode/gcodespeedlistmodel.h
+  cxgcode/gcodespeedlistmodel.cpp
+  cxgcode/gcodetypelistmodel.h
+  cxgcode/gcodetypelistmodel.cpp
   
   cxgcode/us/defaultloader.h
   cxgcode/us/defaultloader.cpp
