@@ -4,7 +4,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
-namespace us
+namespace cxgcode
 {
 	USettings::USettings(QObject* parent)
 		: QObject(parent)
@@ -29,7 +29,7 @@ namespace us
 		if (setting)
 		{
 			setting->setParent(this);
-			QHash<QString, us::USetting*>::iterator insertIt = m_hashsettings.find(setting->key());
+			QHash<QString, USetting*>::iterator insertIt = m_hashsettings.find(setting->key());
 			if (insertIt != m_hashsettings.end())
 			{
 				insertIt.value() = setting;
@@ -43,7 +43,7 @@ namespace us
 
 	void USettings::add(const QString& key, const QString& value, bool cover)
 	{
-		QHash<QString, us::USetting*>::const_iterator it = m_hashsettings.find(key);
+		QHash<QString, USetting*>::const_iterator it = m_hashsettings.find(key);
 		if (it != m_hashsettings.end())
 		{
 			if (cover)
@@ -61,9 +61,9 @@ namespace us
 		if (settings)
 		{
 			const QHash<QString, USetting*>& mergeSettings = settings->m_hashsettings;
-			for (QHash<QString, us::USetting*>::const_iterator it = mergeSettings.begin(); it != mergeSettings.end(); ++it)
+			for (QHash<QString, USetting*>::const_iterator it = mergeSettings.begin(); it != mergeSettings.end(); ++it)
 			{
-				QHash<QString, us::USetting*>::iterator insertIt = m_hashsettings.find(it.key());
+				QHash<QString, USetting*>::iterator insertIt = m_hashsettings.find(it.key());
 				if (insertIt != m_hashsettings.end())
 				{
 					insertIt.value()->setValue(it.value()->str());   // replace value
@@ -83,7 +83,7 @@ namespace us
 		for (QHash<QString, QString>::const_iterator it = kvs.begin();
 			it != kvs.end(); ++it)
 		{
-			QHash<QString, us::USetting*>::iterator insertIt = m_hashsettings.find(it.key());
+			QHash<QString, USetting*>::iterator insertIt = m_hashsettings.find(it.key());
 			if (insertIt != m_hashsettings.end())
 			{
 				insertIt.value()->setValue(it.value());   // replace value
@@ -102,9 +102,9 @@ namespace us
 		if (settings)
 		{
 			const QHash<QString, USetting*>& mergeSettings = settings->m_hashsettings;
-			for (QHash<QString, us::USetting*>::const_iterator it = mergeSettings.begin(); it != mergeSettings.end(); ++it)
+			for (QHash<QString, USetting*>::const_iterator it = mergeSettings.begin(); it != mergeSettings.end(); ++it)
 			{
-				QHash<QString, us::USetting*>::iterator insertIt = m_hashsettings.find(it.key());
+				QHash<QString, USetting*>::iterator insertIt = m_hashsettings.find(it.key());
 				if (insertIt != m_hashsettings.end())
 				{
 					//insertIt.value()->setValue(it.value()->value());   // replace value
@@ -137,7 +137,7 @@ namespace us
 
 	void USettings::print()
 	{
-		for (QHash<QString, us::USetting*>::const_iterator it = m_hashsettings.begin();
+		for (QHash<QString, USetting*>::const_iterator it = m_hashsettings.begin();
 			it != m_hashsettings.end(); ++it)
 		{
 			qDebug() << it.key() << " : " << it.value()->str();
@@ -152,34 +152,34 @@ namespace us
 
 	void USettings::appendDefault(const QStringList& keys)
 	{
-		QHash<QString, us::SettingItemDef*> hashItemDef = us::SettingDef::instance().getHashItemDef();
+		QHash<QString, SettingItemDef*> hashItemDef = SettingDef::instance().getHashItemDef();
 		for (const QString& key : keys)
 		{
 			if (!m_hashsettings.contains(key))
 			{
-				insert(us::SettingDef::instance().create(key));
+				insert(SettingDef::instance().create(key));
 			}
 		}
 	}
 
 	void USettings::appendDefault()
 	{
-		QHash<QString, us::SettingItemDef*> hashItemDef = us::SettingDef::instance().getHashItemDef();
-		for (QHash<QString, us::SettingItemDef*>::iterator it = hashItemDef.begin();
+		QHash<QString, SettingItemDef*> hashItemDef = SettingDef::instance().getHashItemDef();
+		for (QHash<QString, SettingItemDef*>::iterator it = hashItemDef.begin();
 			it != hashItemDef.end(); ++it)
 		{
 			if (!m_hashsettings.contains(it.key()))
-				m_hashsettings.insert(it.key(), us::SettingDef::instance().create(it.key()));
+				m_hashsettings.insert(it.key(), SettingDef::instance().create(it.key()));
 		}
 	}
 
 	void USettings::loadCompleted()
 	{
-		QHash<QString, us::SettingItemDef*> hashItemDef = us::SettingDef::instance().getHashItemDef();
-		for (QHash<QString, us::SettingItemDef*>::iterator it = hashItemDef.begin();
+		QHash<QString, SettingItemDef*> hashItemDef = SettingDef::instance().getHashItemDef();
+		for (QHash<QString, SettingItemDef*>::iterator it = hashItemDef.begin();
 			it != hashItemDef.end(); ++it)
 		{
-			m_hashsettings.insert(it.key(), us::SettingDef::instance().create(it.key()));
+			m_hashsettings.insert(it.key(), SettingDef::instance().create(it.key()));
 		}
 	}
 
@@ -219,10 +219,10 @@ namespace us
 	QList<USetting*> USettings::filter(const QString& category, const QString& filter, bool professional)
 	{
 		QList<USetting*> settings;
-		for (QHash<QString, us::USetting*>::const_iterator it = m_hashsettings.begin();
+		for (QHash<QString, USetting*>::const_iterator it = m_hashsettings.begin();
 			it != m_hashsettings.end(); ++it)
 		{
-			us::SettingItemDef* def = it.value()->def();
+			SettingItemDef* def = it.value()->def();
 			if (def->category == category || category=="")
 			{
 				bool levelOK = false;
@@ -249,7 +249,7 @@ namespace us
 			}
 		}
 
-		auto variantLessThanByOrder = [](us::USetting* v1, us::USetting* v2)
+		auto variantLessThanByOrder = [](USetting* v1, USetting* v2)
 		{
 			return v1->def()->order < v2->def()->order;
 		};
@@ -303,17 +303,17 @@ namespace us
 			return;
 		}
 
-		QList<us::USetting*> orderSettings;
-		for (QHash<QString, us::USetting*>::const_iterator it = m_hashsettings.begin();
+		QList<USetting*> orderSettings;
+		for (QHash<QString, USetting*>::const_iterator it = m_hashsettings.begin();
 			it != m_hashsettings.end(); ++it)
 			orderSettings.append(it.value());
 
-		auto f = [](us::USetting* s1, us::USetting* s2)->bool {
+		auto f = [](USetting* s1, USetting* s2)->bool {
 			return s1->def()->order < s2->def()->order;
 		};
 
 		std::sort(orderSettings.begin(), orderSettings.end(), f);
-		for(us::USetting* setting : orderSettings)
+		for(USetting* setting : orderSettings)
 		{
 			QString v = setting->str();
 			QString key = setting->key();
@@ -349,18 +349,18 @@ namespace us
 			return;
 		}
 
-		QList<us::USetting*> orderSettings;
-		for (QHash<QString, us::USetting*>::const_iterator it = m_hashsettings.begin();
+		QList<USetting*> orderSettings;
+		for (QHash<QString, USetting*>::const_iterator it = m_hashsettings.begin();
 			it != m_hashsettings.end(); ++it)
 			orderSettings.append(it.value());
 
-		auto f = [](us::USetting* s1, us::USetting* s2)->bool {
+		auto f = [](USetting* s1, USetting* s2)->bool {
 			return s1->def()->order < s2->def()->order;
 		};
 
 		std::sort(orderSettings.begin(), orderSettings.end(), f);
 		file.write("[machine]\n");
-		for (us::USetting* setting : orderSettings)
+		for (USetting* setting : orderSettings)
 		{
 			QString v = setting->str();
 			QString key = setting->key();
@@ -391,18 +391,18 @@ namespace us
 			return;
 		}
 
-		QList<us::USetting*> orderSettings;
-		for (QHash<QString, us::USetting*>::const_iterator it = m_hashsettings.begin();
+		QList<USetting*> orderSettings;
+		for (QHash<QString, USetting*>::const_iterator it = m_hashsettings.begin();
 			it != m_hashsettings.end(); ++it)
 			orderSettings.append(it.value());
 
-		auto f = [](us::USetting* s1, us::USetting* s2)->bool {
+		auto f = [](USetting* s1, USetting* s2)->bool {
 			return s1->def()->order < s2->def()->order;
 		};
 
 		std::sort(orderSettings.begin(), orderSettings.end(), f);
 		file.write(QString("[Extruder_%1]\n").arg(index).toUtf8());
-		for (us::USetting* setting : orderSettings)
+		for (USetting* setting : orderSettings)
 		{
 			QString v = setting->str();
 			QString key = setting->key();

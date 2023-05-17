@@ -2,7 +2,7 @@
 #define CXGCODE_DEFENUMSMODEL_1676525780906_H
 #include <QAbstractListModel>
 
-namespace us
+namespace cxgcode
 {
 	class SettingItemDef;
 	class DefEnumsModel : public QAbstractListModel {

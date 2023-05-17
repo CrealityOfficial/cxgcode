@@ -8,7 +8,7 @@
 #include "cxgcode/us/settingdef.h"
 #include "qcxutil/crypt/cryptfiledevice.h"
 
-namespace us
+namespace cxgcode
 {
 	DefaultLoader::DefaultLoader(QObject* parent)
 		:QObject(parent)

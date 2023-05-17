@@ -1,6 +1,6 @@
 #include "metatype.h"
 
-namespace us
+namespace cxgcode
 {
 	MetaType::MetaType()
 	{

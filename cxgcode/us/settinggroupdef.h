@@ -3,7 +3,7 @@
 #include "cxgcode/interface.h"
 #include "cxgcode/us/settingitemdef.h"
 
-namespace us
+namespace cxgcode
 {
 	class CXGCODE_API SettingGroupDef: public QObject
 	{

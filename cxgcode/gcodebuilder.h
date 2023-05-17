@@ -14,7 +14,7 @@
 
 namespace cxgcode
 {
-	class GCodeBuilder
+	class CXGCODE_API GCodeBuilder
 	{
 	public:
 		GCodeBuilder();

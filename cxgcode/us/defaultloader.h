@@ -3,7 +3,7 @@
 #include "cxgcode/interface.h"
 #include <QtCore/QObject>
 
-namespace us
+namespace cxgcode
 {
 	class USettings;
 	class CXGCODE_API DefaultLoader: public QObject

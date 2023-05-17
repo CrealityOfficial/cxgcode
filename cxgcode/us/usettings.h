@@ -8,7 +8,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QSharedPointer>
 
-namespace us
+namespace cxgcode
 {
 	class SettingDef;
 	class CXGCODE_API USettings: public QObject
@@ -59,8 +59,8 @@ namespace us
 		QHash<QString, USetting*> m_hashsettings;
 		SettingDef* m_def;
 	};
-}
 
-typedef QSharedPointer<us::USettings> SettingsPointer;
+	typedef QSharedPointer<USettings> SettingsPointer;
+}
 
 #endif // _CXGCODE_US_USETTINGS_1589354685439_H

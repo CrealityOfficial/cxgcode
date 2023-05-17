@@ -6,7 +6,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QHash>
 
-namespace us
+namespace cxgcode
 {
 	class USetting;
 	class USettings;
@@ -47,6 +47,6 @@ namespace us
 	};
 }
 
-#define SETTING(x) us::SettingDef::instance().create(x)
-#define SETTING2(x, y) us::SettingDef::instance().create(x, y)
+#define SETTING(x) cxgcode::SettingDef::instance().create(x)
+#define SETTING2(x, y) cxgcode::SettingDef::instance().create(x, y)
 #endif // _CXGCODE_US_SETTINGDEF_1589436632667_H

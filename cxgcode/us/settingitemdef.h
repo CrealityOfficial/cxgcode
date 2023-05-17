@@ -3,7 +3,7 @@
 #include "cxgcode/interface.h"
 #include <QtCore/QVariant>
 
-namespace us
+namespace cxgcode
 {
 	CXGCODE_API bool checkBool(const QString& str);
 	CXGCODE_API QStringList loadKeys(const QString& fileName);

@@ -4,7 +4,7 @@
 #include "cxgcode/us/settinggroupdef.h"
 #include <QtCore/QMap>
 
-namespace us
+namespace cxgcode
 {
 	class CXGCODE_API JsonDef: public QObject
 	{

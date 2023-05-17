@@ -1,7 +1,7 @@
 #include "defenumsmodel.h"
 #include "cxgcode/us/settingitemdef.h"
 
-namespace us
+namespace cxgcode
 {
     enum {
         NameRole = Qt::UserRole + 1,

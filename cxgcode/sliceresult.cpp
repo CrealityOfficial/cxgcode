@@ -10,7 +10,7 @@ namespace cxgcode
 {
     SliceResult::SliceResult() 
     {
-        G.reset(new us::USettings());
+        G.reset(new USettings());
         G->loadCompleted();
     }
 

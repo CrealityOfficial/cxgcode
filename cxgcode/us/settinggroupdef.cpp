@@ -1,6 +1,6 @@
 #include "cxgcode/us/settinggroupdef.h"
 
-namespace us
+namespace cxgcode
 {
 	SettingGroupDef::SettingGroupDef(QObject* parent)
 		: QObject(parent)

@@ -1,6 +1,6 @@
 #ifndef _CXGCODE_NULLSPACE_SLICEMODELBUILDER_1590033290815_H
 #define _CXGCODE_NULLSPACE_SLICEMODELBUILDER_1590033290815_H
-
+#include "cxgcode/interface.h"
 #include <float.h>
 
 #include <QtCore/QObject>
@@ -44,7 +44,7 @@ namespace cxgcode
 		int extruder;
 	};
 
-	class GCodeStruct
+	class CXGCODE_API GCodeStruct
 	{
 	public:
 		GCodeStruct();

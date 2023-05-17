@@ -4,7 +4,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 
-namespace us
+namespace cxgcode
 {
 	bool checkBool(const QString& str)
 	{

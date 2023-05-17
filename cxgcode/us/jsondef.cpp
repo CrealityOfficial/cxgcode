@@ -6,7 +6,7 @@
 
 #include <functional>
 
-namespace us
+namespace cxgcode
 {
 	JsonDef::JsonDef(QObject* parent)
 		:QObject(parent)

@@ -5,7 +5,7 @@
 #include <functional>
 
 #include <QtCore/QDebug>
-namespace us
+namespace cxgcode
 {
 	SettingDef SettingDef::s_settingDef;
 	SettingDef::SettingDef(QObject* parent)
@@ -96,16 +96,16 @@ namespace us
 
 	QList<SettingItemDef*> SettingDef::collectItems(SettingGroupDef* groupDef)
 	{
-		QList<us::SettingItemDef*> defs;
+		QList<SettingItemDef*> defs;
 
-		std::function<void(const QList<us::SettingItemDef*>&)> buildFunc;
-		buildFunc = [&defs, &buildFunc](const QList<us::SettingItemDef*>& items) {
+		std::function<void(const QList<SettingItemDef*>&)> buildFunc;
+		buildFunc = [&defs, &buildFunc](const QList<SettingItemDef*>& items) {
 			if (items.count() == 0)
 				return;
 
-			QList<us::SettingItemDef*> next;
+			QList<SettingItemDef*> next;
 			defs += items;
-			for (us::SettingItemDef* item : items)
+			for (SettingItemDef* item : items)
 				next += item->items;
 			buildFunc(next);
 		};
@@ -146,9 +146,9 @@ namespace us
 
 	void SettingDef::writeAllKeys()
 	{
-		for (QMap<QString, us::SettingGroupDef*>::const_iterator it = m_settingGroupDefs.begin(); it != m_settingGroupDefs.end(); ++it)
+		for (QMap<QString, SettingGroupDef*>::const_iterator it = m_settingGroupDefs.begin(); it != m_settingGroupDefs.end(); ++it)
 		{
-			QList<us::SettingItemDef*> defs = collectItems(it.value());
+			QList<SettingItemDef*> defs = collectItems(it.value());
 
 			QList<QString> keys = collectKeys(defs);
 			saveKeys(keys, it.key());
@@ -157,19 +157,19 @@ namespace us
 
 	QVariantList SettingDef::parameterGroupList()
 	{
-		auto variantLessThanByOrder = [](us::SettingGroupDef* v1, us::SettingGroupDef* v2)
+		auto variantLessThanByOrder = [](SettingGroupDef* v1, SettingGroupDef* v2)
 		{
 			return v1->order < v2->order;
 		};
 
-		QList<us::SettingGroupDef*> defs;
-		for (QMap<QString, us::SettingGroupDef*>::const_iterator it = m_settingGroupDefs.begin(); it != m_settingGroupDefs.end(); ++it)
+		QList<SettingGroupDef*> defs;
+		for (QMap<QString, SettingGroupDef*>::const_iterator it = m_settingGroupDefs.begin(); it != m_settingGroupDefs.end(); ++it)
 			defs.append(it.value());
 
 		std::sort(defs.begin(), defs.end(), variantLessThanByOrder);
 
 		QVariantList values;
-		for (us::SettingGroupDef* def : defs)
+		for (SettingGroupDef* def : defs)
 			values.push_back(QVariant::fromValue(def->label));
 
 		qDebug() << QString("SettingDef::parameterGroupList : ");
@@ -179,15 +179,15 @@ namespace us
 
 	QVariantList SettingDef::parameterList(const QString& type)
 	{
-		auto variantLessThanByOrder = [](us::SettingItemDef* v1, us::SettingItemDef* v2)
+		auto variantLessThanByOrder = [](SettingItemDef* v1, SettingItemDef* v2)
 		{
 			return v1->order < v2->order;
 		};
 
-		QList<us::SettingItemDef*> defs;
+		QList<SettingItemDef*> defs;
 		if (type.isEmpty())
 		{
-			for (QHash<QString, us::SettingItemDef*>::const_iterator it = m_hashItemDef.begin();
+			for (QHash<QString, SettingItemDef*>::const_iterator it = m_hashItemDef.begin();
 				it != m_hashItemDef.end(); ++it)
 			{
 				defs.append(it.value());
@@ -195,7 +195,7 @@ namespace us
 		}
 		else
 		{
-			for (QMap<QString, us::SettingGroupDef*>::const_iterator it = m_settingGroupDefs.begin(); it != m_settingGroupDefs.end(); ++it)
+			for (QMap<QString, SettingGroupDef*>::const_iterator it = m_settingGroupDefs.begin(); it != m_settingGroupDefs.end(); ++it)
 			{
 				if (it.value()->label == type)
 				{
@@ -208,7 +208,7 @@ namespace us
 		std::sort(defs.begin(), defs.end(), variantLessThanByOrder);
 
 		QVariantList values;
-		for (us::SettingItemDef* def : defs)
+		for (SettingItemDef* def : defs)
 			values.push_back(QVariant::fromValue(def->name));
 
 		return values;

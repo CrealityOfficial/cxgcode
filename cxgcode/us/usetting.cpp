@@ -1,7 +1,7 @@
 #include "usetting.h"
 #include <QtCore/QDebug>
 
-namespace us
+namespace cxgcode
 {
 	USetting::USetting(SettingItemDef* def, QObject* parent)
 		:QObject(parent)

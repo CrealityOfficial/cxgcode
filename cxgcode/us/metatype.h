@@ -3,7 +3,7 @@
 #include "cxgcode/interface.h"
 #include <QtCore/QVariant>
 
-namespace us
+namespace cxgcode
 {
 	class CXGCODE_API MetaType
 	{

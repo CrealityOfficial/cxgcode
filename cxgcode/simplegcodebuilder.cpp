@@ -780,7 +780,7 @@ namespace cxgcode
 		stepsFlagsAtt->setParent(renderer);
 
 
-		Qt3DRender::QGeometry* geo = qtuser_3d::BasicShapeCreateHelper::createBall(QVector3D(0, 0, 0), 0.3, 30);
+		Qt3DRender::QGeometry* geo = qtuser_3d::BasicShapeCreateHelper::createBall(QVector3D(0.0f, 0.0f, 0.0f), 0.3f, 30);
 		geo->addAttribute(positionAtt);
 		geo->addAttribute(stepsFlagsAtt);
 		renderer->setGeometry(geo);

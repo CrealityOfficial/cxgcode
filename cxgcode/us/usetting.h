@@ -5,7 +5,7 @@
 #include "cxgcode/us/settinggroupdef.h"
 #include <QVariant>
 
-namespace us
+namespace cxgcode
 {
 	class CXGCODE_API USetting: public QObject
 	{
