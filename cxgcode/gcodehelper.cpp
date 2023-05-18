@@ -286,18 +286,24 @@ namespace cxsw
 		QByteArray cdata = imgSavePath.toLocal8Bit();
 		std::string imgSaveStdPath(cdata);
 
-		std::fstream ios(imgSaveStdPath, std::ios::binary | std::ios::in);
+		std::ifstream ios(imgSaveStdPath, std::ios::binary | std::ios::in);
 		std::string s;
 		std::vector<unsigned char> data;
-		while (std::getline(ios, s))
+
+		if (ios.is_open()) 
 		{
-			s += "\n";
-			int src_size = data.size();
-			data.resize(src_size + s.size());
-			copy(s.begin(), s.end(), data.begin() + src_size);
+			char buffer[1024]{ 0 };
+			while (ios.good()) 
+			{
+				ios.read(buffer, sizeof(buffer));
+				std::string temp(buffer, ios.gcount());
+				int src_size = data.size();
+				data.resize(src_size + temp.size());
+				copy(temp.begin(), temp.end(), data.begin() + src_size);
+			}
+			ios.close();
 		}
 
-		data.pop_back();
 		std::vector<std::string> outStr;
 		QString imgSize;
 		imgSize.sprintf("%d*%d", Image->width(), Image->height());
