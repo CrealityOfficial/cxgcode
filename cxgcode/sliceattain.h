@@ -8,7 +8,7 @@
 #include "cxgcode/simplegcodebuilder.h"
 
 #include <Qt3DRender/QGeometry>
-#include <Qt3dRender/QGeometryRenderer>
+#include <Qt3DRender/QGeometryRenderer>
 
 #include "qtuser3d/math/box3d.h"
 
