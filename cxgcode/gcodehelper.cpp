@@ -74,7 +74,6 @@ namespace cxsw
         QString value = "";
         bool headend = false;
 		qint64 readBytes = 0;
-
         while (!file.atEnd())
         {
             QByteArray line = file.readLine();
@@ -97,7 +96,18 @@ namespace cxsw
 
             if (temp.contains(";LAYER_COUNT"))
             {
-                prefixString.append(value);
+				if (!headend)
+				{
+					prefixString.append(value);
+				}
+				else
+				{ 
+					//针对逐个打印 增加抬升代码
+					QString str = layerString.last();
+					str += value;
+					layerString.last() = str;
+				}
+
                 //layerString.append(temp);
                 headend = true;
                 value.clear();
