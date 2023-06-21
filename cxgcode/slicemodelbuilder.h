@@ -35,12 +35,26 @@ namespace cxgcode
 		}
 	};
 
+	struct GcodeTemperature
+	{
+		float bedTemperature{ 0.0f }; //平台温度
+		float temperature{ 0.0f };  //喷嘴温度
+		float camberTemperature{ 0.0f };  //腔体温度
+	};
+
+	struct GcodeFan
+	{
+		float fanSpeed{ 0.0f }; //风扇速度
+		float camberSpeed{ 0.0f };  //腔体风扇速度
+		float fanSpeed_1{ 0.0f };  //子风扇
+	};
+
 	struct GCodeMove
 	{
 		int start;
 		float speed;
 		SliceLineType type;
-		float e;
+		float e;  //流量
 		int extruder;
 	};
 
@@ -54,6 +68,11 @@ namespace cxgcode
 
 		std::vector<trimesh::vec3> m_positions;
 		std::vector<GCodeMove> m_moves;
+
+		std::vector <GcodeTemperature> m_temperatures;
+		std::vector <GcodeFan> m_fans;
+		std::vector<int> m_temperatureIndex;
+		std::vector<int> m_fanIndex;
 
 		std::vector<int> m_zSeams;
 		std::vector<int> m_retractions;

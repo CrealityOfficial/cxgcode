@@ -114,8 +114,158 @@ namespace cxgcode
         tempBaseInfo.steps.push_back((int)m_moves.size() - startNumber);
     }
 
+    void checkoutFan(const QString& stepCode, std::vector <GcodeFan>& fans)
+    {
+        //std::vector <GcodeTemperature> m_temperatures;
+        if (stepCode.contains("M106")
+            || stepCode.contains("M107"))
+        {
+            GcodeFan gcodeFan;
+            QStringList strs = stepCode.split(" ");
+
+            float speed = 0.0f;
+            int type = -1;
+            for (const QString& it3 : strs)
+            {
+                QString componentStr = it3.trimmed();
+                if (componentStr.isEmpty())
+                    continue;
+
+                if (componentStr[0] == "S")
+                {
+                    speed = componentStr.mid(1).toFloat();
+                }
+
+                if (!it3.compare("M106"))
+                {
+                    if (!it3.compare("P1"))
+                        type = 1;
+                    else if(!it3.compare("P2"))
+                        type = 2;
+                    else
+                        type = 0;
+                }
+                else if (!it3.compare("M107"))
+                {
+                    if (!it3.compare("P1"))
+                        type = 4;
+                    else if (!it3.compare("P2"))
+                        type = 5;
+                    else
+                        type = 3;
+                }
+            }
+            switch (type)
+            {
+            case 0:
+                gcodeFan.fanSpeed = speed;
+                break;
+            case 1:
+                gcodeFan.camberSpeed = speed;
+                break;
+            case 2:
+                gcodeFan.fanSpeed_1 = speed;
+                break;
+            case 3:
+                gcodeFan.fanSpeed = 0.0f;
+                break;
+            case 4:
+                gcodeFan.camberSpeed = 0.0f;
+                break;
+            case 5:
+                gcodeFan.fanSpeed_1 = 0.0f;
+                break;
+            default:
+                break;
+            }
+
+            if (type >= 0)
+            {
+                fans.push_back(gcodeFan);
+            }
+        }
+
+    }
+
+
+    void checkoutTemperature(const QString& stepCode, std::vector <GcodeTemperature>& temperatures)
+    {
+        //std::vector <GcodeTemperature> m_temperatures;
+        if (stepCode.contains("M140")
+            || stepCode.contains("M190")
+            || stepCode.contains("M104")
+            || stepCode.contains("M109")
+            || stepCode.contains("M141")
+            || stepCode.contains("M191")
+            )
+        {
+            GcodeTemperature gcodeTemperature;
+            QStringList strs = stepCode.split(" ");
+
+            float temperature = 0.0f;
+            int type = -1;
+            for (const QString& it3 : strs)
+            {
+                QString componentStr = it3.trimmed();
+                if (componentStr.isEmpty())
+                    continue;
+
+                if (componentStr[0] == "S")
+                {
+                    temperature = componentStr.mid(1).toFloat();
+                }
+
+                if (!it3.compare("M140")
+                    || !it3.compare("M190"))
+                {
+                    type = 0;
+                }
+                else if (!it3.compare("M104")
+                    || !it3.compare("M109"))
+                {
+                    if (!it3.compare("T1")
+                        || !it3.compare("t1"))
+                        type = 1;
+                    else
+                        type = 2;
+                }
+                else if (!it3.compare("M141")
+                    || !it3.compare("M191"))
+                {
+                    type = 3;
+                }
+            }
+            switch (type)
+            {
+            case 0:
+                gcodeTemperature.bedTemperature = temperature;
+                break;
+            case 1:
+                //gcodeTemperature.temperature0 = temperature;
+                //break;
+            case 2:
+                gcodeTemperature.temperature = temperature;
+                break;
+            case 3:
+                gcodeTemperature.camberTemperature = temperature;
+                break;
+            default:
+                break;
+            }
+
+            if (type >= 0)
+            {
+                temperatures.push_back(gcodeTemperature);
+            }
+        }
+
+    }
+
     void GCodeStruct::processStep(const QString& stepCode, int nIndex, QList<int>& stepIndexMap)
     {
+        //checkoutTemperature(stepCode, m_temperatures);
+        //checkoutFan(stepCode, m_fans);
+
         if (stepCode.contains(";TYPE:") && !stepCode.contains(";TYPE:end"))
         {
             tempCurrentType = GetLineType(stepCode);
