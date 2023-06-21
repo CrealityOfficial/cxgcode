@@ -82,6 +82,10 @@ namespace cxgcode
 		void processG01(const QString& G01Str, int nIndex, QList<int>& stepIndexMap);
 		void processG23(const QString& G23Str, int nIndex, QList<int>& stepIndexMap);
 		void processSpeed(float speed);
+
+		void processPrefixCode(const QString& stepCod);
+		void checkoutFan(const QString& stepCod);
+		void checkoutTemperature(const QString& stepCode);
 	protected:
 		SliceLineType  tempCurrentType;
 		int tempNozzleIndex;

@@ -114,13 +114,13 @@ namespace cxgcode
         tempBaseInfo.steps.push_back((int)m_moves.size() - startNumber);
     }
 
-    void checkoutFan(const QString& stepCode, std::vector <GcodeFan>& fans)
+    void GCodeStruct::checkoutFan(const QString& stepCode)
     {
         //std::vector <GcodeTemperature> m_temperatures;
         if (stepCode.contains("M106")
             || stepCode.contains("M107"))
         {
-            GcodeFan gcodeFan;
+            GcodeFan gcodeFan = m_fans.size() > 0 ? m_fans.back() : GcodeFan();;
             QStringList strs = stepCode.split(" ");
 
             float speed = 0.0f;
@@ -181,14 +181,13 @@ namespace cxgcode
 
             if (type >= 0)
             {
-                fans.push_back(gcodeFan);
+                m_fans.push_back(gcodeFan);
             }
         }
 
     }
 
-
-    void checkoutTemperature(const QString& stepCode, std::vector <GcodeTemperature>& temperatures)
+    void GCodeStruct::checkoutTemperature(const QString& stepCode)
     {
         //std::vector <GcodeTemperature> m_temperatures;
         if (stepCode.contains("M140")
@@ -197,9 +196,11 @@ namespace cxgcode
             || stepCode.contains("M109")
             || stepCode.contains("M141")
             || stepCode.contains("M191")
+            || stepCode.contains("EXTRUDER_TEMP")
+            || stepCode.contains("BED_TEMP")
             )
         {
-            GcodeTemperature gcodeTemperature;
+            GcodeTemperature gcodeTemperature= m_temperatures.size()>0 ? m_temperatures.back(): GcodeTemperature();
             QStringList strs = stepCode.split(" ");
 
             float temperature = 0.0f;
@@ -214,6 +215,18 @@ namespace cxgcode
                 {
                     temperature = componentStr.mid(1).toFloat();
                 }
+                else if (componentStr.contains("EXTRUDER_TEMP"))
+                {
+                    temperature = componentStr.mid(14).toFloat();
+                    gcodeTemperature.temperature = temperature;
+                    type = 4;
+                }
+                else if (componentStr.contains("BED_TEMP"))
+                {
+                    temperature = componentStr.mid(9).toFloat();
+                    gcodeTemperature.bedTemperature = temperature;
+                    type = 4;
+                }
 
                 if (!it3.compare("M140")
                     || !it3.compare("M190"))
@@ -221,7 +234,7 @@ namespace cxgcode
                     type = 0;
                 }
                 else if (!it3.compare("M104")
-                    || !it3.compare("M109"))
+                    || !it3.compare("M109") )
                 {
                     if (!it3.compare("T1")
                         || !it3.compare("t1"))
@@ -249,22 +262,50 @@ namespace cxgcode
             case 3:
                 gcodeTemperature.camberTemperature = temperature;
                 break;
+            case 4:
             default:
                 break;
             }
 
             if (type >= 0)
             {
-                temperatures.push_back(gcodeTemperature);
+                m_temperatures.push_back(gcodeTemperature);
             }
         }
 
     }
 
+    void GCodeStruct::processPrefixCode(const QString& stepCod)
+    {
+        QStringList layerLines = stepCod.split("\n");
+
+        for (const QString& layerLine : layerLines)
+        {
+            QString stepCode = layerLine.trimmed();  //" \n\r\t"
+            if (stepCode.isEmpty())
+                continue;
+
+            if (stepCode.contains("M140")
+                || stepCode.contains("M190")
+                || stepCode.contains("M104")
+                || stepCode.contains("M109")
+                || stepCode.contains("M141")
+                || stepCode.contains("M191")
+                || stepCode.contains("EXTRUDER_TEMP")
+                || stepCode.contains("BED_TEMP")
+                || stepCode.contains("M106")
+                || stepCode.contains("M107"))
+            {
+                checkoutFan(stepCode);
+                checkoutTemperature(stepCode);
+            }
+        }
+    }
+
     void GCodeStruct::processStep(const QString& stepCode, int nIndex, QList<int>& stepIndexMap)
     {
-        //checkoutTemperature(stepCode, m_temperatures);
-        //checkoutFan(stepCode, m_fans);
+        checkoutTemperature(stepCode);
+        checkoutFan(stepCode);
 
         if (stepCode.contains(";TYPE:") && !stepCode.contains(";TYPE:end"))
         {
@@ -383,6 +424,20 @@ namespace cxgcode
 
             move.extruder = tempNozzleIndex;
             m_moves.emplace_back(move);
+
+            //add temperature fan
+            if (m_temperatures.empty())
+            {
+                m_temperatures.push_back(GcodeTemperature());
+            }
+            if (m_fans.empty())
+            {
+                m_fans.push_back(GcodeFan());
+            }
+            m_temperatureIndex.push_back(m_temperatures.size()-1);
+            m_fanIndex.push_back(m_fans.size() - 1);
+            //end
+
             stepIndexMap.append(nIndex);
 
             tempBaseInfo.gCodeBox += tempEndPos;
@@ -546,6 +601,9 @@ namespace cxgcode
         GCodeStructBaseInfo& baseInfo, QVector<QList<int>>& stepIndexMaps, ccglobal::Tracer* tracer)
     {
         m_tracer = tracer;
+
+        //get temperature and fan
+        processPrefixCode(result->prefixCode());
 
         parseInfo = info;
         tempBaseInfo.nNozzle = 1;
