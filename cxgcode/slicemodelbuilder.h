@@ -49,6 +49,12 @@ namespace cxgcode
 		float fanSpeed_1{ 0.0f };  //子风扇
 	};
 
+	struct GcodeLayerInfo
+	{
+		float layerHight{ 0.0f }; //层高
+		float width{ 0.0f };  //线宽
+	};
+
 	struct GCodeMove
 	{
 		int start;
@@ -67,12 +73,17 @@ namespace cxgcode
 		void buildFromResult(SliceResultPointer result, const GCodeParseInfo& info, GCodeStructBaseInfo& baseInfo, QVector<QList<int>>& stepIndexMaps, ccglobal::Tracer* tracer = nullptr);
 
 		std::vector<trimesh::vec3> m_positions;
-		std::vector<GCodeMove> m_moves;
+		std::vector<GCodeMove> m_moves;  //流量、速度..
 
-		std::vector <GcodeTemperature> m_temperatures;
-		std::vector <GcodeFan> m_fans;
-		std::vector<int> m_temperatureIndex;
-		std::vector<int> m_fanIndex;
+		std::vector <GcodeTemperature> m_temperatures;//温度设置值
+		std::vector<int> m_temperatureIndex;//温度步进索引
+		std::vector <GcodeFan> m_fans;//风扇设置值
+		std::vector<int> m_fanIndex;//风扇步进索引
+		std::vector <GcodeLayerInfo> m_gcodeLayerInfos;  //层高、线宽设置值
+		std::vector<int> m_layerInfoIndex;  //层高、线宽 步进索引
+
+		std::map<int,float> m_layerTimes;  //每层时间
+		//std::map<int, float> m_layerTimeLogs;  //每层时间对数
 
 		std::vector<int> m_zSeams;
 		std::vector<int> m_retractions;
@@ -86,10 +97,12 @@ namespace cxgcode
 		void processPrefixCode(const QString& stepCod);
 		void checkoutFan(const QString& stepCod);
 		void checkoutTemperature(const QString& stepCode);
+		void checkoutLayerInfo(const QString& stepCode,int layer);
 	protected:
 		SliceLineType  tempCurrentType;
 		int tempNozzleIndex;
 		float tempCurrentE;
+		float tempCurrentTime{ 0.0f };
 		trimesh::vec3 tempCurrentPos;
 		float tempSpeed;
 		bool layerNumberParseSuccess;

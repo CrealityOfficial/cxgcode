@@ -5,6 +5,7 @@
 #include "trimesh2/XForm.h"
 #include "mmesh/trimesh/trimeshutil.h"
 #include "mmesh/trimesh/algrithm3d.h"
+#include <math.h>
 
 namespace cxgcode
 {
@@ -107,6 +108,7 @@ namespace cxgcode
             if (stepCode.isEmpty())
                 continue;
 
+            checkoutLayerInfo(layerLine, layer);
             processStep(stepCode, nIndex, stepIndexMap);
             ++nIndex;
         }
@@ -120,7 +122,7 @@ namespace cxgcode
         if (stepCode.contains("M106")
             || stepCode.contains("M107"))
         {
-            GcodeFan gcodeFan = m_fans.size() > 0 ? m_fans.back() : GcodeFan();;
+            GcodeFan gcodeFan = m_fans.size() > 0 ? m_fans.back() : GcodeFan();
             QStringList strs = stepCode.split(" ");
 
             float speed = 0.0f;
@@ -217,13 +219,21 @@ namespace cxgcode
                 }
                 else if (componentStr.contains("EXTRUDER_TEMP"))
                 {
-                    temperature = componentStr.mid(14).toFloat();
+                    QStringList strs = componentStr.split("=");
+                    if (strs.size() >= 2)
+                    {
+                        temperature = strs[1].toFloat();
+                    }
                     gcodeTemperature.temperature = temperature;
                     type = 4;
                 }
                 else if (componentStr.contains("BED_TEMP"))
                 {
-                    temperature = componentStr.mid(9).toFloat();
+                    QStringList strs = componentStr.split("=");
+                    if (strs.size() >= 2)
+                    {
+                        temperature = strs[1].toFloat();
+                    }
                     gcodeTemperature.bedTemperature = temperature;
                     type = 4;
                 }
@@ -273,6 +283,27 @@ namespace cxgcode
             }
         }
 
+    }
+
+    void GCodeStruct::checkoutLayerInfo(const QString& stepCode, int layer)
+    {
+        //;TIME_ELAPSED:548.869644
+        if (stepCode.contains("TIME_ELAPSED"))
+        {
+            QStringList strs = stepCode.split(":");
+            if (strs.size() >= 2)
+            {
+                float temp = strs[1].toFloat() - tempCurrentTime;
+                float templog = 0.0f;
+                //if (temp >0)
+                //{
+                //    templog = std::log(temp);
+                //}
+                //m_layerTimeLogs.insert(std::pair<int, float>(layer, templog));
+                m_layerTimes.insert(std::pair<int,float>(layer, temp));
+                tempCurrentTime = strs[1].toFloat();
+            }
+        }
     }
 
     void GCodeStruct::processPrefixCode(const QString& stepCod)
@@ -351,6 +382,7 @@ namespace cxgcode
         SliceLineType tempType = tempCurrentType;
         bool havaXYZ = false;
 
+        GcodeLayerInfo gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
         for (const QString& it3 : G01Strs)
         {
             QString componentStr = it3.trimmed();
@@ -384,6 +416,12 @@ namespace cxgcode
             {
                 tempEndPos.at(2) = componentStr.mid(1).toFloat();
                 havaXYZ = true;
+
+                //add layerHeight
+                GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
+                gcodeLayerInfo.layerHight = tempEndPos[2];
+                m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+                //
             }
         }
 
@@ -425,7 +463,7 @@ namespace cxgcode
             move.extruder = tempNozzleIndex;
             m_moves.emplace_back(move);
 
-            //add temperature fan
+            //add temperature fan and time ...
             if (m_temperatures.empty())
             {
                 m_temperatures.push_back(GcodeTemperature());
@@ -434,8 +472,35 @@ namespace cxgcode
             {
                 m_fans.push_back(GcodeFan());
             }
+            if (m_gcodeLayerInfos.empty())
+            {
+                m_gcodeLayerInfos.push_back(GcodeLayerInfo());
+            }
+
+            //calculate width
+            trimesh::vec3 offset = tempCurrentPos - tempEndPos;
+            offset.z = 0;
+            float len = trimesh::length(offset);
+            float len1 = std::sqrt(offset.x * offset.x + offset.y * offset.y);
+            float h = m_gcodeLayerInfos.back().layerHight;
+
+            float width = 0.0f;
+            if (len !=0 && h != 0 && move.e >0.0f)
+            {
+                width = move.e*2.405 / len / h;
+            }
+
+            if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001)
+            {
+                GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
+                gcodeLayerInfo.width = width;
+                m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+            }
+            //end
+
             m_temperatureIndex.push_back(m_temperatures.size()-1);
             m_fanIndex.push_back(m_fans.size() - 1);
+            m_layerInfoIndex.push_back(m_gcodeLayerInfos.size() - 1);
             //end
 
             stepIndexMap.append(nIndex);
