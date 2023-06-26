@@ -103,6 +103,7 @@ namespace cxgcode
 		int tempNozzleIndex;
 		float tempCurrentE;
 		float tempCurrentTime{ 0.0f };
+		float tempCurrentZ{ 0.0f };
 		trimesh::vec3 tempCurrentPos;
 		float tempSpeed;
 		bool layerNumberParseSuccess;
