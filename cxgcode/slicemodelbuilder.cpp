@@ -419,9 +419,16 @@ namespace cxgcode
 
                 //add layerHeight
                 GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
-                gcodeLayerInfo.layerHight = tempEndPos[2];
-                m_gcodeLayerInfos.push_back(gcodeLayerInfo);
-                //
+                float layerHight = tempEndPos[2] - gcodeLayerInfo.layerHight;
+                if (layerHight < 0.0f)
+                {
+                    layerHight = tempEndPos[2];
+                }
+                if (layerHight != 0 || m_gcodeLayerInfos.empty())
+                {
+                    gcodeLayerInfo.layerHight = layerHight;
+                    m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+                }
             }
         }
 
