@@ -21,7 +21,14 @@ namespace cxgcode {
 	{
 		gvt_speed,
 		gvt_structure,
-		gvt_extruder
+		gvt_extruder,
+		gvt_layerHight,  //层高
+		gvt_lineWidth,   //线宽
+		gvt_flow,        //流量
+		gvt_layerTime,   //层时间
+		gvt_fanSpeed,    //风扇速度
+		gvt_temperature, //温度
+		gvt_num,
 	};
 
 	struct TimeParts {

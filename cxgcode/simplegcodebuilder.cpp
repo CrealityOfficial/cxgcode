@@ -360,7 +360,7 @@ namespace cxgcode
 			const GCodeMove& move = structMoves.at(i);
 			float* tempSteps = data + stride * i;
 
-			float flag = produceFlag(move, type);
+			float flag = produceFlag(move, type, i);
 			for (int j = 0; j < 24; ++j)
 			{
 				*(tempSteps + j) = flag;
@@ -610,7 +610,7 @@ namespace cxgcode
 			const GCodeMove& move = structMoves.at(i);
 			float* tempData = data + stride * i;
 
-			*(tempData) = produceFlag(move, type);
+			*(tempData) = produceFlag(move, type, i);
 		}
 	}
 
@@ -713,23 +713,126 @@ namespace cxgcode
 		}
 	}
 
-	float SimpleGCodeBuilder::produceFlag(const GCodeMove& move, GCodeVisualType type)
+	float SimpleGCodeBuilder::produceFlag(const GCodeMove& move, GCodeVisualType type, int step)
 	{
 		float flag = 0.0f;
-		if (type == GCodeVisualType::gvt_extruder)
+		
+		switch (type)
 		{
-			flag = (float)move.extruder;
-			if (move.type == SliceLineType::Travel)
-				flag = -1.0f;
+			case cxgcode::GCodeVisualType::gvt_speed:
+			{
+				flag = (float)move.speed;
+				//着色器里面把flag < 0.0的线段忽略
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+			break;
+
+			case cxgcode::GCodeVisualType::gvt_structure:
+			{
+				flag = (float)move.type;
+			}
+			break;
+
+			case cxgcode::GCodeVisualType::gvt_extruder:
+			{
+				flag = (float)move.extruder;
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+			break;
+
+			case cxgcode::GCodeVisualType::gvt_layerHight:
+			{
+				//[0.1, 1.0]
+				int idx = m_struct.m_layerInfoIndex[step];
+				GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				flag = l.layerHight;
+				//qDebug() << "layer height = " << flag;
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+			break;
+
+			case cxgcode::GCodeVisualType::gvt_lineWidth:
+			{
+				//[0.1, 1.0]
+				int idx = m_struct.m_layerInfoIndex[step];
+				GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				flag = l.width;
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+			break;
+
+			case cxgcode::GCodeVisualType::gvt_flow:
+			{
+				flag = (float)move.e;
+				//qDebug() << "flow = " << flag;
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+				break;
+
+			case cxgcode::GCodeVisualType::gvt_layerTime:
+			{
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+				else if (step < m_steps.count)
+				{
+					int stride = 1;
+					trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
+					trimesh::vec2 layerAndStepAtOne = *(tsteps + stride * step);
+					int layer = layerAndStepAtOne.x - INDEX_START_AT_ONE;
+
+					std::map<int, float>::iterator it = m_struct.m_layerTimes.find(layer);
+					if (it != m_struct.m_layerTimes.end())
+					{
+						float time = it->second;
+						//qDebug() << "layer Time = " << time;
+						flag = (time - baseInfo.minTimeOfLayer) / (baseInfo.maxTimeOfLayer - baseInfo.minTimeOfLayer);	
+					}
+				}
+				qDebug() << "some thing error";
+				return flag;
+			}
+
+			case cxgcode::GCodeVisualType::gvt_fanSpeed:
+			{
+				//[0, 100%]
+#ifdef DEBUG
+				assert(0 <= step && step < m_struct.m_fanIndex.size());
+#endif // DEBUG
+				int idx = m_struct.m_fanIndex[step];
+#ifdef DEBUG
+				assert(0 <= idx && idx < m_struct.m_fans.size());
+#endif // DEBUG
+				GcodeFan& fans = m_struct.m_fans[idx]; 
+				flag = fminf(fmaxf(fans.fanSpeed / 255.0, 0.0), 1.0);
+
+				//qDebug() << "fan speed = " << flag;
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+			break;
+
+
+			case cxgcode::GCodeVisualType::gvt_temperature:
+			{
+				//[0, 500]
+				int idx = m_struct.m_temperatureIndex[step];
+				GcodeTemperature& t = m_struct.m_temperatures[idx];
+				float temp = t.temperature ;
+				//qDebug() << "temperature = " << temp;
+				flag = fminf(fmaxf(temp / 500.0, 0.0), 1.0);
+				if (move.type == SliceLineType::Travel)
+					flag = -1.0f;
+			}
+			break;
+
+			default:
+				break;
 		}
-		else if (type == GCodeVisualType::gvt_speed)
-		{
-			flag = (float)move.speed;
-			if (move.type == SliceLineType::Travel)
-				flag = -1.0f;
-		}
-		else
-			flag = (float)move.type;
 
 		return flag;
 	}

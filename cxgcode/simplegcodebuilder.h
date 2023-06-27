@@ -43,7 +43,7 @@ namespace cxgcode
 
 		void processOffsetNormals(std::vector<trimesh::vec3>& normals, bool step = false);
 		void processSteps(std::vector<trimesh::ivec2>& layerSteps);
-		float produceFlag(const GCodeMove& move, GCodeVisualType type);
+		float produceFlag(const GCodeMove& move, GCodeVisualType type, int step);
 
         //cr30 offset
         void processCr30offset(GCodeParseInfo& info);

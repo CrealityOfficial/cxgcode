@@ -118,7 +118,7 @@ namespace cxgcode
 	void GCodeViewEntity::setGCodeVisualType(GCodeVisualType type)
 	{
 		int _type = (int)type;
-		if (_type >= 0 && _type <= 2 && m_showType)
+		if (_type >= 0 && _type < (int)cxgcode::GCodeVisualType::gvt_num && m_showType)
 		{
 			m_showType->setValue(_type);
 		}

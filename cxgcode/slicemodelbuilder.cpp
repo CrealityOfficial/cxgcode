@@ -724,6 +724,17 @@ namespace cxgcode
         for (GCodeMove& move : m_moves)
             move.speed = d > 0 ? (move.speed - tempBaseInfo.speedMin) / d : 0;
 
+
+        float minTime = FLT_MAX, maxTime = FLT_MIN;
+        for each (auto t in m_layerTimes)
+        {
+            float time = t.second;
+            minTime = fminf(time, minTime);
+            maxTime = fmaxf(time, maxTime);
+        }
+        tempBaseInfo.minTimeOfLayer = minTime;
+        tempBaseInfo.maxTimeOfLayer = maxTime;
+
         baseInfo = tempBaseInfo;
     }
 }
