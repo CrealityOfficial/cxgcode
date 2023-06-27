@@ -38,6 +38,72 @@ namespace cxgcode
         return false;
     }
 
+    bool  regex_match_time(std::string& gcodeStr, std::smatch& sm,GCodeParseInfo& parseInfo)
+    {
+        if (std::regex_match(gcodeStr, sm, std::regex(".*OuterWall Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.OuterWall = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*InnerWall Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.InnerWall = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*Skin Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.Skin = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*Support Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.Support = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*SkirtBrim Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.SkirtBrim = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*Infill Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.Infill = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*InfillSupport Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.SupportInfill = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*Combing Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.MoveCombing = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*Retraction Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.MoveRetraction = tmp;
+        }
+        if (std::regex_match(gcodeStr, sm, std::regex(".*PrimeTower Time:([0-9]{0,8}).*")))
+        {
+            std::string tStr = sm[1];
+            float tmp = atof(tStr.c_str());
+            parseInfo.timeParts.PrimeTower = tmp;
+        }
+
+        return true;
+    }
+
     void getImage(std::string p, SliceResult* result)
     {
         std::string tail1 = p;
@@ -119,6 +185,8 @@ namespace cxgcode
 			std::string tStr = sm[1];
 			int tmp = atoi(tStr.c_str());
 			parseInfo.printTime = tmp;
+
+            regex_match_time(gcodeStr, sm, parseInfo);
 		}
 		if (std::regex_match(gcodeStr, sm, std::regex(".*Filament used:([0-9]{0,8}\\.[0-9]{0,8}).*"))) ////get print time
 		{

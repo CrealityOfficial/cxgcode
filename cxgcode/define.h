@@ -24,6 +24,19 @@ namespace cxgcode {
 		gvt_extruder
 	};
 
+	struct TimeParts {
+		float OuterWall{0.0f};
+		float InnerWall{ 0.0f };
+		float Skin{ 0.0f };
+		float Support{ 0.0f };
+		float SkirtBrim{ 0.0f };
+		float Infill{ 0.0f };
+		float SupportInfill{ 0.0f };
+		float MoveCombing{ 0.0f };
+		float MoveRetraction{ 0.0f };
+		float PrimeTower{ 0.0f };
+	};
+
 	struct GCodeParseInfo {
 		float machine_height;
 		float machine_width;
@@ -37,6 +50,8 @@ namespace cxgcode {
 		bool spiralMode;
 		QString exportFormat;
 		QString screenSize;
+
+		TimeParts timeParts;
 	
 		int beltType;  // 1 creality print belt  2 creality slicer belt
 		float beltOffset;
@@ -59,6 +74,8 @@ namespace cxgcode {
 			exportFormat = "png";
 			screenSize = "Sermoon D3";
 			spiralMode = false;
+
+			timeParts = TimeParts();
 	
 			beltType = 0;
 			beltOffset = 0.0f;
