@@ -19,8 +19,11 @@ namespace cxgcode
 		std::vector<int> steps;
 		int totalSteps;
 		int layers;
-		float minTimeOfLayer;
-		float maxTimeOfLayer;
+		float minTimeOfLayer;   //单层最短时间
+		float maxTimeOfLayer;   //单层最长时间
+
+		float minFlowOfStep;  //单步最小流量，非零
+		float maxFlowOfStep;  //单步最大流量
 
 		trimesh::box3 gCodeBox;
 		int nNozzle;
@@ -35,6 +38,8 @@ namespace cxgcode
 			, totalSteps(0)
 			, minTimeOfLayer(FLT_MAX)
 			, maxTimeOfLayer(FLT_MIN)
+			, minFlowOfStep(FLT_MAX)
+			, maxFlowOfStep(FLT_MIN)
 		{
 		}
 	};

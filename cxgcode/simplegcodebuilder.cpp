@@ -767,10 +767,14 @@ namespace cxgcode
 
 			case cxgcode::GCodeVisualType::gvt_flow:
 			{
-				flag = (float)move.e;
-				//qDebug() << "flow = " << flag;
-				if (move.type == SliceLineType::Travel)
+				float flow = move.e;
+				//qDebug() << "flow = " << flow;
+				if (move.type == SliceLineType::Travel || flow <= 0.0)
 					flag = -1.0f;
+				else
+				{
+					flag = (flow - baseInfo.minFlowOfStep) / (baseInfo.maxFlowOfStep - baseInfo.minFlowOfStep);
+				}
 			}
 				break;
 
