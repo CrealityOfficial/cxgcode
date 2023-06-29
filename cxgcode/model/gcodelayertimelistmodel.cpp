@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeLayerTimeListModel::GcodeLayerTimeListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : GcodePreviewListModel(GCodeVisualType::gvt_layerTime, parent) {}
 
 void GcodeLayerTimeListModel::setDataList(const QList<GcodeLayerTimeData>& data_list) {
   beginResetModel();

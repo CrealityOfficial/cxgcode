@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeTemperatureListModel::GcodeTemperatureListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : GcodePreviewListModel(GCodeVisualType::gvt_temperature, parent) {}
 
 void GcodeTemperatureListModel::setDataList(const QList<GcodeTemperatureListData>& data_list) {
   beginResetModel();

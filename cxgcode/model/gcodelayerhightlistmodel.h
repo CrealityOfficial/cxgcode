@@ -3,11 +3,11 @@
 #ifndef CXGCODE_MODEL_GCODELAYERHIGHTLISTMODEL_H_
 #define CXGCODE_MODEL_GCODELAYERHIGHTLISTMODEL_H_
 
-#include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
 #include "cxgcode/interface.h"
+#include "cxgcode/model/gcodepreviewlistmodel.h"
 
 namespace cxgcode {
 
@@ -15,7 +15,7 @@ struct GcodeLayerHightData{
   QColor color;
 };
 
-class CXGCODE_API GcodeLayerHightListModel : public QAbstractListModel {
+class CXGCODE_API GcodeLayerHightListModel : public GcodePreviewListModel {
   Q_OBJECT;
 
 public:

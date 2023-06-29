@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeLayerHightListModel::GcodeLayerHightListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : GcodePreviewListModel(GCodeVisualType::gvt_layerHight, parent) {}
 
 void GcodeLayerHightListModel::setDataList(const QList<GcodeLayerHightData>& data_list) {
   beginResetModel();

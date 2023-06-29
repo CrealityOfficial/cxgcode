@@ -3,11 +3,11 @@
 #ifndef CXGCODE_MODEL_GCODEFANSPEEDLISTMODEL_H_
 #define CXGCODE_MODEL_GCODEFANSPEEDLISTMODEL_H_
 
-#include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
 #include "cxgcode/interface.h"
+#include "cxgcode/model/gcodepreviewlistmodel.h"
 
 namespace cxgcode {
 
@@ -15,7 +15,7 @@ struct GcodeFanSpeedData{
   QColor color;
 };
 
-class CXGCODE_API GcodeFanSpeedListModel : public QAbstractListModel {
+class CXGCODE_API GcodeFanSpeedListModel : public GcodePreviewListModel {
   Q_OBJECT;
 
 public:

@@ -22,6 +22,8 @@ set(SRCS
   cxgcode/slicemodelbuilder.h
   cxgcode/slicemodelbuilder.cpp
 
+  cxgcode/model/gcodepreviewlistmodel.h
+  cxgcode/model/gcodepreviewlistmodel.cpp
   cxgcode/model/gcodespeedlistmodel.h
   cxgcode/model/gcodespeedlistmodel.cpp
   cxgcode/model/gcodestructurelistmodel.h

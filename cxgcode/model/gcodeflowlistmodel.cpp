@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeFlowListModel::GcodeFlowListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : GcodePreviewListModel(GCodeVisualType::gvt_flow, parent) {}
 
 void GcodeFlowListModel::setDataList(const QList<GcodeFlowData>& data_list) {
   beginResetModel();

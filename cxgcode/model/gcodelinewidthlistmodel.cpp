@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeLineWidthListModel::GcodeLineWidthListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : GcodePreviewListModel(GCodeVisualType::gvt_lineWidth, parent) {}
 
 void GcodeLineWidthListModel::setDataList(const QList<GcodeLineWidthData>& data_list) {
   beginResetModel();

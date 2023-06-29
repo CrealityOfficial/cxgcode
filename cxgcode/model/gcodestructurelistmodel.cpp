@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeStructureListModel::GcodeStructureListModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : GcodePreviewListModel(GCodeVisualType::gvt_structure, parent)
     , data_list_({
       { QColor{ QStringLiteral("#772D28") }, QStringLiteral("Outer Perimeter") , 1 , true  },
       { QColor{ QStringLiteral("#028C05") }, QStringLiteral("Inner Perimeter") , 2 , true  },

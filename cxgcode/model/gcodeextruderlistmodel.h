@@ -3,11 +3,11 @@
 #ifndef CXGCODE_MODEL_GCODEEXTRUDERLISTMODEL_H_
 #define CXGCODE_MODEL_GCODEEXTRUDERLISTMODEL_H_
 
-#include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
 #include "cxgcode/interface.h"
+#include "cxgcode/model/gcodepreviewlistmodel.h"
 
 namespace cxgcode {
 
@@ -16,7 +16,7 @@ struct GcodeExtruderData{
   int    index{ 1 };
 };
 
-class CXGCODE_API GcodeExtruderListModel : public QAbstractListModel {
+class CXGCODE_API GcodeExtruderListModel : public GcodePreviewListModel {
   Q_OBJECT;
 
 public:

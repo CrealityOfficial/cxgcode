@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeSpeedListModel::GcodeSpeedListModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : GcodePreviewListModel(GCodeVisualType::gvt_speed, parent)
     , min_speed_(0.0f)
     , max_speed_(1.0f) {}
 

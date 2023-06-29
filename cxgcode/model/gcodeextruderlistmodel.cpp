@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeExtruderListModel::GcodeExtruderListModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : GcodePreviewListModel(GCodeVisualType::gvt_extruder, parent)
     , data_list_({
       { QColor{ QStringLiteral("#FF8080") }, 1 },
       { QColor{ QStringLiteral("#80FF80") }, 2 },

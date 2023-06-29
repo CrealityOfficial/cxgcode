@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeFanSpeedListModel::GcodeFanSpeedListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : GcodePreviewListModel(GCodeVisualType::gvt_fanSpeed, parent) {}
 
 void GcodeFanSpeedListModel::setDataList(const QList<GcodeFanSpeedData>& data_list) {
   beginResetModel();

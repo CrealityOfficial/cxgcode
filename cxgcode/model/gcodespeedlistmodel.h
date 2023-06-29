@@ -3,11 +3,11 @@
 #ifndef CXGCODE_MODEL_GCODESPEEDLISTMODEL_H_
 #define CXGCODE_MODEL_GCODESPEEDLISTMODEL_H_
 
-#include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
 #include "cxgcode/interface.h"
+#include "cxgcode/model/gcodepreviewlistmodel.h"
 
 namespace cxgcode {
 
@@ -16,7 +16,7 @@ struct GcodeSpeedData{
   double speed;
 };
 
-class CXGCODE_API GcodeSpeedListModel : public QAbstractListModel {
+class CXGCODE_API GcodeSpeedListModel : public GcodePreviewListModel {
   Q_OBJECT;
 
 public:

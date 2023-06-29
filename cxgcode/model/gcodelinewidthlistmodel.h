@@ -3,11 +3,11 @@
 #ifndef CXGCODE_MODEL_GCODELINEWIDTHLISTMODEL_H_
 #define CXGCODE_MODEL_GCODELINEWIDTHLISTMODEL_H_
 
-#include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
 #include "cxgcode/interface.h"
+#include "cxgcode/model/gcodepreviewlistmodel.h"
 
 namespace cxgcode {
 
@@ -15,7 +15,7 @@ struct GcodeLineWidthData{
   QColor color;
 };
 
-class CXGCODE_API GcodeLineWidthListModel : public QAbstractListModel {
+class CXGCODE_API GcodeLineWidthListModel : public GcodePreviewListModel {
   Q_OBJECT;
 
 public:
