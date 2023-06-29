@@ -736,7 +736,7 @@ namespace cxgcode
         tempBaseInfo.maxFlowOfStep = maxFlow;
 
         float minTime = FLT_MAX, maxTime = FLT_MIN;
-        for each (auto t in m_layerTimes)
+        for (auto t : m_layerTimes)
         {
             float time = t.second;
             minTime = fminf(time, minTime);

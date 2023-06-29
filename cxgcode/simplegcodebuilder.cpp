@@ -795,6 +795,7 @@ namespace cxgcode
 						float time = it->second;
 						//qDebug() << "layer Time = " << time;
 						flag = (time - baseInfo.minTimeOfLayer) / (baseInfo.maxTimeOfLayer - baseInfo.minTimeOfLayer);	
+						return flag;
 					}
 				}
 				qDebug() << "some thing error";
