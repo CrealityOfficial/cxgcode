@@ -21,11 +21,26 @@ set(SRCS
   cxgcode/gcodebuilder.cpp
   cxgcode/slicemodelbuilder.h
   cxgcode/slicemodelbuilder.cpp
-  cxgcode/gcodespeedlistmodel.h
-  cxgcode/gcodespeedlistmodel.cpp
-  cxgcode/gcodetypelistmodel.h
-  cxgcode/gcodetypelistmodel.cpp
-  
+
+  cxgcode/model/gcodespeedlistmodel.h
+  cxgcode/model/gcodespeedlistmodel.cpp
+  cxgcode/model/gcodestructurelistmodel.h
+  cxgcode/model/gcodestructurelistmodel.cpp
+  cxgcode/model/gcodeextruderlistmodel.h
+  cxgcode/model/gcodeextruderlistmodel.cpp
+  cxgcode/model/gcodelayerhightlistmodel.h
+  cxgcode/model/gcodelayerhightlistmodel.cpp
+  cxgcode/model/gcodelinewidthlistmodel.h
+  cxgcode/model/gcodelinewidthlistmodel.cpp
+  cxgcode/model/gcodeflowlistmodel.h
+  cxgcode/model/gcodeflowlistmodel.cpp
+  cxgcode/model/gcodelayertimelistmodel.h
+  cxgcode/model/gcodelayertimelistmodel.cpp
+  cxgcode/model/gcodefanspeedlistmodel.h
+  cxgcode/model/gcodefanspeedlistmodel.cpp
+  cxgcode/model/gcodetemperaturelistmodel.h
+  cxgcode/model/gcodetemperaturelistmodel.cpp
+
   cxgcode/us/defaultloader.h
   cxgcode/us/defaultloader.cpp
   cxgcode/us/defenumsmodel.h
@@ -44,7 +59,7 @@ set(SRCS
   cxgcode/us/usetting.cpp
   cxgcode/us/usettings.h
   cxgcode/us/usettings.cpp
-  
+
   cxgcode/render/gcodevieweffect.h
   cxgcode/render/gcodevieweffect.cpp
   cxgcode/render/gcodeviewentity.h
@@ -56,7 +71,7 @@ set(LIBS
   Qt5::Gui
   Qt5::Network
   Qt5::Quick
-  
+
   thumbnail
   mmesh
 )
@@ -65,7 +80,7 @@ set(ILIBS
 	qtuser_core
 	qtuser_3d
 	qcxutil
-	
+
 	trimesh2
 	rapidjson
 )
