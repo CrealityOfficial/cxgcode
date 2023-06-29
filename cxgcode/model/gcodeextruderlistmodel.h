@@ -13,6 +13,7 @@ namespace cxgcode {
 
 struct GcodeExtruderData{
   QColor color;
+  int    index{ 1 };
 };
 
 class CXGCODE_API GcodeExtruderListModel : public QAbstractListModel {
@@ -33,6 +34,7 @@ protected:
 private:
   enum DataRole : int {
     COLOR = Qt::ItemDataRole::UserRole + 1,
+    INDEX ,
   };
 
   QList<GcodeExtruderData> data_list_;

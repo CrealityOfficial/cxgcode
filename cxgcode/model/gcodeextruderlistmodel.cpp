@@ -3,7 +3,15 @@
 namespace cxgcode {
 
 GcodeExtruderListModel::GcodeExtruderListModel(QObject* parent)
-    : QAbstractListModel(parent) {}
+    : QAbstractListModel(parent)
+    , data_list_({
+      { QColor{ QStringLiteral("#FF8080") }, 1 },
+      { QColor{ QStringLiteral("#80FF80") }, 2 },
+      { QColor{ QStringLiteral("#8080FF") }, 3 },
+      { QColor{ QStringLiteral("#FFFF80") }, 4 },
+      { QColor{ QStringLiteral("#FF80FF") }, 5 },
+      { QColor{ QStringLiteral("#80FFFF") }, 6 },
+    }) {}
 
 void GcodeExtruderListModel::setDataList(const QList<GcodeExtruderData>& data_list) {
   beginResetModel();
@@ -26,6 +34,9 @@ QVariant GcodeExtruderListModel::data(const QModelIndex& index, int role) const 
     case DataRole::COLOR:
       result = QVariant::fromValue(data.color);
       break;
+    case DataRole::INDEX:
+      result = QVariant::fromValue(data.index);
+      break;
     default:
       break;
   }
@@ -36,6 +47,7 @@ QVariant GcodeExtruderListModel::data(const QModelIndex& index, int role) const 
 QHash<int, QByteArray> GcodeExtruderListModel::roleNames() const {
   return {
     { static_cast<int>(DataRole::COLOR), QByteArrayLiteral("model_color") },
+    { static_cast<int>(DataRole::INDEX), QByteArrayLiteral("model_index") },
   };
 }
 
