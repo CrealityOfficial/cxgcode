@@ -11,31 +11,12 @@
 
 namespace cxgcode {
 
-struct GcodeTemperatureListData{
-  QColor color;
-};
-
-class CXGCODE_API GcodeTemperatureListModel : public GcodePreviewListModel {
+class CXGCODE_API GcodeTemperatureListModel : public GcodePreviewRangeDivideModel {
   Q_OBJECT;
 
 public:
   explicit GcodeTemperatureListModel(QObject* parent = nullptr);
   virtual ~GcodeTemperatureListModel() = default;
-
-public:
-  void setDataList(const QList<GcodeTemperatureListData>& data_list);
-
-protected:
-  int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
-  QVariant data(const QModelIndex& index, int role = Qt::ItemDataRole::DisplayRole) const override;
-  QHash<int, QByteArray> roleNames() const override;
-
-private:
-  enum DataRole : int {
-    COLOR = Qt::ItemDataRole::UserRole + 1,
-  };
-
-  QList<GcodeTemperatureListData> data_list_;
 };
 
 }  // namespace cxgcode

@@ -4,6 +4,8 @@
 #define CXGCODE_MODEL_GCODEPREVIEWLISTMODEL_H_
 
 #include <QtCore/QAbstractListModel>
+#include <QtCore/QList>
+#include <QtGui/QColor>
 
 #include "cxgcode/define.h"
 #include "cxgcode/interface.h"
@@ -25,6 +27,47 @@ public:
 private:
   const GCodeVisualType type_;
 };
+
+
+
+struct GcodeRangeDivideData {
+	QColor color;
+	double value;
+};
+
+class CXGCODE_API GcodePreviewRangeDivideModel : public GcodePreviewListModel {
+	Q_OBJECT;
+
+public:
+	explicit GcodePreviewRangeDivideModel(GCodeVisualType type, QObject* parent = nullptr);
+	virtual ~GcodePreviewRangeDivideModel() = default;
+
+public:
+	void setColors(const QList<QColor>& colors);
+	void setRange(double min, double max);
+
+protected:
+	int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
+	QVariant data(const QModelIndex& index, int role = Qt::ItemDataRole::DisplayRole) const override;
+	QHash<int, QByteArray> roleNames() const override;
+
+private:
+	void resetData();
+
+private:
+	enum DataRole : int {
+		COLOR = Qt::ItemDataRole::UserRole + 1,
+		VALUE,
+	};
+
+	QList<GcodeRangeDivideData> m_dataList;
+	QList<QColor> m_colors;
+	double m_min;
+	double m_max;
+};
+
+
+
 
 }  // namespace cxgcode
 

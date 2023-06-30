@@ -3,39 +3,19 @@
 #ifndef CXGCODE_MODEL_GCODEFLOWLISTMODEL_H_
 #define CXGCODE_MODEL_GCODEFLOWLISTMODEL_H_
 
-#include <QtCore/QList>
-#include <QtGui/QColor>
-
 #include "cxgcode/interface.h"
 #include "cxgcode/model/gcodepreviewlistmodel.h"
 
 namespace cxgcode {
 
-struct GcodeFlowData{
-  QColor color;
-};
 
-class CXGCODE_API GcodeFlowListModel : public GcodePreviewListModel {
+class CXGCODE_API GcodeFlowListModel : public GcodePreviewRangeDivideModel {
   Q_OBJECT;
 
 public:
   explicit GcodeFlowListModel(QObject* parent = nullptr);
   virtual ~GcodeFlowListModel() = default;
 
-public:
-  void setDataList(const QList<GcodeFlowData>& data_list);
-
-protected:
-  int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
-  QVariant data(const QModelIndex& index, int role = Qt::ItemDataRole::DisplayRole) const override;
-  QHash<int, QByteArray> roleNames() const override;
-
-private:
-  enum DataRole : int {
-    COLOR = Qt::ItemDataRole::UserRole + 1,
-  };
-
-  QList<GcodeFlowData> data_list_;
 };
 
 }  // namespace cxgcode
