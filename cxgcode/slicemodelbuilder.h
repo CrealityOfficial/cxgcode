@@ -107,6 +107,7 @@ namespace cxgcode
 		void checkoutFan(const QString& stepCod);
 		void checkoutTemperature(const QString& stepCode);
 		void checkoutLayerInfo(const QString& stepCode,int layer);
+		void checkoutLayerHeight(const QStringList& layerLines);
 	protected:
 		SliceLineType  tempCurrentType;
 		int tempNozzleIndex;

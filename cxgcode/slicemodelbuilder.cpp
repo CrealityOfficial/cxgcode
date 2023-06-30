@@ -101,6 +101,9 @@ namespace cxgcode
             layerNumberParseSuccess = false;
         }
 
+        //»ñÈ¡²ã¸ß
+        checkoutLayerHeight(layerLines);
+
         int nIndex = 0;
         for (const QString& layerLine : layerLines)
         {
@@ -306,6 +309,46 @@ namespace cxgcode
         }
     }
 
+    void GCodeStruct::checkoutLayerHeight(const QStringList& layerLines)
+    {
+        float height = 0.0f;
+        bool bfirst = true;
+        for (auto stepCode : layerLines)
+        {
+            if (stepCode.size() > 3)
+            {
+                if (stepCode[0] == 'G' &&
+                    (stepCode[1] == '0' || stepCode[1] == '1' || stepCode[1] == '2' || stepCode[1] == '3'))
+                {
+                    QStringList G01Strs = stepCode.split(" ");
+                    for (const QString& it3 : G01Strs)
+                    {
+                        QString componentStr = it3.trimmed();
+                        if (componentStr[0] == "Z")
+                        {
+                            float h = componentStr.mid(1).toFloat();
+                            if (bfirst){
+                                height = std::max(h, height);
+                                bfirst = false;
+                            }
+                            else {      
+                                height = std::min(h, height);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
+        float layerHight = height - tempCurrentZ;
+
+        gcodeLayerInfo.layerHight = layerHight + 0.00001f;;
+        m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+
+        tempCurrentZ = height;
+    }
+
     void GCodeStruct::processPrefixCode(const QString& stepCod)
     {
         QStringList layerLines = stepCod.split("\n");
@@ -416,24 +459,6 @@ namespace cxgcode
             {
                 tempEndPos.at(2) = componentStr.mid(1).toFloat();
                 havaXYZ = true;
-
-                //add layerHeight
-                GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
-                float layerHight = tempEndPos[2] - tempCurrentZ ;
-                tempCurrentZ = tempEndPos[2];
-                if (layerHight > 0 || m_gcodeLayerInfos.empty())
-                {
-                    if (layerHight < 0.1)
-                    {
-                        int test = 0;
-                    }
-                    if (layerHight > 0.3f)
-                    {
-                        int test = 0;
-                    }
-                    gcodeLayerInfo.layerHight = layerHight + 0.001f;
-                    m_gcodeLayerInfos.push_back(gcodeLayerInfo);
-                }
             }
         }
 
