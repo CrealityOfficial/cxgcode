@@ -343,7 +343,7 @@ namespace cxgcode
         GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
         float layerHight = height - tempCurrentZ;
 
-        gcodeLayerInfo.layerHight = layerHight + 0.00001f;;
+        gcodeLayerInfo.layerHight = layerHight + 0.00001f;
         m_gcodeLayerInfos.push_back(gcodeLayerInfo);
 
         tempCurrentZ = height;
@@ -518,7 +518,6 @@ namespace cxgcode
             trimesh::vec3 offset = tempCurrentPos - tempEndPos;
             offset.z = 0;
             float len = trimesh::length(offset);
-            float len1 = std::sqrt(offset.x * offset.x + offset.y * offset.y);
             float h = m_gcodeLayerInfos.back().layerHight;
 
             float width = 0.0f;
@@ -527,10 +526,19 @@ namespace cxgcode
                 width = move.e*2.405 / len / h;
             }
 
-            if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001)
+            //calculate flow
+            float flow = 0.0f;
+            if (len != 0 && move.e > 0.0f)
+            {
+                flow = move.e * move.speed / 60.0 / len;
+            }
+
+            if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001
+                || std::abs(m_gcodeLayerInfos.back().flow - flow) > 0.001)
             {
                 GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
                 gcodeLayerInfo.width = width;
+                gcodeLayerInfo.flow = flow;
                 m_gcodeLayerInfos.push_back(gcodeLayerInfo);
             }
             //end

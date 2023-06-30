@@ -62,6 +62,7 @@ namespace cxgcode
 	{
 		float layerHight{ 0.0f }; //层高
 		float width{ 0.0f };  //线宽
+		float flow; //体积流量
 	};
 
 	struct GCodeMove
