@@ -767,7 +767,9 @@ namespace cxgcode
 
 			case cxgcode::GCodeVisualType::gvt_flow:
 			{
-				float flow = move.e;
+				int idx = m_struct.m_layerInfoIndex[step];
+				GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				float flow = l.flow;
 				//qDebug() << "flow = " << flow;
 				if (move.type == SliceLineType::Travel || flow <= 0.0)
 					flag = -1.0f;

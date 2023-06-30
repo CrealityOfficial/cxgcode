@@ -753,20 +753,25 @@ namespace cxgcode
             }
         }
 
-        float minFlow = FLT_MAX, maxFlow = FLT_MIN;
+        
         float d = tempBaseInfo.speedMax - tempBaseInfo.speedMin;
         for (GCodeMove& move : m_moves) 
         {
             move.speed = d > 0 ? (move.speed - tempBaseInfo.speedMin) / d : 0;
+        }
 
-            if (move.e > 0)
+        float minFlow = FLT_MAX, maxFlow = FLT_MIN;
+        for (GcodeLayerInfo & info : m_gcodeLayerInfos)
+        {
+            if (info.flow > 0)
             {
-                minFlow = fminf(move.e, minFlow);
-                maxFlow = fmaxf(move.e, maxFlow);
+                minFlow = fminf(info.flow, minFlow);
+                maxFlow = fmaxf(info.flow, maxFlow);
             }
         }
         tempBaseInfo.minFlowOfStep = minFlow;
         tempBaseInfo.maxFlowOfStep = maxFlow;
+
 
         float minTime = FLT_MAX, maxTime = FLT_MIN;
         for (auto t : m_layerTimes)
