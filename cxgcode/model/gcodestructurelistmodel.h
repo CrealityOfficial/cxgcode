@@ -6,6 +6,7 @@
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
+#include "cxgcode/define.h"
 #include "cxgcode/interface.h"
 #include "cxgcode/model/gcodepreviewlistmodel.h"
 
@@ -14,6 +15,8 @@ namespace cxgcode {
 struct GcodeStructureData {
   QColor  color;
   QString name;
+  QString time;
+  double  percent{ 0.0 };
   int     type{ 1 };
   bool    checked{ true };
 };
@@ -27,6 +30,7 @@ public:
 
 public:
   void setDataList(const QList<GcodeStructureData>& data_list);
+  void setTimeParts(const TimeParts& time_parts);
 
   Q_INVOKABLE void checkItem(int type, bool checked);
   Q_SIGNAL void itemCheckedChanged(int type, bool checked);
@@ -39,8 +43,10 @@ protected:
 private:
   enum DataRole : int {
     COLOR  = Qt::ItemDataRole::UserRole + 1,
-    TYPE   ,
     NAME   ,
+    TIME   ,
+    PERCENT,
+    TYPE   ,
     CHECKED,
   };
 
