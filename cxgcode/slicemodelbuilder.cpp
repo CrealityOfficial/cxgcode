@@ -311,13 +311,12 @@ namespace cxgcode
 
     void GCodeStruct::checkoutLayerHeight(const QStringList& layerLines)
     {
-        GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
-        float height = 0.0f;
-        if (gcodeLayerInfo.layerHight < tempCurrentZ)
-        {
-            height = tempCurrentZ;
-        }
+        float height= tempCurrentZ;
 
+        bool haveG123 = false;
+        bool haveXYZ = false;
+        bool haveE = false;
+        bool isHeight = false;
         for (auto stepCode : layerLines)
         {
             if (stepCode.size() > 3)
@@ -325,29 +324,54 @@ namespace cxgcode
                 if (stepCode[0] == 'G' &&
                     (stepCode[1] == '0' || stepCode[1] == '1' || stepCode[1] == '2' || stepCode[1] == '3'))
                 {
+                    haveG123 = false;
+                    haveXYZ = false;
+                    haveE = false;
                     QStringList G01Strs = stepCode.split(" ");
                     for (const QString& it3 : G01Strs)
                     {
                         QString componentStr = it3.trimmed();
+                        if (componentStr.isEmpty())
+                            continue;
                         if (componentStr[0] == "Z")
                         {
-                            float h = componentStr.mid(1).toFloat();    
-                            if (height <= 0.0f)
-                            {
-                                height = std::max(h, height);
-                            }
-                            else
-                                height = std::min(h, height);
+                            tempCurrentZ = componentStr.mid(1).toFloat();
 
-                            tempCurrentZ = height;
+                            if (!isHeight)
+                                height = componentStr.mid(1).toFloat();
                         }
+                        
+                        if (isHeight)
+                            continue;
+                            
+                        if (componentStr[0] == "X" || componentStr[0] == "Y" || componentStr[0] == "Z")
+                        {
+                            haveXYZ = true;
+                        }
+                        else if (componentStr[0] == "E")
+                        {
+                            haveE = true;
+                        }
+                        else if (componentStr == "G1" || componentStr == "G2" || componentStr == "G3")
+                        {
+                            haveG123 = true;
+                        }
+                        if (haveG123 && haveXYZ && haveE)
+                            isHeight = true;
                     }
                 }
             }
         }
-        float layerHight = height - gcodeLayerInfo.layerHight;
-        gcodeLayerInfo.layerHight = layerHight + 0.00001f;
-        m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+        if (isHeight)
+        {
+            GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
+            
+            float layerHight = height - belowZ;
+            gcodeLayerInfo.layerHight = layerHight + 0.00001f;
+            m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+
+            belowZ = height;
+        }
     }
 
     void GCodeStruct::processPrefixCode(const QString& stepCod)
@@ -533,7 +557,8 @@ namespace cxgcode
                 float flow = 0.0f;
                 if (move.e > 0.0f)
                 {
-                    flow = move.e * move.speed / 60.0 / len;
+                    float r = 1.75 / 2;
+                    flow = r* r* PI* move.e * move.speed / 60.0 / len;
                 }
 
                 if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001

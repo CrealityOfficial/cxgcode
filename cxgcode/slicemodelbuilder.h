@@ -115,6 +115,7 @@ namespace cxgcode
 		float tempCurrentE;
 		float tempCurrentTime{ 0.0f };
 		float tempCurrentZ{ 0.0f };
+		float belowZ{ 0.0f };
 		trimesh::vec3 tempCurrentPos;
 		float tempSpeed;
 		bool layerNumberParseSuccess;
