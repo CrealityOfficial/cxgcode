@@ -62,7 +62,7 @@ namespace cxgcode
 	{
 		float layerHight{ 0.0f }; //层高
 		float width{ 0.0f };  //线宽
-		float flow; //体积流量
+		float flow{ 0.0f }; //体积流量
 	};
 
 	struct GCodeMove
@@ -100,7 +100,7 @@ namespace cxgcode
 	private:
 		void processLayer(const QString& layerCode, int layer, QList<int>& stepIndexMap);
 		void processStep(const QString& stepCode, int nIndex, QList<int>& stepIndexMap);
-		void processG01(const QString& G01Str, int nIndex, QList<int>& stepIndexMap);
+		void processG01(const QString& G01Str, int nIndex, QList<int>& stepIndexMap,bool isG2G3 =false);
 		void processG23(const QString& G23Str, int nIndex, QList<int>& stepIndexMap);
 		void processSpeed(float speed);
 

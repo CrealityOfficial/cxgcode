@@ -311,8 +311,13 @@ namespace cxgcode
 
     void GCodeStruct::checkoutLayerHeight(const QStringList& layerLines)
     {
+        GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
         float height = 0.0f;
-        bool bfirst = true;
+        if (gcodeLayerInfo.layerHight < tempCurrentZ)
+        {
+            height = tempCurrentZ;
+        }
+
         for (auto stepCode : layerLines)
         {
             if (stepCode.size() > 3)
@@ -326,27 +331,23 @@ namespace cxgcode
                         QString componentStr = it3.trimmed();
                         if (componentStr[0] == "Z")
                         {
-                            float h = componentStr.mid(1).toFloat();
-                            if (bfirst){
+                            float h = componentStr.mid(1).toFloat();    
+                            if (height <= 0.0f)
+                            {
                                 height = std::max(h, height);
-                                bfirst = false;
                             }
-                            else {      
+                            else
                                 height = std::min(h, height);
-                            }
+
+                            tempCurrentZ = height;
                         }
                     }
                 }
             }
         }
-
-        GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
-        float layerHight = height - tempCurrentZ;
-
+        float layerHight = height - gcodeLayerInfo.layerHight;
         gcodeLayerInfo.layerHight = layerHight + 0.00001f;
         m_gcodeLayerInfos.push_back(gcodeLayerInfo);
-
-        tempCurrentZ = height;
     }
 
     void GCodeStruct::processPrefixCode(const QString& stepCod)
@@ -416,7 +417,7 @@ namespace cxgcode
         }
     }
 
-    void GCodeStruct::processG01(const QString& G01Str, int nIndex, QList<int>& stepIndexMap)
+    void GCodeStruct::processG01(const QString& G01Str, int nIndex, QList<int>& stepIndexMap, bool isG2G3)
     {
         QStringList G01Strs = G01Str.split(" ");
 
@@ -514,35 +515,38 @@ namespace cxgcode
                 m_gcodeLayerInfos.push_back(GcodeLayerInfo());
             }
 
-            //calculate width
-            trimesh::vec3 offset = tempCurrentPos - tempEndPos;
-            offset.z = 0;
-            float len = trimesh::length(offset);
-            float h = m_gcodeLayerInfos.back().layerHight;
-
-            float width = 0.0f;
-            if (len !=0 && h != 0 && move.e >0.0f)
+            if (!isG2G3)
             {
-                width = move.e*2.405 / len / h;
-            }
+                //calculate width
+                trimesh::vec3 offset = tempCurrentPos - tempEndPos;
+                offset.z = 0;
+                float len = trimesh::length(offset);
+                float h = m_gcodeLayerInfos.back().layerHight;
 
-            //calculate flow
-            float flow = 0.0f;
-            if (len != 0 && move.e > 0.0f)
-            {
-                flow = move.e * move.speed / 60.0 / len;
-            }
+                float width = 0.0f;
+                if (len != 0 && h != 0 && move.e > 0.0f)
+                {
+                    width = move.e * 2.405 / len / h;
+                }
 
-            if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001
-                || std::abs(m_gcodeLayerInfos.back().flow - flow) > 0.001)
-            {
-                GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
-                gcodeLayerInfo.width = width;
-                gcodeLayerInfo.flow = flow;
-                m_gcodeLayerInfos.push_back(gcodeLayerInfo);
-            }
-            //end
+                //calculate flow
+                float flow = 0.0f;
+                if (move.e > 0.0f)
+                {
+                    flow = move.e * move.speed / 60.0 / len;
+                }
 
+                if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001
+                    || std::abs(m_gcodeLayerInfos.back().flow - flow) > 0.001)
+                {
+                    GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
+                    gcodeLayerInfo.width = width;
+                    gcodeLayerInfo.flow = flow;
+                    m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+                }
+                //end
+            }
+ 
             m_temperatureIndex.push_back(m_temperatures.size()-1);
             m_fanIndex.push_back(m_fans.size() - 1);
             m_layerInfoIndex.push_back(m_gcodeLayerInfos.size() - 1);
@@ -576,6 +580,7 @@ namespace cxgcode
         float i = 0.0f;
         float j = 0.0f;
         bool  bcircles = false;
+        float currentE = tempCurrentE;
         for (const QString& it3 : G23Strs)
         {
             //it4 ==G1 / F4800 / X110.125 / Y106.709 /Z0.6 /E575.62352
@@ -585,17 +590,22 @@ namespace cxgcode
 
             if (G23Str[0] == "E")
             {
-                e = G23Str.mid(1).toFloat();
-                if (e > 0)
+                float _e = G23Str.mid(1).toFloat();
+                if (_e > 0)
                 {
-                    if(!parseInfo.relativeExtrude)
-                        e = e - tempCurrentE;
+                    if (!parseInfo.relativeExtrude)
+                        e = _e - tempCurrentE;
+                    else
+                        e = _e;
                     bIsTravel = false;
                 }
+
+                currentE = _e;
             }
             else if (G23Str[0] == "F")
             {
                 f = G23Str.mid(1).toFloat();
+                tempSpeed = G23Str.mid(1).toFloat();
             }
             else if (G23Str[0] == "X")
             {
@@ -625,10 +635,6 @@ namespace cxgcode
             }
         }
 
-        //for test
-        //if (qFuzzyCompare(x, 103.334f) && qFuzzyCompare(y, 105.998f))
-        //    int test = 0;
-
         trimesh::vec3 circlePos = tempCurrentPos;
         circlePos.x += i;
         circlePos.y += j;
@@ -650,6 +656,30 @@ namespace cxgcode
         {
             theta = 360;
         }
+
+        trimesh::vec3 offset = tempCurrentPos - circlePos;
+        offset.z = 0;
+        float radius = trimesh::length(offset);
+        //¼ÆËã»¡³¤
+        float len = theta * M_PIf * radius / 180.0;
+        float flow = e * tempSpeed / 60.0 / len;
+
+        float h = m_gcodeLayerInfos.back().layerHight;
+        float width = 0.0f;
+        if (len != 0 && h != 0 && e > 0.0f)
+        {
+            width = e * 2.405 / len / h;
+        }
+
+        if (std::abs(m_gcodeLayerInfos.back().flow - flow) > 0.001 && len >= 1.0f)
+        {
+            GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
+            gcodeLayerInfo.width = width;
+            gcodeLayerInfo.flow = flow;
+            m_gcodeLayerInfos.push_back(gcodeLayerInfo);
+        }
+
+
         mmesh::getDevidePoint(circlePos, tempCurrentPos, out, theta, isG2);
         out.push_back(circleEndPos);
         float devideE = e;
@@ -695,8 +725,10 @@ namespace cxgcode
 
         for (const QString& G23toG01 : G23toG1s)
         {
-            processG01(G23toG01, nIndex, stepIndexMap);
+            processG01(G23toG01, nIndex, stepIndexMap,true);
         }
+
+        tempCurrentE = currentE;
     }
 
     void GCodeStruct::processSpeed(float speed)
