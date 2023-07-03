@@ -515,7 +515,7 @@ namespace cxgcode
                 m_gcodeLayerInfos.push_back(GcodeLayerInfo());
             }
 
-            if (!isG2G3)
+            if (!isG2G3 && SliceLineType::Travel != tempType && SliceLineType::React != tempType)
             {
                 //calculate width
                 trimesh::vec3 offset = tempCurrentPos - tempEndPos;
