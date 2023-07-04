@@ -32,7 +32,7 @@ namespace cxgcode
 		void setModelMatrix(const QMatrix4x4& matrix);
 
 		void setLayerHeight(float height);
-		void setLineWidth(float width);
+		//void setLineWidth(float width);
 	protected:
 		Qt3DRender::QParameter* m_clipValue;
 		Qt3DRender::QParameter* m_typeColors;
@@ -48,7 +48,7 @@ namespace cxgcode
 		Qt3DRender::QParameter* m_layerStartFlagShow;
 
 		Qt3DRender::QParameter* m_layerHeight;
-		Qt3DRender::QParameter* m_lineWidth;
+		//Qt3DRender::QParameter* m_lineWidth;
 
 		QVariantList m_showTypeValues;
 		QVariantList m_speedColorValues;

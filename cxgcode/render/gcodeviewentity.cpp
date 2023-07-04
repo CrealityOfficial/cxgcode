@@ -89,7 +89,7 @@ namespace cxgcode
 		m_typecolorsshow = setParameter("typecolorsshow[0]", m_showTypeValues);
 
 		m_layerHeight = setParameter("layerHeight", 0.1f);
-		m_lineWidth = setParameter("lineWidth", 0.4f);
+		//m_lineWidth = setParameter("lineWidth", 0.4f);
 	}
 
 	GCodeViewEntity::~GCodeViewEntity()
@@ -168,8 +168,8 @@ namespace cxgcode
 		m_layerHeight->setValue(height);
 	}
 
-	void GCodeViewEntity::setLineWidth(float width)
+	/*void GCodeViewEntity::setLineWidth(float width)
 	{
 		m_lineWidth->setValue(width);
-	}
+	}*/
 }

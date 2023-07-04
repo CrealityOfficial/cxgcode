@@ -55,7 +55,7 @@ namespace cxgcode
 		qtuser_3d::AttributeShade m_positions;
 		qtuser_3d::AttributeShade m_normals;
 		qtuser_3d::AttributeShade m_steps;
-
+		qtuser_3d::AttributeShade m_lineWidths;
 #if SIMPLE_GCODE_IMPL == 1
 		qtuser_3d::AttributeShade m_indices;
 #elif SIMPLE_GCODE_IMPL == 3

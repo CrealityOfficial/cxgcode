@@ -47,7 +47,7 @@ namespace cxgcode
 #if SIMPLE_GCODE_IMPL == 1
 		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_normals, &m_steps, &m_indices);
 #elif SIMPLE_GCODE_IMPL == 3
-		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_endPositions, &m_normals, &m_steps);
+		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_endPositions, &m_normals, &m_steps, &m_lineWidths);
 #else
 		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_normals, &m_steps);
 #endif
@@ -554,10 +554,17 @@ namespace cxgcode
 		m_steps.count = count;
 		m_steps.bytes.resize(sizeof(float) * 2 * count);
 
+		m_lineWidths.name = QString("lineWidth");
+		m_lineWidths.stride = 1;
+		m_lineWidths.count = count;
+		m_lineWidths.bytes.resize(sizeof(float) * 1 * count);
+
 		trimesh::vec3* tposition = (trimesh::vec3*)m_positions.bytes.data();
 		trimesh::vec3* tEndPosition = (trimesh::vec3*)m_endPositions.bytes.data();
 		trimesh::vec3* tnormals = (trimesh::vec3*)m_normals.bytes.data();
 		trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
+		float* tlineWidths = (float *)m_lineWidths.bytes.data();
+
 		for (int i = 0; i < stepCount; ++i)
 		{
 			const GCodeMove& move = structMoves.at(i);
@@ -565,6 +572,7 @@ namespace cxgcode
 			trimesh::vec3* tempEndPosition = tEndPosition + stride * i;
 			trimesh::vec3* tempNormals = tnormals + stride * i;
 			trimesh::vec2* tempSteps = tsteps + stride * i;
+			float* tempLineWidths = tlineWidths + stride * i;
 
 			trimesh::vec3 start = structPositions.at(move.start);
 			trimesh::vec3 end = structPositions.at(move.start + 1);
@@ -573,6 +581,13 @@ namespace cxgcode
 			*(tempEndPosition) = end;
 			*(tempNormals) = positionsNormals.at(i);
 			*(tempSteps) = layerSteps.at(i);
+			
+			{
+				int idx = m_struct.m_layerInfoIndex[i];
+				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				*tempLineWidths = l.width;
+			}
+
 
 			if (m_tracer && (i % 1000 == 0))
 			{
@@ -746,7 +761,7 @@ namespace cxgcode
 			{
 				//[0.1, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
-				GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				flag = l.layerHight;
 				//qDebug() << "layer height = " << flag;
 				if (move.type == SliceLineType::Travel)
@@ -758,7 +773,7 @@ namespace cxgcode
 			{
 				//[0.1, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
-				GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				flag = l.width;
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
@@ -768,7 +783,7 @@ namespace cxgcode
 			case cxgcode::GCodeVisualType::gvt_flow:
 			{
 				int idx = m_struct.m_layerInfoIndex[step];
-				GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				float flow = l.flow;
 				//qDebug() << "flow = " << flow;
 				if (move.type == SliceLineType::Travel || flow <= 0.0)
