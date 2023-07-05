@@ -555,14 +555,14 @@ namespace cxgcode
 
                 //calculate flow
                 float flow = 0.0f;
-                if (move.e > 0.0f)
+                if (move.e > 0.0f && len > 0)
                 {
                     float r = 1.75 / 2;
                     flow = r* r* PI* move.e * move.speed / 60.0 / len;
                 }
 
-                if (std::abs(m_gcodeLayerInfos.back().width - width) > 0.001
-                    || std::abs(m_gcodeLayerInfos.back().flow - flow) > 0.001)
+                if ((std::abs(m_gcodeLayerInfos.back().width - width) > 0.001 && width > 0)
+                    || (std::abs(m_gcodeLayerInfos.back().flow - flow) > 0.001 && flow > 0))
                 {
                     GcodeLayerInfo  gcodeLayerInfo = m_gcodeLayerInfos.size() > 0 ? m_gcodeLayerInfos.back() : GcodeLayerInfo();
                     gcodeLayerInfo.width = width;
@@ -687,7 +687,8 @@ namespace cxgcode
         float radius = trimesh::length(offset);
         //º∆À„ª°≥§
         float len = theta * M_PIf * radius / 180.0;
-        float flow = e * tempSpeed / 60.0 / len;
+        float r = 1.75 / 2.0f;
+        float flow = r * r * PI * e * tempSpeed / 60.0 / len;
 
         float h = m_gcodeLayerInfos.back().layerHight;
         float width = 0.0f;
