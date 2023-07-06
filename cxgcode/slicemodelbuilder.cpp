@@ -129,7 +129,8 @@ namespace cxgcode
             QStringList strs = stepCode.split(" ");
 
             float speed = 0.0f;
-            int type = -1;
+            int type = 0;
+            int Mtypes = -1;  //1 M106 , 2 M107
             for (const QString& it3 : strs)
             {
                 QString componentStr = it3.trimmed();
@@ -141,50 +142,51 @@ namespace cxgcode
                     speed = componentStr.mid(1).toFloat();
                 }
 
-                if (!it3.compare("M106"))
+                if (Mtypes == 1)//M106
                 {
                     if (!it3.compare("P1"))
                         type = 1;
-                    else if(!it3.compare("P2"))
+                    else if (!it3.compare("P2"))
                         type = 2;
-                    else
-                        type = 0;
                 }
-                else if (!it3.compare("M107"))
+                else if (Mtypes == 2)//M107
                 {
                     if (!it3.compare("P1"))
                         type = 4;
                     else if (!it3.compare("P2"))
                         type = 5;
-                    else
-                        type = 3;
+                }
+
+                if (!it3.compare("M106"))
+                {
+                    Mtypes = 1;
+                }
+                else if (!it3.compare("M107"))
+                {
+                    Mtypes = 2;
                 }
             }
-            switch (type)
+
+            if (Mtypes == 1)//M106
             {
-            case 0:
-                gcodeFan.fanSpeed = speed;
-                break;
-            case 1:
-                gcodeFan.camberSpeed = speed;
-                break;
-            case 2:
-                gcodeFan.fanSpeed_1 = speed;
-                break;
-            case 3:
-                gcodeFan.fanSpeed = 0.0f;
-                break;
-            case 4:
-                gcodeFan.camberSpeed = 0.0f;
-                break;
-            case 5:
-                gcodeFan.fanSpeed_1 = 0.0f;
-                break;
-            default:
-                break;
+                if (type == 1)
+                    gcodeFan.camberSpeed = speed;
+                else if (type == 2)
+                    gcodeFan.fanSpeed_1 = speed;
+                else
+                    gcodeFan.fanSpeed = speed;
+            }
+            else if (Mtypes == 2)//M107
+            {
+                if (type == 4)
+                    gcodeFan.camberSpeed = 0;
+                else if (type == 5)
+                    gcodeFan.fanSpeed_1 = 0;
+                else
+                    gcodeFan.fanSpeed = 0;
             }
 
-            if (type >= 0)
+            if (Mtypes >= 0)
             {
                 m_fans.push_back(gcodeFan);
             }
