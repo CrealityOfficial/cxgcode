@@ -25,6 +25,15 @@ namespace cxgcode
 		float minFlowOfStep;  //单步最小流量，非零
 		float maxFlowOfStep;  //单步最大流量
 
+		float minLineWidth;
+		float maxLineWidth;
+
+		float minLayerHeight;
+		float maxLayerHeight;
+
+		float minTemperature;
+		float maxTemperature;
+
 		trimesh::box3 gCodeBox;
 		int nNozzle;
 		float speedMin;
@@ -40,6 +49,13 @@ namespace cxgcode
 			, maxTimeOfLayer(FLT_MIN)
 			, minFlowOfStep(FLT_MAX)
 			, maxFlowOfStep(FLT_MIN)
+			, minLineWidth(FLT_MAX)
+			, maxLineWidth(FLT_MIN)
+			, minLayerHeight(FLT_MAX)
+			, maxLayerHeight(FLT_MIN)
+			, minTemperature(FLT_MAX)
+			, maxTemperature(FLT_MIN)
+		
 		{
 		}
 	};

@@ -17,6 +17,9 @@ class CXGCODE_API GcodeTemperatureListModel : public GcodePreviewRangeDivideMode
 public:
   explicit GcodeTemperatureListModel(QObject* parent = nullptr);
   virtual ~GcodeTemperatureListModel() = default;
+
+  void setRange(double min, double max) override;
+
 };
 
 }  // namespace cxgcode

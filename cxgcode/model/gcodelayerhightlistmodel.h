@@ -14,6 +14,11 @@ class CXGCODE_API GcodeLayerHightListModel : public GcodePreviewRangeDivideModel
 public:
   explicit GcodeLayerHightListModel(QObject* parent = nullptr);
   virtual ~GcodeLayerHightListModel() = default;
+
+  void setRange(double min, double max) override;
+
+protected:
+	
 };
 }  // namespace cxgcode
 

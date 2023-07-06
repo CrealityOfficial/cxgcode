@@ -44,17 +44,17 @@ public:
 
 public:
 	void setColors(const QList<QColor>& colors);
-	void setRange(double min, double max);
+	virtual void setRange(double min, double max);
 
 protected:
 	int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
 	QVariant data(const QModelIndex& index, int role = Qt::ItemDataRole::DisplayRole) const override;
 	QHash<int, QByteArray> roleNames() const override;
 
-private:
+protected:
 	void resetData();
 
-private:
+protected:
 	enum DataRole : int {
 		COLOR = Qt::ItemDataRole::UserRole + 1,
 		VALUE,

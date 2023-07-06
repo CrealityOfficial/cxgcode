@@ -819,28 +819,64 @@ namespace cxgcode
             move.speed = move.speed / tempBaseInfo.speedMax;
         }
 
-        float minFlow = FLT_MAX, maxFlow = FLT_MIN;
-        for (GcodeLayerInfo & info : m_gcodeLayerInfos)
         {
-            if (info.flow > 0)
+            float minFlow = FLT_MAX, maxFlow = FLT_MIN;
+            float minWidth = FLT_MAX, maxWidth = FLT_MIN;
+            float minHeight = FLT_MAX, maxHeight = FLT_MIN;
+
+            for (GcodeLayerInfo& info : m_gcodeLayerInfos)
             {
-                minFlow = fminf(info.flow, minFlow);
-                maxFlow = fmaxf(info.flow, maxFlow);
+                if (info.flow > 0.0)
+                {
+                    minFlow = fminf(info.flow, minFlow);
+                    maxFlow = fmaxf(info.flow, maxFlow);
+                }
+
+                if (info.width > 0.0)
+                {
+                    minWidth = fminf(info.width, minWidth);
+                    maxWidth = fmaxf(info.width, maxWidth);
+                }
+                
+                minHeight = fminf(info.layerHight, minHeight);
+                maxHeight = fmaxf(info.layerHight, maxHeight);
             }
+            tempBaseInfo.minFlowOfStep = minFlow;
+            tempBaseInfo.maxFlowOfStep = maxFlow;
+            tempBaseInfo.minLineWidth = minWidth;
+            tempBaseInfo.maxLineWidth = maxWidth;
+            tempBaseInfo.minLayerHeight = minHeight;
+            tempBaseInfo.maxLayerHeight = maxHeight;
+
         }
-        tempBaseInfo.minFlowOfStep = minFlow;
-        tempBaseInfo.maxFlowOfStep = maxFlow;
-
-
-        float minTime = FLT_MAX, maxTime = FLT_MIN;
-        for (auto t : m_layerTimes)
+        
         {
-            float time = t.second;
-            minTime = fminf(time, minTime);
-            maxTime = fmaxf(time, maxTime);
+            float minTime = FLT_MAX, maxTime = FLT_MIN;
+            for (auto t : m_layerTimes)
+            {
+                float time = t.second;
+                minTime = fminf(time, minTime);
+                maxTime = fmaxf(time, maxTime);
+            }
+            tempBaseInfo.minTimeOfLayer = minTime;
+            tempBaseInfo.maxTimeOfLayer = maxTime;
         }
-        tempBaseInfo.minTimeOfLayer = minTime;
-        tempBaseInfo.maxTimeOfLayer = maxTime;
+
+
+        {
+            float minTemp = FLT_MAX, maxTemp = FLT_MIN;
+            for (GcodeTemperature& t : m_temperatures)
+            {
+                if (t.temperature > 0)
+                {
+                    minTemp = fminf(t.temperature, minTemp);
+                    maxTemp = fmaxf(t.temperature, maxTemp);
+                }
+            }
+            tempBaseInfo.minTemperature = minTemp;
+            tempBaseInfo.maxTemperature = maxTemp;
+        }
+
 
         baseInfo = tempBaseInfo;
     }

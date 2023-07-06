@@ -771,10 +771,10 @@ namespace cxgcode
 
 			case cxgcode::GCodeVisualType::gvt_lineWidth:
 			{
-				//[0.1, 1.0]
+				//重新映射到[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
 				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
-				flag = l.width;
+				flag = (l.width - baseInfo.minLineWidth) / (baseInfo.maxLineWidth - baseInfo.minLineWidth);
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
 			}
@@ -841,12 +841,20 @@ namespace cxgcode
 
 			case cxgcode::GCodeVisualType::gvt_temperature:
 			{
-				//[0, 500]
+				//重新映射到[0.0, 1.0]
 				int idx = m_struct.m_temperatureIndex[step];
 				GcodeTemperature& t = m_struct.m_temperatures[idx];
 				float temp = t.temperature ;
-				//qDebug() << "temperature = " << temp;
-				flag = fminf(fmaxf(temp / 500.0, 0.0), 1.0);
+				
+				float diff = (baseInfo.maxTemperature - baseInfo.minTemperature);
+				if (diff <= 0)
+				{
+					flag = 0.0;
+				}
+				else {
+					flag = (temp - baseInfo.minTemperature) / diff;
+				}
+
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
 			}
