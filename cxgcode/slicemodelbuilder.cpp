@@ -814,10 +814,9 @@ namespace cxgcode
         }
 
         
-        float d = tempBaseInfo.speedMax - tempBaseInfo.speedMin;
         for (GCodeMove& move : m_moves) 
         {
-            move.speed = d > 0 ? (move.speed - tempBaseInfo.speedMin) / d : 0;
+            move.speed = move.speed / tempBaseInfo.speedMax;
         }
 
         float minFlow = FLT_MAX, maxFlow = FLT_MIN;
