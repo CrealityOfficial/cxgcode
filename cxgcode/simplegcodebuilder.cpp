@@ -759,10 +759,20 @@ namespace cxgcode
 
 			case cxgcode::GCodeVisualType::gvt_layerHight:
 			{
-				//[0.1, 1.0]
+				//ÖØÐÂÓ³Éäµ½[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
 				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
-				flag = l.layerHight;
+
+				float min = baseInfo.minLayerHeight;
+				float max = baseInfo.maxLayerHeight;
+
+				if (min > 0.0 && (max - min) < min / 50.0)
+				{
+					flag = 0.0;
+				}
+				else {
+					flag = (l.layerHight - min) / (max - min);
+				}
 				//qDebug() << "layer height = " << flag;
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
