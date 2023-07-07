@@ -18,7 +18,7 @@ int GcodePreviewListModel::getVisualTypeIndex() const {
 
 
 namespace cxgcode {
-    
+
     GcodePreviewRangeDivideModel::GcodePreviewRangeDivideModel(GCodeVisualType type, QObject* parent)
         :GcodePreviewListModel(type, parent)
         , m_min(0.0f)
@@ -26,7 +26,7 @@ namespace cxgcode {
     {
     }
 
-    void GcodePreviewRangeDivideModel::setColors(const QList<QColor>& colors) 
+    void GcodePreviewRangeDivideModel::setColors(const QList<QColor>& colors)
     {
         m_colors = colors;
         resetData();
@@ -40,12 +40,12 @@ namespace cxgcode {
     }
 
     int GcodePreviewRangeDivideModel::rowCount(const QModelIndex& parent) const {
-        return m_colors.size();
+        return m_dataList.size();
     }
 
     QVariant GcodePreviewRangeDivideModel::data(const QModelIndex& index, int role) const {
         QVariant result{ QVariant::Type::Invalid };
-        if (index.row() < 0 || index.row() >= rowCount() || rowCount() < 2) {
+        if (index.row() < 0 || index.row() >= rowCount()) {
             return result;
         }
 
@@ -74,10 +74,18 @@ namespace cxgcode {
     void GcodePreviewRangeDivideModel::resetData() {
 
         QList<GcodeRangeDivideData> data_list;
-        double const diff = (m_max - m_min) / (m_colors.size() - 1);
-        for (size_t index = 0ull; index < m_colors.size(); ++index) {
-            double speed = (m_min + diff * index);
-            data_list << GcodeRangeDivideData{ m_colors[index], speed };
+
+        size_t const data_size = m_colors.size();
+        if (data_size == 0) {
+            // do nothing
+        } else if (data_size == 1) {
+            data_list << GcodeRangeDivideData{ m_colors[0], m_min };
+        } else {
+            double const diff = (m_max - m_min) / (m_colors.size() - 1);
+            for (size_t index = 0ull; index < m_colors.size(); ++index) {
+                double value = (m_min + diff * index);
+                data_list << GcodeRangeDivideData{ m_colors[index], value };
+            }
         }
 
         std::reverse(data_list.begin(), data_list.end());
@@ -88,5 +96,3 @@ namespace cxgcode {
     }
 
 }
-
-
