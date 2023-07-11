@@ -143,6 +143,56 @@ namespace cxgcode
 		return builder.baseInfo.speedMax;
 	}
 
+	float SliceAttain::minTimeOfLayer()
+	{
+		return builder.baseInfo.minTimeOfLayer;
+	}
+
+	float SliceAttain::maxTimeOfLayer()
+	{
+		return builder.baseInfo.maxTimeOfLayer;
+	}
+
+	float SliceAttain::minFlowOfStep()
+	{
+		return builder.baseInfo.minFlowOfStep;
+	}
+
+	float SliceAttain::maxFlowOfStep()
+	{
+		return builder.baseInfo.maxFlowOfStep;
+	}
+
+	float SliceAttain::minLineWidth()
+	{
+		return builder.baseInfo.minLineWidth;
+	}
+
+	float SliceAttain::maxLineWidth()
+	{
+		return builder.baseInfo.maxLineWidth;
+	}
+
+	float SliceAttain::minLayerHeight()
+	{
+		return builder.baseInfo.minLayerHeight;
+	}
+
+	float SliceAttain::maxLayerHeight()
+	{
+		return builder.baseInfo.maxLayerHeight;
+	}
+
+	float SliceAttain::minTemperature()
+	{
+		return builder.baseInfo.minTemperature;
+	}
+
+	float SliceAttain::maxTemperature()
+	{
+		return builder.baseInfo.maxTemperature;
+	}
+
 	float SliceAttain::layerHeight()
 	{
 		return builder.parseInfo.layerHeight;
@@ -151,6 +201,43 @@ namespace cxgcode
 	float SliceAttain::lineWidth()
 	{
 		return builder.parseInfo.lineWidth;
+	}
+
+	cxgcode::TimeParts SliceAttain::getTimeParts() const {
+		return builder.parseInfo.timeParts;
+	}
+
+	QImage* SliceAttain::getImageFromGcode()
+	{
+		if (m_result)
+		{
+			if (!m_result->previews.empty())
+			{
+				return &m_result->previews.back();
+			}
+		}
+		return nullptr;
+	}
+
+	QString SliceAttain::fileNameFromGcode()
+	{
+		if (m_result)
+		{
+			QString str = m_result->fileName();
+			int index = str.lastIndexOf('/');
+			if (index)
+			{
+				str = str.right(str.length() - index-1);
+			}
+			int index2 = str.lastIndexOf(".gcode");
+			if (index2)
+			{
+				str = str.left(index2);
+			}
+			return str;
+		}
+
+		return "";
 	}
 
 	float SliceAttain::traitSpeed(int layer, int step)
@@ -279,7 +366,7 @@ namespace cxgcode
 	void SliceAttain::saveGCode(const QString& fileName, QImage* previewImage)
 	{
 		QString imageStr;
-		if (previewImage)
+		if (previewImage && !isFromFile())
 		{
 			float layerHeight = builder.parseInfo.layerHeight;
 			QString screenSize = builder.parseInfo.screenSize;
@@ -295,24 +382,51 @@ namespace cxgcode
 			{
 				QImage minPreImg;
 				QImage maxPreImg;
-				if (screenSize == "Sermoon D3")
-				{
-					minPreImg = previewImage->scaled(96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-					maxPreImg = previewImage->scaled(300, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-				}
-				else if (screenSize == "CR-10 Inspire")
+				if (screenSize == "CR-10 Inspire")
 				{
 					minPreImg = previewImage->scaled(96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 					maxPreImg = previewImage->scaled(600, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 				}
-				else
+				else if (screenSize == "CR-200B Pro")
 				{
 					minPreImg = previewImage->scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 					maxPreImg = previewImage->scaled(200, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 				}
-				cxsw::getImageStr(imageStr, &minPreImg, builder.baseInfo.layers, exportFormat, layerHeight);
-				cxsw::getImageStr(imageStr, &maxPreImg, builder.baseInfo.layers, exportFormat, layerHeight, exportFormat == "png");
+				else if (screenSize == "Ender-3 S1")
+				{
+					maxPreImg = previewImage->scaled(200, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				}
+				else if (screenSize == "Ender-5 S1")
+				{
+					maxPreImg = previewImage->scaled(300, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				}
+				else//Sermoon D3
+				{
+					minPreImg = previewImage->scaled(96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+					maxPreImg = previewImage->scaled(300, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+				}
+				if (!minPreImg.isNull())
+				{
+					cxsw::getImageStr(imageStr, &minPreImg, builder.baseInfo.layers, exportFormat, layerHeight, false, m_slicePath);
+				}
+				cxsw::getImageStr(imageStr, &maxPreImg, builder.baseInfo.layers, exportFormat, layerHeight, exportFormat == "png", m_slicePath);
 			}
+		}
+		else if (isFromFile())
+		{
+			float layerHeight = builder.parseInfo.layerHeight;
+			QString screenSize = builder.parseInfo.screenSize;
+			QString exportFormat = builder.parseInfo.exportFormat;
+
+			QString imgSavePath = QString("%1/imgPreview.%2").arg(m_slicePath).arg(exportFormat);
+			QImage* image = getImageFromGcode();
+			if(image)
+				image->save(imgSavePath);
+			else
+			{
+				QFile::remove(imgSavePath);
+			}
+			//cxsw::getImageStr(imageStr, getImageFromGcode(), builder.baseInfo.layers, exportFormat, layerHeight, false, SLICE_PATH);
 		}
 
 		cxsw::cxSaveGCode(fileName, imageStr, m_result->layerCode(), m_result->prefixCode(), m_result->tailCode());

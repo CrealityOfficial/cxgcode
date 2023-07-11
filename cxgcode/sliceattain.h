@@ -53,8 +53,28 @@ namespace cxgcode
 		float minSpeed();
 		float maxSpeed();
 
+		float minTimeOfLayer();
+		float maxTimeOfLayer();
+
+		float minFlowOfStep();
+		float maxFlowOfStep();
+
+		float minLineWidth();
+		float maxLineWidth();
+
+		float minLayerHeight();
+		float maxLayerHeight();
+
+		float minTemperature();
+		float maxTemperature();
+
 		float layerHeight();
 		float lineWidth();
+
+		cxgcode::TimeParts getTimeParts() const;
+
+		QImage* getImageFromGcode();
+		QString fileNameFromGcode();
 
 		float traitSpeed(int layer, int step);
 		trimesh::vec3 traitPosition(int layer, int step);
