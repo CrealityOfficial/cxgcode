@@ -449,4 +449,17 @@ namespace cxgcode
 		USetting* setting = findSetting(key);
 		return setting;
 	}
+
+
+	SettingsPtr convert(const cxgcode::USettings& settings)
+	{
+		SettingsPtr ptr(new crcommon::Settings());
+		const QHash<QString, cxgcode::USetting*>& ss = settings.settings();
+		for (QHash<QString, cxgcode::USetting*>::ConstIterator it = ss.begin();
+			it != ss.end(); ++it)
+		{
+			ptr->add(it.key().toStdString(), it.value()->str().toStdString());
+		}
+		return ptr;
+	}
 }
