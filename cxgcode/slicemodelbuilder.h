@@ -134,6 +134,7 @@ namespace cxgcode
 		float belowZ{ 0.0f };
 		trimesh::vec3 tempCurrentPos;
 		float tempSpeed;
+		float tempSpeedMax{ 0.0f };
 		bool layerNumberParseSuccess;
 
 		GCodeParseInfo parseInfo;

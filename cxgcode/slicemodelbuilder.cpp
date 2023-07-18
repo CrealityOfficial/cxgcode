@@ -400,6 +400,25 @@ namespace cxgcode
                 checkoutFan(stepCode);
                 checkoutTemperature(stepCode);
             }
+            else if (stepCode.contains("Outer Wall Speed")
+                || stepCode.contains("Inner Wall Speed")
+                || stepCode.contains("Infill Speed")
+                || stepCode.contains("Top/Bottom Speed")
+                || stepCode.contains("Initial Layer Speed")
+                || stepCode.contains("Skirt/Brim Speed")
+                || stepCode.contains("Prime Tower Speed")
+                )
+            {
+                //获取速度最大限制
+                QStringList strs = stepCode.split(":");
+                if (strs.size() == 2)
+                {
+                    QString componentStr = strs[1].trimmed();
+                    if (componentStr.isEmpty())
+                        continue;
+                    tempSpeedMax =std::max(tempSpeedMax, componentStr.toFloat()*60);
+                }
+            }
         }
     }
 
@@ -514,7 +533,13 @@ namespace cxgcode
             m_positions.push_back(tempEndPos);
             GCodeMove move;
             move.start = index - 1;
+            //limit speed
+            if (tempSpeedMax > 0.0f)
+            {
+                tempSpeed = tempSpeed > tempSpeedMax ? tempSpeedMax : tempSpeed;
+            }
             move.speed = tempSpeed;
+
             move.e = tempEndE - tempCurrentE;
             move.type = tempType;
             if (move.e == 0.0f)
