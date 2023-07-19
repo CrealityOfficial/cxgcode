@@ -282,9 +282,33 @@ namespace cxgcode
                 break;
             }
 
-            if (type >= 0)
+            //过滤温度为0 的情况
+            if (type >= 0 && temperature > 0.0f)
             {
-                m_temperatures.push_back(gcodeTemperature);
+                if (!m_temperatures.empty())
+                {
+                    bool isRepeat = false;
+                    for (int i=0; i< m_temperatures.size(); i++)
+                    {
+                        if (m_temperatures[i].bedTemperature == gcodeTemperature.bedTemperature
+                            && m_temperatures[i].camberTemperature == gcodeTemperature.camberTemperature
+                            && m_temperatures[i].temperature == gcodeTemperature.temperature)
+                        {
+                            tempTempIndex = i;
+                            isRepeat = true;
+                        }
+                    }
+                    if (!isRepeat)
+                    {
+                        tempTempIndex = m_temperatures.size();
+                        m_temperatures.push_back(gcodeTemperature);
+                    }
+                }
+                else
+                {
+                    tempTempIndex = m_temperatures.size();
+                    m_temperatures.push_back(gcodeTemperature);
+                }
             }
         }
 
@@ -555,6 +579,7 @@ namespace cxgcode
             //add temperature fan and time ...
             if (m_temperatures.empty())
             {
+                tempTempIndex = m_temperatures.size();
                 m_temperatures.push_back(GcodeTemperature());
             }
             if (m_fans.empty())
@@ -599,7 +624,7 @@ namespace cxgcode
                 //end
             }
  
-            m_temperatureIndex.push_back(m_temperatures.size()-1);
+            m_temperatureIndex.push_back(tempTempIndex);
             m_fanIndex.push_back(m_fans.size() - 1);
             m_layerInfoIndex.push_back(m_gcodeLayerInfos.size() - 1);
             //end

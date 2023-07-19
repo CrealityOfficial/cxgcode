@@ -129,12 +129,13 @@ namespace cxgcode
 		SliceLineType  tempCurrentType;
 		int tempNozzleIndex;
 		float tempCurrentE;
-		float tempCurrentTime{ 0.0f };
+		float tempCurrentTime{ 0.0f };//time
 		float tempCurrentZ{ 0.0f };
 		float belowZ{ 0.0f };
 		trimesh::vec3 tempCurrentPos;
 		float tempSpeed;
-		float tempSpeedMax{ 0.0f };
+		float tempSpeedMax{ 0.0f };//最大速度限制
+		int tempTempIndex{ 0 };; //当前温度索引
 		bool layerNumberParseSuccess;
 
 		GCodeParseInfo parseInfo;
