@@ -917,8 +917,11 @@ namespace cxgcode
             float minTemp = FLT_MAX, maxTemp = FLT_MIN;
             for (GcodeTemperature& t : m_temperatures)
             {
-                minTemp = fminf(t.temperature, minTemp);
-                maxTemp = fmaxf(t.temperature, maxTemp);
+                if (t.temperature > 0)
+                {
+                    minTemp = fminf(t.temperature, minTemp);
+                    maxTemp = fmaxf(t.temperature, maxTemp);
+                }
             }
             tempBaseInfo.minTemperature = minTemp;
             tempBaseInfo.maxTemperature = maxTemp;

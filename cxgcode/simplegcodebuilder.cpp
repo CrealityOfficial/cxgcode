@@ -857,7 +857,7 @@ namespace cxgcode
 				float temp = t.temperature ;
 				
 				float diff = (baseInfo.maxTemperature - baseInfo.minTemperature);
-				if (diff <= 0)
+				if (diff <= 0.1)
 				{
 					flag = 0.0;
 				}
