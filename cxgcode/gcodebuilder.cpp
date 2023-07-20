@@ -267,6 +267,7 @@ namespace cxgcode
 		float material_diameter = ExtrudeSettings->value("material_diameter", "1.75").toFloat();
         //单位面积密度
 		parseInfo.materialDensity = PI * (material_diameter * 0.5) * (material_diameter * 0.5) * ExtrudeSettings->value("material_density", "1.24").toFloat();
+        parseInfo.materialDiameter = material_diameter;
 
         float filament_cost = ExtrudeSettings->value("filament_cost", "0.0").toFloat();
         float filament_weight = ExtrudeSettings->value("filament_weight", "0.0").toFloat();

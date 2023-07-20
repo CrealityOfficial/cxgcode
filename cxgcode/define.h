@@ -51,6 +51,7 @@ namespace cxgcode {
 		int printTime;
 		float materialLenth;
 		float materialDensity;
+		float materialDiameter;
 		float lineWidth;
 		float layerHeight;
 		float unitPrice;
@@ -75,6 +76,7 @@ namespace cxgcode {
 			printTime = 0;
 			materialLenth = 0.0f;
 			materialDensity = 1.0f;
+			materialDiameter = 0.0f;
 			lineWidth = 0.1f;
 			layerHeight = 0.1f;
 			unitPrice = 0.3f;

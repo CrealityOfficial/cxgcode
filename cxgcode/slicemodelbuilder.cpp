@@ -604,12 +604,16 @@ namespace cxgcode
                 {
                     width = move.e * 2.405 / len / h;
                 }
+                if (len < 0.05)
+                {
+                    width = m_gcodeLayerInfos.back().width;
+                }
 
                 //calculate flow
                 float flow = 0.0f;
                 if (move.e > 0.0f && len > 0)
                 {
-                    float r = 1.75 / 2;
+                    float r = parseInfo.materialDiameter / 2;
                     flow = r* r* PI* move.e * move.speed / 60.0 / len;
                 }
 
@@ -739,7 +743,7 @@ namespace cxgcode
         float radius = trimesh::length(offset);
         //º∆À„ª°≥§
         float len = theta * M_PIf * radius / 180.0;
-        float r = 1.75 / 2.0f;
+        float r = parseInfo.materialDiameter / 2.0f;
         float flow = r * r * PI * e * tempSpeed / 60.0 / len;
 
         float h = m_gcodeLayerInfos.back().layerHight;
