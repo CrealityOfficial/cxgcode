@@ -76,7 +76,7 @@ namespace cxgcode
             float tmp = atof(tStr.c_str());
             parseInfo.timeParts.Infill = tmp;
         }
-        if (std::regex_match(gcodeStr, sm, std::regex(".*InfillSupport Time:([0-9]{0,8}).*")))
+        if (std::regex_match(gcodeStr, sm, std::regex(".*Support Infills Time:([0-9]{0,8}).*")))
         {
             std::string tStr = sm[1];
             float tmp = atof(tStr.c_str());
