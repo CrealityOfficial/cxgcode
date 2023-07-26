@@ -9,7 +9,7 @@
 #include "trimesh2/Box.h"
 
 #include "ccglobal/tracer.h"
-#include <Qimage>
+
 #include <Qt3DRender/QGeometry>
 #define PI 3.1415926535
 
