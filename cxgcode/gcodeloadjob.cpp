@@ -1,6 +1,6 @@
 #include "gcodeloadjob.h"
 
-#include "cxgcode/sliceresult.h"
+#include "gcode/sliceresult.h"
 #include "cxgcode/sliceattain.h"
 
 #include "qtusercore/module/systemutil.h"
@@ -70,14 +70,14 @@ namespace cxgcode
 
 		tracer.resetProgressScope(0.0f, stepProgress);
 
-		SliceResultPointer result(new SliceResult());
-		result->load(m_fileName, &tracer);
+		SliceResultPointer result(new gcode::SliceResult());
+		result->load(m_fileName.toStdString(), &tracer);
 
 		qDebug() << QString("Slice : GcodeFilePreview load over . [%1]").arg(currentProcessMemory());
 		if (!result->layerCode().empty())
 		{
 			QFileInfo fileInfo(m_fileName);
-			result->setSliceName(fileInfo.baseName());
+			result->setSliceName(fileInfo.baseName().toStdString());
 
 			tracer.resetProgressScope(stepProgress, 1.0f);
 			m_attain = new SliceAttain(m_slicePath, m_tempPath, result, SliceAttainType::sat_file);

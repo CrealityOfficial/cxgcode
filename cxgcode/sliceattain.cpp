@@ -1,5 +1,6 @@
 ﻿#include "sliceattain.h"
 #include "cxgcode/gcodehelper.h"
+#include "gcode/gcodedata.h"
 
 #include "qtusercore/string/resourcesfinder.h"
 #include "qtusercore/module/systemutil.h"
@@ -24,7 +25,7 @@ namespace cxgcode
 		QString path = QString("%1/%2").arg(m_tempPath).arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
 		mkMutiDir(path);
 
-		QString name = m_result->sliceName();
+		QString name = m_result->sliceName().c_str();
 		m_tempGCodeFileName = QString("%1/%2").arg(path).arg(name);
 		int maxPath = qtuser_core::getSystemMaxPath() - 7;
 		if (m_tempGCodeFileName.length() > maxPath)
@@ -58,12 +59,12 @@ namespace cxgcode
 
 	QString SliceAttain::sliceName()
 	{
-		return m_result->sliceName();
+		return m_result->sliceName().c_str();
 	}
 
 	QString SliceAttain::sourceFileName()
 	{
-		return m_result->fileName();
+		return m_result->fileName().c_str();
 	}
 
 	bool SliceAttain::isFromFile()
@@ -203,7 +204,7 @@ namespace cxgcode
 		return builder.parseInfo.lineWidth;
 	}
 
-	cxgcode::TimeParts SliceAttain::getTimeParts() const {
+	gcode::TimeParts SliceAttain::getTimeParts() const {
 		return builder.parseInfo.timeParts;
 	}
 
@@ -211,9 +212,11 @@ namespace cxgcode
 	{
 		if (m_result)
 		{
-			if (!m_result->previews.empty())
+			if (!m_result->previewsData.empty())
 			{
-				return &m_result->previews.back();
+				QImage* image = new QImage();
+				image->loadFromData(&m_result->previewsData.back()[0], m_result->previewsData.back().size());
+				return image;
 			}
 		}
 		return nullptr;
@@ -223,7 +226,7 @@ namespace cxgcode
 	{
 		if (m_result)
 		{
-			QString str = m_result->fileName();
+			QString str = m_result->fileName().c_str();
 			int index = str.lastIndexOf('/');
 			if (index)
 			{
@@ -262,7 +265,7 @@ namespace cxgcode
 
 		if (_layer >= 0 && _layer < layers())
 		{
-			const QList<int>& maps = builder.m_stepGCodesMaps.at(_layer);
+			const std::vector<int>& maps = builder.m_stepGCodesMaps.at(_layer);
 			if (_nStep >= 0 && _nStep < maps.size())
 				return maps.at(_nStep);
 		}
@@ -274,8 +277,8 @@ namespace cxgcode
 		int _layer = layer - INDEX_START_AT_ONE;
 		if (_layer >= 0 && _layer < layers())
 		{
-			const QList<int>& maps = builder.m_stepGCodesMaps.at(_layer);
-			return maps.indexOf(nViewIndex);
+			const std::vector<int>& maps = builder.m_stepGCodesMaps.at(_layer);
+			return maps.at(nViewIndex);
 		}
 		return -1;
 	}
@@ -287,10 +290,10 @@ namespace cxgcode
 	const QString& SliceAttain::layerGcode(int layer)
 	{
 		int _layer = layer - INDEX_START_AT_ONE;
-		return m_result->layer(_layer);
+		return m_result->layer(_layer).c_str();
 	}
 
-	void SliceAttain::setGCodeVisualType(GCodeVisualType type)
+	void SliceAttain::setGCodeVisualType(gcode::GCodeVisualType type)
 	{
 		builder.updateFlagAttribute(m_attribute, type);
 	}
@@ -369,8 +372,8 @@ namespace cxgcode
 		if (previewImage && !isFromFile())
 		{
 			float layerHeight = builder.parseInfo.layerHeight;
-			QString screenSize = builder.parseInfo.screenSize;
-            QString exportFormat = builder.parseInfo.exportFormat;
+			QString screenSize = builder.parseInfo.screenSize.c_str();
+            QString exportFormat = builder.parseInfo.exportFormat.c_str();
 
 			previewImage = cxsw::resizeModule(previewImage);
 			if (exportFormat == "bmp")
@@ -415,8 +418,8 @@ namespace cxgcode
 		else if (isFromFile())
 		{
 			float layerHeight = builder.parseInfo.layerHeight;
-			QString screenSize = builder.parseInfo.screenSize;
-			QString exportFormat = builder.parseInfo.exportFormat;
+			QString screenSize = builder.parseInfo.screenSize.c_str();
+			QString exportFormat = builder.parseInfo.exportFormat.c_str();
 
 			QString imgSavePath = QString("%1/imgPreview.%2").arg(m_slicePath).arg(exportFormat);
 			QImage* image = getImageFromGcode();
@@ -429,7 +432,7 @@ namespace cxgcode
 			//cxsw::getImageStr(imageStr, getImageFromGcode(), builder.baseInfo.layers, exportFormat, layerHeight, false, SLICE_PATH);
 		}
 
-		cxsw::cxSaveGCode(fileName, imageStr, m_result->layerCode(), m_result->prefixCode(), m_result->tailCode());
+		cxsw::_SaveGCode(fileName.toLocal8Bit().data(), imageStr.toLocal8Bit().data(), m_result->layerCode(), m_result->prefixCode(), m_result->tailCode());
 	}
 
 	void SliceAttain::saveTempGCode()
@@ -449,7 +452,7 @@ namespace cxgcode
 
     QString SliceAttain::tempGcodeThumbnail()
     {
-        QString exportFormat = builder.parseInfo.exportFormat;
+        QString exportFormat = builder.parseInfo.exportFormat.c_str();
         return QString("%1/imgPreview.%2").arg(m_slicePath).arg(exportFormat);
     }
 

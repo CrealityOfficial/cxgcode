@@ -2,9 +2,9 @@
 #define _NULLSPACE_SLICEATTAIN_1590249988869_H
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
-#include "cxgcode/define.h"
+#include "gcode/define.h"
 
-#include "cxgcode/sliceresult.h"
+#include "gcode/sliceresult.h"
 #include "cxgcode/simplegcodebuilder.h"
 
 #include <Qt3DRender/QGeometry>
@@ -71,7 +71,7 @@ namespace cxgcode
 		float layerHeight();
 		float lineWidth();
 
-		cxgcode::TimeParts getTimeParts() const;
+		gcode::TimeParts getTimeParts() const;
 
 		QImage* getImageFromGcode();
 		QString fileNameFromGcode();
@@ -90,7 +90,7 @@ namespace cxgcode
         int getBeltType();
 
 		//fdm
-		void setGCodeVisualType(GCodeVisualType type);
+		void setGCodeVisualType(gcode::GCodeVisualType type);
 		Qt3DRender::QGeometry* createGeometry();
 		Qt3DRender::QGeometry* createRetractionGeometry();
 		Qt3DRender::QGeometry* createZSeamsGeometry();

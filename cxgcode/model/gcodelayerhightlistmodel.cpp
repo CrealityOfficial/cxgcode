@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeLayerHightListModel::GcodeLayerHightListModel(QObject* parent)
-    : GcodePreviewRangeDivideModel(GCodeVisualType::gvt_layerHight, parent) {}
+    : GcodePreviewRangeDivideModel(gcode::GCodeVisualType::gvt_layerHight, parent) {}
 
 void GcodeLayerHightListModel::setRange(double min, double max)
 {

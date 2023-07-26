@@ -2,11 +2,11 @@
 
 namespace cxgcode {
 
-GcodePreviewListModel::GcodePreviewListModel(GCodeVisualType type, QObject* parent)
+GcodePreviewListModel::GcodePreviewListModel(gcode::GCodeVisualType type, QObject* parent)
     : QAbstractListModel(parent)
     , type_(type) {}
 
-GCodeVisualType GcodePreviewListModel::getVisualType() const {
+gcode::GCodeVisualType GcodePreviewListModel::getVisualType() const {
   return type_;
 }
 
@@ -19,7 +19,7 @@ int GcodePreviewListModel::getVisualTypeIndex() const {
 
 namespace cxgcode {
 
-    GcodePreviewRangeDivideModel::GcodePreviewRangeDivideModel(GCodeVisualType type, QObject* parent)
+    GcodePreviewRangeDivideModel::GcodePreviewRangeDivideModel(gcode::GCodeVisualType type, QObject* parent)
         :GcodePreviewListModel(type, parent)
         , m_min(0.0f)
         , m_max(1.0f)

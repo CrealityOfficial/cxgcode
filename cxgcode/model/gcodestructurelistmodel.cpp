@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeStructureListModel::GcodeStructureListModel(QObject* parent)
-    : GcodePreviewListModel(GCodeVisualType::gvt_structure, parent) {}
+    : GcodePreviewListModel(gcode::GCodeVisualType::gvt_structure, parent) {}
 
 void GcodeStructureListModel::checkItem(int type, bool checked) {
   for (auto const& data : data_list_) {
@@ -19,7 +19,7 @@ void GcodeStructureListModel::setDataList(const QList<GcodeStructureData>& data_
   endResetModel();
 }
 
-void GcodeStructureListModel::setTimeParts(const TimeParts& time_parts) {
+void GcodeStructureListModel::setTimeParts(const gcode::TimeParts& time_parts) {
   auto const outer_wall_time      = static_cast<int>(time_parts.OuterWall);
   auto const inner_wall_time      = static_cast<int>(time_parts.InnerWall);
   auto const skin_time            = static_cast<int>(time_parts.Skin);

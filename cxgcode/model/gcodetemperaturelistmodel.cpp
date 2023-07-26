@@ -3,7 +3,7 @@
 namespace cxgcode {
 
 GcodeTemperatureListModel::GcodeTemperatureListModel(QObject* parent)
-    : GcodePreviewRangeDivideModel(GCodeVisualType::gvt_temperature, parent) {}
+    : GcodePreviewRangeDivideModel(gcode::GCodeVisualType::gvt_temperature, parent) {}
 
 void GcodeTemperatureListModel::setRange(double min, double max) {
     //assert(min <= max && "min value is bigger than max value");

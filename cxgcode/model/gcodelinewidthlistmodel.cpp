@@ -3,6 +3,6 @@
 namespace cxgcode {
 
 GcodeLineWidthListModel::GcodeLineWidthListModel(QObject* parent)
-    : GcodePreviewRangeDivideModel(GCodeVisualType::gvt_lineWidth, parent) {}
+    : GcodePreviewRangeDivideModel(gcode::GCodeVisualType::gvt_lineWidth, parent) {}
 
 }  // namespace cxgcode

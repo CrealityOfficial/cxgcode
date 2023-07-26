@@ -1,6 +1,7 @@
 #include "gcodebuilder.h"
 #include <regex>
 #include "thumbnail/thumbnail.h"
+#include <Qimage>
 
 namespace cxgcode
 {
@@ -38,7 +39,19 @@ namespace cxgcode
         return false;
     }
 
-    bool  regex_match_time(std::string& gcodeStr, std::smatch& sm,GCodeParseInfo& parseInfo)
+	bool  regex_match_float(std::string& gcodeStr, std::string key, std::smatch& sm)
+	{
+		std::string temp1 = ".*" + key + ":([-]{0,1}[0-9]{0,8}\\.[0-9]{0,8}).";
+		std::string temp2 = ".*" + key + ":([-]{0,1}[0-9]{0,8}\\.[0-9]{0,8}).*";
+		if (std::regex_match(gcodeStr, sm, std::regex(temp1.c_str())) ||
+			std::regex_match(gcodeStr, sm, std::regex(temp2.c_str())))
+		{
+			return true;
+		}
+		return false;
+	}
+
+    bool  regex_match_time(std::string& gcodeStr, std::smatch& sm, gcode::GCodeParseInfo& parseInfo)
     {
         if (std::regex_match(gcodeStr, sm, std::regex(".*OuterWall Time:([0-9]{0,8}).*")))
         {
@@ -104,7 +117,7 @@ namespace cxgcode
         return true;
     }
 
-    void getImage(std::string p, SliceResult* result)
+    void getImage(std::string p, gcode::SliceResult* result)
     {
         std::string tail1 = p;
 
@@ -121,12 +134,10 @@ namespace cxgcode
         std::vector<unsigned char> decodeData;
         thumbnail_base2image(prevData, decodeData);
 
-        if (decodeData.size())
-        {
-            QImage image;
-            image.loadFromData(&decodeData[0], decodeData.size());
-            result->previews.push_back(image);
-        }
+		if (decodeData.size())
+		{
+			result->previewsData.push_back(decodeData);
+		}
     }
 
     std::string trim(const std::string& str) {
@@ -143,14 +154,14 @@ namespace cxgcode
     
 	void GCodeBuilder::parseGCodeInfo(SliceResultPointer result)
 	{
-		std::string gcodeStr = result->prefixCode().toStdString();
+		std::string gcodeStr = result->prefixCode();
 
 		std::replace(gcodeStr.begin(), gcodeStr.end(), '\n', ' ');
 		std::replace(gcodeStr.begin(), gcodeStr.end(), '\r', ' ');
 
 		std::smatch sm;
 
-        result->previews.clear();
+        result->previewsData.clear();
         if (std::regex_match(gcodeStr, sm, std::regex(".*jpg begin(.*)jpg end.*jpg begin(.*)jpg end.*"))) //jpg
         {
             getImage(sm[1], result.get());
@@ -258,29 +269,75 @@ namespace cxgcode
             }
         }
 
-		int index1 = result->prefixCode().lastIndexOf("M83");
-		int index2 = result->prefixCode().lastIndexOf("M82");
+		int index1 = result->prefixCode().find_last_of("M83");
+		int index2 = result->prefixCode().find_last_of("M82");
 		if (index1 > index2)
 			parseInfo.relativeExtrude = true;
 
-		SettingsPointer ExtrudeSettings = result->ES.empty() ? result->G : result->ES.back();
-		float material_diameter = ExtrudeSettings->value("material_diameter", "1.75").toFloat();
-        //单位面积密度
-		parseInfo.materialDensity = PI * (material_diameter * 0.5) * (material_diameter * 0.5) * ExtrudeSettings->value("material_density", "1.24").toFloat();
-        parseInfo.materialDiameter = material_diameter;
+		float material_diameter = 1.75;
+		float material_density = 1.24;
+		if (regex_match_float(gcodeStr, "material_diameter", sm))
+		{
+			std::string tStr = sm[1];
+			material_diameter = atof(tStr.c_str()); //gap
+		}
+		if (regex_match_float(gcodeStr, "material_density", sm))
+		{
+			std::string tStr = sm[1];
+			material_density = atof(tStr.c_str()); //gap
+		}
 
-        float filament_cost = ExtrudeSettings->value("filament_cost", "0.0").toFloat();
-        float filament_weight = ExtrudeSettings->value("filament_weight", "0.0").toFloat();
+        //单位面积密度
+		parseInfo.materialDensity = PI * (material_diameter * 0.5) * (material_diameter * 0.5) * material_density;
+
+		float filament_cost = 0.0;
+		if (regex_match(gcodeStr, "filament_cost", sm))
+		{
+			std::string tStr = sm[1];
+			filament_cost = atof(tStr.c_str()); //gap
+		}
+		float filament_weight = 0.0;
+		if (regex_match(gcodeStr, "filament_weight", sm))
+		{
+			std::string tStr = sm[1];
+			filament_weight = atof(tStr.c_str()); //gap
+		}
 
         float filament_length = filament_weight /  parseInfo.materialDensity;
         parseInfo.unitPrice = filament_cost / filament_length;
 
-		parseInfo.lineWidth = result->G->value("line_width", "0.1").toFloat();
-		parseInfo.exportFormat = result->G->value("preview_img_type", "jpg");
-		parseInfo.layerHeight = result->G->value("layer_height", "0.1").toFloat();
-		parseInfo.screenSize = result->G->value("screen_size", "Sermoon D3");
+		parseInfo.lineWidth = 0.4;
+		if (regex_match_float(gcodeStr, "Out Wall Line Width", sm))
+		{
+			std::string tStr = sm[1];
+			parseInfo.lineWidth = atof(tStr.c_str()); //gap
+		}
 
-		const QString& preStr = result->prefixCode();
+		parseInfo.exportFormat = "jpg";
+		int ipos = gcodeStr.find("preview_img_type");
+		if (ipos != std::string::npos)
+		{
+			parseInfo.exportFormat = gcodeStr.substr(ipos+17, 3);
+		}
+
+
+		parseInfo.layerHeight = 0.1;
+		if (regex_match_float(gcodeStr, "Layer Height", sm))
+		{
+			std::string tStr = sm[1];
+			parseInfo.layerHeight =atof(tStr.c_str()); //gap
+		}
+		parseInfo.screenSize = "Sermoon D3";
+		if (gcodeStr.find("screen_size:CR-200B Pro") != std::string::npos)
+		{
+			parseInfo.screenSize = "CR - 200B Pro";
+		}
+		else if (gcodeStr.find("screen_size:CR-10 Inspire") != std::string::npos)
+		{
+			parseInfo.screenSize = "CR-10 Inspire";
+		}
+
+		const QString& preStr = result->prefixCode().c_str();
 		parseInfo.spiralMode = preStr.contains(";Vase Model:true");
 		if (preStr.contains(";machine is belt:true"))
 			parseInfo.beltType = 1;
@@ -308,7 +365,7 @@ namespace cxgcode
 		return nullptr;
 	}
 
-	void GCodeBuilder::updateFlagAttribute(Qt3DRender::QAttribute* attribute, GCodeVisualType type)
+	void GCodeBuilder::updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type)
 	{
 	}
 }

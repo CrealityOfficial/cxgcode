@@ -115,10 +115,10 @@ namespace cxgcode
 		m_clipValue->setValue(value);
 	}
 
-	void GCodeViewEntity::setGCodeVisualType(GCodeVisualType type)
+	void GCodeViewEntity::setGCodeVisualType(gcode::GCodeVisualType type)
 	{
 		int _type = (int)type;
-		if (_type >= 0 && _type < (int)cxgcode::GCodeVisualType::gvt_num && m_showType)
+		if (_type >= 0 && _type < (int)gcode::GCodeVisualType::gvt_num && m_showType)
 		{
 			m_showType->setValue(_type);
 		}

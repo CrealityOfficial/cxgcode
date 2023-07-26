@@ -7,7 +7,7 @@
 #include <QtCore/QList>
 #include <QtGui/QColor>
 
-#include "cxgcode/define.h"
+#include "gcode/define.h"
 #include "cxgcode/interface.h"
 
 namespace cxgcode {
@@ -16,16 +16,16 @@ class CXGCODE_API GcodePreviewListModel : public QAbstractListModel {
   Q_OBJECT;
 
 public:
-  explicit GcodePreviewListModel(GCodeVisualType type, QObject* parent = nullptr);
+  explicit GcodePreviewListModel(gcode::GCodeVisualType type, QObject* parent = nullptr);
   virtual ~GcodePreviewListModel() = default;
 
 public:
-  GCodeVisualType getVisualType() const;
+	gcode::GCodeVisualType getVisualType() const;
   int getVisualTypeIndex() const;
   Q_PROPERTY(int visualType READ getVisualTypeIndex CONSTANT);
 
 private:
-  const GCodeVisualType type_;
+  const gcode::GCodeVisualType type_;
 };
 
 
@@ -39,7 +39,7 @@ class CXGCODE_API GcodePreviewRangeDivideModel : public GcodePreviewListModel {
 	Q_OBJECT;
 
 public:
-	explicit GcodePreviewRangeDivideModel(GCodeVisualType type, QObject* parent = nullptr);
+	explicit GcodePreviewRangeDivideModel(gcode::GCodeVisualType type, QObject* parent = nullptr);
 	virtual ~GcodePreviewRangeDivideModel() = default;
 
 public:

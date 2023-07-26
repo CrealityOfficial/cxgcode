@@ -4,13 +4,9 @@ __cc_find(thumbnail)
 __assert_target(thumbnail)
 
 set(SRCS
-  cxgcode/define.h
   cxgcode/interface.h
-  cxgcode/sliceline.h
   cxgcode/gcodeloadjob.h
   cxgcode/gcodeloadjob.cpp
-  cxgcode/sliceresult.h
-  cxgcode/sliceresult.cpp
   cxgcode/gcodehelper.h
   cxgcode/gcodehelper.cpp
   cxgcode/sliceattain.h
@@ -19,8 +15,6 @@ set(SRCS
   cxgcode/simplegcodebuilder.cpp
   cxgcode/gcodebuilder.h
   cxgcode/gcodebuilder.cpp
-  cxgcode/slicemodelbuilder.h
-  cxgcode/slicemodelbuilder.cpp
 
   cxgcode/model/gcodepreviewlistmodel.h
   cxgcode/model/gcodepreviewlistmodel.cpp
@@ -82,7 +76,7 @@ set(ILIBS
 	qtuser_core
 	qtuser_3d
 	qcxutil
-
+	gcode
 	trimesh2
 	rapidjson
 	crcommon

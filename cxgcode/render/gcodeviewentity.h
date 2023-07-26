@@ -2,7 +2,7 @@
 #define CXGCODE_GCODEVIEWENTITY_1683805686175_H
 #include "cxgcode/interface.h"
 #include "qtuser3d/refactor/xentity.h"
-#include "cxgcode/define.h"
+#include "gcode/define.h"
 
 #include <QtGui/QVector4D>
 #include <QtGui/QVector2D>
@@ -20,7 +20,7 @@ namespace cxgcode
 		void setClipValue(const QVector4D& value);
 		QList<QColor> getSpeedColorValues();
 
-		void setGCodeVisualType(GCodeVisualType type);
+		void setGCodeVisualType(gcode::GCodeVisualType type);
 		void setAnimation(int animation);
 
 		void setTypeShow(int typepos, bool needshow);

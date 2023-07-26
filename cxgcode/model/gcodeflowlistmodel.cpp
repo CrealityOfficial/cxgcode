@@ -3,6 +3,6 @@
 namespace cxgcode {
 
 GcodeFlowListModel::GcodeFlowListModel(QObject* parent)
-    : GcodePreviewRangeDivideModel(GCodeVisualType::gvt_flow, parent) {}
+    : GcodePreviewRangeDivideModel(gcode::GCodeVisualType::gvt_flow, parent) {}
 
 }  // namespace cxgcode

@@ -151,7 +151,7 @@ namespace cxgcode
 		return buildGeometryRenderer(m_struct.m_positions, m_struct.m_zSeams, (trimesh::vec2*)m_steps.bytes.data());
 	}
 
-	void SimpleGCodeBuilder::updateFlagAttribute(Qt3DRender::QAttribute* attribute, GCodeVisualType type)
+	void SimpleGCodeBuilder::updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type)
 	{
 		if (!attribute)
 			return;
@@ -199,7 +199,7 @@ namespace cxgcode
 #endif
 	}
 
-    void SimpleGCodeBuilder::processCr30offset(GCodeParseInfo& info)
+    void SimpleGCodeBuilder::processCr30offset(gcode::GCodeParseInfo& info)
     {
         const int& beltType = parseInfo.beltType;
         if (beltType)
@@ -238,7 +238,7 @@ namespace cxgcode
 		float lradius = parseInfo.lineWidth / 2.0f;
 
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
-		const std::vector<GCodeMove>& structMoves = m_struct.m_moves;
+		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 
 		int pCount = (int)structPositions.size();
 		int stepCount = (int)structMoves.size();
@@ -284,7 +284,7 @@ namespace cxgcode
 		trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
 		for (int i = 0; i < stepCount; ++i)
 		{
-			const GCodeMove& move = structMoves.at(i);
+			const gcode::GCodeMove& move = structMoves.at(i);
 			trimesh::vec3* tempPosition = tposition + stride * i;
 			trimesh::vec3* tempNormals = tnormals + stride * i;
 			trimesh::vec2* tempSteps = tsteps + stride * i;
@@ -337,10 +337,10 @@ namespace cxgcode
 		}
 	}
 
-	void SimpleGCodeBuilder::cpuTriSoupUpdate(qtuser_3d::AttributeShade& shade, GCodeVisualType type)
+	void SimpleGCodeBuilder::cpuTriSoupUpdate(qtuser_3d::AttributeShade& shade, gcode::GCodeVisualType type)
 	{
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
-		const std::vector<GCodeMove>& structMoves = m_struct.m_moves;
+		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 
 		int pCount = (int)structPositions.size();
 		int stepCount = (int)structMoves.size();
@@ -357,7 +357,7 @@ namespace cxgcode
 		float* data = (float*)shade.bytes.data();
 		for (int i = 0; i < stepCount; ++i)
 		{
-			const GCodeMove& move = structMoves.at(i);
+			const gcode::GCodeMove& move = structMoves.at(i);
 			float* tempSteps = data + stride * i;
 
 			float flag = produceFlag(move, type, i);
@@ -471,7 +471,7 @@ namespace cxgcode
 #endif
 	}
 
-	void SimpleGCodeBuilder::cpuIndicesUpdate(qtuser_3d::AttributeShade& shade, GCodeVisualType type)
+	void SimpleGCodeBuilder::cpuIndicesUpdate(qtuser_3d::AttributeShade& shade, gcode::GCodeVisualType type)
 	{
 #if SIMPLE_GCODE_IMPL == 1
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
@@ -518,7 +518,7 @@ namespace cxgcode
 		(void)lradius;
 
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
-		const std::vector<GCodeMove>& structMoves = m_struct.m_moves;
+		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 
 		int pCount = (int)structPositions.size();
 		int stepCount = (int)structMoves.size();
@@ -567,7 +567,7 @@ namespace cxgcode
 
 		for (int i = 0; i < stepCount; ++i)
 		{
-			const GCodeMove& move = structMoves.at(i);
+			const gcode::GCodeMove& move = structMoves.at(i);
 			trimesh::vec3* tempPosition = tposition + stride * i;
 			trimesh::vec3* tempEndPosition = tEndPosition + stride * i;
 			trimesh::vec3* tempNormals = tnormals + stride * i;
@@ -584,7 +584,7 @@ namespace cxgcode
 			
 			{
 				int idx = m_struct.m_layerInfoIndex[i];
-				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				*tempLineWidths = l.width;
 			}
 
@@ -602,10 +602,10 @@ namespace cxgcode
 #endif
 	}
 
-	void SimpleGCodeBuilder::gpuIndicesUpdate(qtuser_3d::AttributeShade& shade, GCodeVisualType type)
+	void SimpleGCodeBuilder::gpuIndicesUpdate(qtuser_3d::AttributeShade& shade, gcode::GCodeVisualType type)
 	{
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
-		const std::vector<GCodeMove>& structMoves = m_struct.m_moves;
+		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 
 		int pCount = (int)structPositions.size();
 		int stepCount = (int)structMoves.size();
@@ -622,7 +622,7 @@ namespace cxgcode
 		float* data = (float*)shade.bytes.data();
 		for (int i = 0; i < stepCount; ++i)
 		{
-			const GCodeMove& move = structMoves.at(i);
+			const gcode::GCodeMove& move = structMoves.at(i);
 			float* tempData = data + stride * i;
 
 			*(tempData) = produceFlag(move, type, i);
@@ -632,7 +632,7 @@ namespace cxgcode
 	void SimpleGCodeBuilder::processOffsetNormals(std::vector<trimesh::vec3>& normals, bool step)
 	{
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
-		const std::vector<GCodeMove>& structMoves = m_struct.m_moves;
+		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 
 		int pCount = (int)structPositions.size();
 		int stepCount = (int)structMoves.size();
@@ -644,7 +644,7 @@ namespace cxgcode
 			normals.resize(stepCount);
 			for (int i = 0; i < stepCount; ++i)
 			{
-				const GCodeMove& move = structMoves.at(i);
+				const gcode::GCodeMove& move = structMoves.at(i);
 				trimesh::vec3 delta = structPositions.at(move.start + 1) - structPositions.at(move.start);
 				delta.z = 0.0f;
 				trimesh::normalize(delta);
@@ -703,7 +703,7 @@ namespace cxgcode
 		layerSteps.clear();
 
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
-		const std::vector<GCodeMove>& structMoves = m_struct.m_moves;
+		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 		int stepCount = (int)structMoves.size();
 		int pCount = (int)structPositions.size();
 		if (stepCount < 1 || pCount < 2)
@@ -728,13 +728,13 @@ namespace cxgcode
 		}
 	}
 
-	float SimpleGCodeBuilder::produceFlag(const GCodeMove& move, GCodeVisualType type, int step)
+	float SimpleGCodeBuilder::produceFlag(const gcode::GCodeMove& move, gcode::GCodeVisualType type, int step)
 	{
 		float flag = 0.0f;
 		
 		switch (type)
 		{
-			case cxgcode::GCodeVisualType::gvt_speed:
+			case gcode::GCodeVisualType::gvt_speed:
 			{
 				flag = (float)move.speed;
 				//着色器里面把flag < 0.0的线段忽略
@@ -743,13 +743,13 @@ namespace cxgcode
 			}
 			break;
 
-			case cxgcode::GCodeVisualType::gvt_structure:
+			case gcode::GCodeVisualType::gvt_structure:
 			{
 				flag = (float)move.type;
 			}
 			break;
 
-			case cxgcode::GCodeVisualType::gvt_extruder:
+			case gcode::GCodeVisualType::gvt_extruder:
 			{
 				flag = (float)move.extruder;
 				if (move.type == SliceLineType::Travel)
@@ -757,11 +757,11 @@ namespace cxgcode
 			}
 			break;
 
-			case cxgcode::GCodeVisualType::gvt_layerHight:
+			case gcode::GCodeVisualType::gvt_layerHight:
 			{
 				//重新映射到[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
-				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 
 				float min = baseInfo.minLayerHeight;
 				float max = baseInfo.maxLayerHeight;
@@ -779,21 +779,21 @@ namespace cxgcode
 			}
 			break;
 
-			case cxgcode::GCodeVisualType::gvt_lineWidth:
+			case gcode::GCodeVisualType::gvt_lineWidth:
 			{
 				//重新映射到[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
-				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				flag = (l.width - baseInfo.minLineWidth) / (baseInfo.maxLineWidth - baseInfo.minLineWidth);
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
 			}
 			break;
 
-			case cxgcode::GCodeVisualType::gvt_flow:
+			case gcode::GCodeVisualType::gvt_flow:
 			{
 				int idx = m_struct.m_layerInfoIndex[step];
-				const GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				float flow = l.flow;
 				//qDebug() << "flow = " << flow;
 				if (move.type == SliceLineType::Travel || flow <= 0.0)
@@ -805,7 +805,7 @@ namespace cxgcode
 			}
 				break;
 
-			case cxgcode::GCodeVisualType::gvt_layerTime:
+			case gcode::GCodeVisualType::gvt_layerTime:
 			{
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
@@ -829,7 +829,7 @@ namespace cxgcode
 				return flag;
 			}
 
-			case cxgcode::GCodeVisualType::gvt_fanSpeed:
+			case gcode::GCodeVisualType::gvt_fanSpeed:
 			{
 				//[0, 100%]
 #ifdef DEBUG
@@ -839,7 +839,7 @@ namespace cxgcode
 #ifdef DEBUG
 				assert(0 <= idx && idx < m_struct.m_fans.size());
 #endif // DEBUG
-				GcodeFan& fans = m_struct.m_fans[idx]; 
+				gcode::GcodeFan& fans = m_struct.m_fans[idx];
 				flag = fminf(fmaxf(fans.fanSpeed / 255.0, 0.0), 1.0);
 
 				//qDebug() << "fan speed = " << flag;
@@ -849,11 +849,11 @@ namespace cxgcode
 			break;
 
 
-			case cxgcode::GCodeVisualType::gvt_temperature:
+			case gcode::GCodeVisualType::gvt_temperature:
 			{
 				//重新映射到[0.0, 1.0]
 				int idx = m_struct.m_temperatureIndex[step];
-				GcodeTemperature& t = m_struct.m_temperatures[idx];
+				gcode::GcodeTemperature& t = m_struct.m_temperatures[idx];
 				float temp = t.temperature ;
 				
 				float diff = (baseInfo.maxTemperature - baseInfo.minTemperature);

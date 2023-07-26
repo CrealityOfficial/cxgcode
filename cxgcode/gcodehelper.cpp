@@ -293,7 +293,7 @@ namespace cxsw
 		QString imgSavePath = QString("%1/imgPreview.%2").arg(path).arg(sPreImgFormat);
 		Image->save(imgSavePath);
 
-		QByteArray cdata = imgSavePath.toLocal8Bit();
+		QByteArray cdata = imgSavePath.toLocal8Bit().data();
 		std::string imgSaveStdPath(cdata);
 
 		std::ifstream ios(imgSaveStdPath, std::ios::binary | std::ios::in);
