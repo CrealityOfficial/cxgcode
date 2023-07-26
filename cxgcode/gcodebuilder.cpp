@@ -1,7 +1,6 @@
 #include "gcodebuilder.h"
 #include <regex>
 #include "thumbnail/thumbnail.h"
-#include <Qimage>
 
 namespace cxgcode
 {
