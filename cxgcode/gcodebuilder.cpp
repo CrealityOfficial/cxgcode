@@ -315,7 +315,7 @@ namespace cxgcode
 			parseInfo.layerHeight =atof(tStr.c_str()); //gap
             //¼æÈÝÀÏµÄ
             if (parseInfo.layerHeight > 100)
-                parseInfo.layerHeight = parseInfo.layerHeight / 1000;
+                parseInfo.layerHeight = parseInfo.layerHeight / 1000.0f;
 		}
 		parseInfo.screenSize = "Sermoon D3";
 		if (gcodeStr.find("Screen Size:CR-200B Pro") != std::string::npos)
