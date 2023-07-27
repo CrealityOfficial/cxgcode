@@ -38,18 +38,6 @@ namespace cxgcode
         return false;
     }
 
-	bool  regex_match_float(std::string& gcodeStr, std::string key, std::smatch& sm)
-	{
-		std::string temp1 = ".*" + key + ":([-]{0,1}[0-9]{0,8}\\.[0-9]{0,8}).";
-		std::string temp2 = ".*" + key + ":([-]{0,1}[0-9]{0,8}\\.[0-9]{0,8}).*";
-		if (std::regex_match(gcodeStr, sm, std::regex(temp1.c_str())) ||
-			std::regex_match(gcodeStr, sm, std::regex(temp2.c_str())))
-		{
-			return true;
-		}
-		return false;
-	}
-
     bool  regex_match_time(std::string& gcodeStr, std::smatch& sm, gcode::GCodeParseInfo& parseInfo)
     {
         if (std::regex_match(gcodeStr, sm, std::regex(".*OuterWall Time:([0-9]{0,8}).*")))
@@ -275,28 +263,28 @@ namespace cxgcode
 
 		float material_diameter = 1.75;
 		float material_density = 1.24;
-		if (regex_match_float(gcodeStr, "material_diameter", sm))
+		if (regex_match(gcodeStr, "Material Diameter", sm))
 		{
 			std::string tStr = sm[1];
-			material_diameter = atof(tStr.c_str()); //gap
+            parseInfo.material_diameter = atof(tStr.c_str()); //gap
 		}
-		if (regex_match_float(gcodeStr, "material_density", sm))
+		if (regex_match(gcodeStr, "Material Density", sm))
 		{
 			std::string tStr = sm[1];
-			material_density = atof(tStr.c_str()); //gap
+            parseInfo.material_density = atof(tStr.c_str()); //gap
 		}
 
         //单位面积密度
-		parseInfo.materialDensity = PI * (material_diameter * 0.5) * (material_diameter * 0.5) * material_density;
+		parseInfo.materialDensity = PI * (parseInfo.material_diameter * 0.5) * (parseInfo.material_diameter * 0.5) * parseInfo.material_density;
 
 		float filament_cost = 0.0;
-		if (regex_match(gcodeStr, "filament_cost", sm))
+		if (regex_match(gcodeStr, "Filament Cost", sm))
 		{
 			std::string tStr = sm[1];
 			filament_cost = atof(tStr.c_str()); //gap
 		}
 		float filament_weight = 0.0;
-		if (regex_match(gcodeStr, "filament_weight", sm))
+		if (regex_match(gcodeStr, "Filament Weight", sm))
 		{
 			std::string tStr = sm[1];
 			filament_weight = atof(tStr.c_str()); //gap
@@ -306,14 +294,14 @@ namespace cxgcode
         parseInfo.unitPrice = filament_cost / filament_length;
 
 		parseInfo.lineWidth = 0.4;
-		if (regex_match_float(gcodeStr, "Out Wall Line Width", sm))
+		if (regex_match(gcodeStr, "Out Wall Line Width", sm))
 		{
 			std::string tStr = sm[1];
 			parseInfo.lineWidth = atof(tStr.c_str()); //gap
 		}
 
 		parseInfo.exportFormat = "jpg";
-		int ipos = gcodeStr.find("preview_img_type");
+		int ipos = gcodeStr.find("Preview Img Type");
 		if (ipos != std::string::npos)
 		{
 			parseInfo.exportFormat = gcodeStr.substr(ipos+17, 3);
@@ -321,17 +309,20 @@ namespace cxgcode
 
 
 		parseInfo.layerHeight = 0.1;
-		if (regex_match_float(gcodeStr, "Layer Height", sm))
+		if (regex_match(gcodeStr, "Layer Height", sm))
 		{
 			std::string tStr = sm[1];
 			parseInfo.layerHeight =atof(tStr.c_str()); //gap
+            //兼容老的
+            if (parseInfo.layerHeight > 100)
+                parseInfo.layerHeight = parseInfo.layerHeight / 1000;
 		}
 		parseInfo.screenSize = "Sermoon D3";
-		if (gcodeStr.find("screen_size:CR-200B Pro") != std::string::npos)
+		if (gcodeStr.find("Screen Size:CR-200B Pro") != std::string::npos)
 		{
 			parseInfo.screenSize = "CR - 200B Pro";
 		}
-		else if (gcodeStr.find("screen_size:CR-10 Inspire") != std::string::npos)
+		else if (gcodeStr.find("Screen Size:CR-10 Inspire") != std::string::npos)
 		{
 			parseInfo.screenSize = "CR-10 Inspire";
 		}
