@@ -258,11 +258,11 @@ namespace cxgcode
 
         if (gcodeStr.find("M83") != std::string::npos)
         {
-            bool relativeExtrude = true;
+            parseInfo.relativeExtrude = true;
         }
 
-		float material_diameter = 1.75;
-		float material_density = 1.24;
+		//float material_diameter = 1.75;
+		//float material_density = 1.24;
 		if (regex_match(gcodeStr, "Material Diameter", sm))
 		{
 			std::string tStr = sm[1];
