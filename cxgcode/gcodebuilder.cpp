@@ -1,6 +1,7 @@
 #include "gcodebuilder.h"
 #include <regex>
 #include "thumbnail/thumbnail.h"
+#include "gcode/gcodedata.h"
 
 namespace cxgcode
 {
@@ -21,7 +22,7 @@ namespace cxgcode
 			return;
 
 		m_tracer = tracer;
-		parseGCodeInfo(result);
+		cxsw::parseGCodeInfo(result.get(), parseInfo);
 		implBuild(result);
 		m_tracer = nullptr;
 	}
@@ -139,201 +140,6 @@ namespace cxgcode
         return std::string(it, rit.base());
     }
     
-	void GCodeBuilder::parseGCodeInfo(SliceResultPointer result)
-	{
-		std::string gcodeStr = result->prefixCode();
-
-		std::replace(gcodeStr.begin(), gcodeStr.end(), '\n', ' ');
-		std::replace(gcodeStr.begin(), gcodeStr.end(), '\r', ' ');
-
-		std::smatch sm;
-
-        result->previewsData.clear();
-        if (std::regex_match(gcodeStr, sm, std::regex(".*jpg begin(.*)jpg end.*jpg begin(.*)jpg end.*"))) //jpg
-        {
-            getImage(sm[1], result.get());
-            if (sm.size() > 2)
-            {
-                getImage(sm[2], result.get());
-            }
-        }
-        else  if (std::regex_match(gcodeStr, sm, std::regex(".*png begin(.*)png end.*png begin(.*)png end.*"))) //png
-        {
-            getImage(sm[1], result.get());
-            if (sm.size() > 2)
-            {
-                getImage(sm[2], result.get());
-            }
-        }
-        else  if (std::regex_match(gcodeStr, sm, std::regex(".*bmp begin(.*)bmp end.*bmp begin(.*)bmp end.*"))) //bmp
-        {
-            getImage(sm[1], result.get());
-            if (sm.size() > 2)
-            {
-                getImage(sm[2], result.get());
-            }
-        }
-        if (std::regex_match(gcodeStr, sm, std::regex(".*thumbnail begin(.*)thumbnail end.*"))) //thumbnail
-        {
-            getImage(sm[1], result.get());
-        }     
-
-		if (std::regex_match(gcodeStr, sm, std::regex(".*TIME:([0-9]{0,8}).*"))) ////get print time
-		{
-			std::string tStr = sm[1];
-			int tmp = atoi(tStr.c_str());
-			parseInfo.printTime = tmp;
-
-            regex_match_time(gcodeStr, sm, parseInfo);
-		}
-		if (std::regex_match(gcodeStr, sm, std::regex(".*Filament used:([0-9]{0,8}\\.[0-9]{0,8}).*"))) ////get print time
-		{
-			std::string tStr = sm[1];
-			float tmp = atof(tStr.c_str());
-			parseInfo.materialLenth = tmp;
-		}
-
-        if (regex_match(gcodeStr, "machine belt offset", sm))
-        {
-            std::string tStr = sm[1];
-            float tmp = atof(tStr.c_str());
-            parseInfo.beltOffset = tmp;
-        }
-
-        if (regex_match(gcodeStr, "machine belt offset Y", sm))
-        {
-            std::string tStr = sm[1];
-            float tmp = atof(tStr.c_str());
-            parseInfo.beltOffsetY = tmp;
-        }
-
-        bool hasMachineSpaceBox = false;
-        if (regex_match(gcodeStr, "Machine Height", sm))
-        {
-            std::string tStr = sm[1];
-            float tmp = atof(tStr.c_str());
-            parseInfo.machine_height = tmp;
-        }
-        else
-            hasMachineSpaceBox = true;
-
-        if (regex_match(gcodeStr, "Machine Width", sm))
-        {
-            std::string tStr = sm[1];
-            float tmp = atof(tStr.c_str());
-            parseInfo.machine_width = tmp;
-        }
-        else
-            hasMachineSpaceBox = true;
-
-        if (regex_match(gcodeStr, "Machine Depth", sm))
-        {
-            std::string tStr = sm[1];
-            float tmp = atof(tStr.c_str());
-            parseInfo.machine_depth = tmp;
-        }
-        else
-            hasMachineSpaceBox = true;
-
-        if (hasMachineSpaceBox)
-        {//获取模型尺寸信息
-            if (regex_match(gcodeStr, "MAXX", sm))
-            {
-                std::string tStr = sm[1];
-                parseInfo.machine_width = atof(tStr.c_str()) + 20; //gap
-            }
-
-            if (regex_match(gcodeStr, "MAXY", sm))
-            {
-                std::string tStr = sm[1];
-                parseInfo.machine_depth = atof(tStr.c_str()) + 20; //gap
-            }
-
-            if (regex_match(gcodeStr, "MAXZ", sm))
-            {
-                std::string tStr = sm[1];
-                parseInfo.machine_height = atof(tStr.c_str()) + 20; //gap
-            }
-        }
-
-        if (gcodeStr.find("M83") != std::string::npos)
-        {
-            parseInfo.relativeExtrude = true;
-        }
-
-		//float material_diameter = 1.75;
-		//float material_density = 1.24;
-		if (regex_match(gcodeStr, "Material Diameter", sm))
-		{
-			std::string tStr = sm[1];
-            parseInfo.material_diameter = atof(tStr.c_str()); //gap
-		}
-		if (regex_match(gcodeStr, "Material Density", sm))
-		{
-			std::string tStr = sm[1];
-            parseInfo.material_density = atof(tStr.c_str()); //gap
-		}
-
-        //单位面积密度
-		parseInfo.materialDensity = PI * (parseInfo.material_diameter * 0.5) * (parseInfo.material_diameter * 0.5) * parseInfo.material_density;
-
-		float filament_cost = 0.0;
-		if (regex_match(gcodeStr, "Filament Cost", sm))
-		{
-			std::string tStr = sm[1];
-			filament_cost = atof(tStr.c_str()); //gap
-		}
-		float filament_weight = 0.0;
-		if (regex_match(gcodeStr, "Filament Weight", sm))
-		{
-			std::string tStr = sm[1];
-			filament_weight = atof(tStr.c_str()); //gap
-		}
-
-        float filament_length = filament_weight /  parseInfo.materialDensity;
-        parseInfo.unitPrice = filament_cost / filament_length;
-
-		parseInfo.lineWidth = 0.4;
-		if (regex_match(gcodeStr, "Out Wall Line Width", sm))
-		{
-			std::string tStr = sm[1];
-			parseInfo.lineWidth = atof(tStr.c_str()); //gap
-		}
-
-		parseInfo.exportFormat = "jpg";
-		int ipos = gcodeStr.find("Preview Img Type");
-		if (ipos != std::string::npos)
-		{
-			parseInfo.exportFormat = gcodeStr.substr(ipos+17, 3);
-		}
-
-
-		parseInfo.layerHeight = 0.1;
-		if (regex_match(gcodeStr, "Layer Height", sm))
-		{
-			std::string tStr = sm[1];
-			parseInfo.layerHeight =atof(tStr.c_str()); //gap
-            //兼容老的
-            if (parseInfo.layerHeight >= 50)
-                parseInfo.layerHeight = parseInfo.layerHeight / 1000.0f;
-		}
-		parseInfo.screenSize = "Sermoon D3";
-		if (gcodeStr.find("Screen Size:CR-200B Pro") != std::string::npos)
-		{
-			parseInfo.screenSize = "CR - 200B Pro";
-		}
-		else if (gcodeStr.find("Screen Size:CR-10 Inspire") != std::string::npos)
-		{
-			parseInfo.screenSize = "CR-10 Inspire";
-		}
-
-		const QString& preStr = result->prefixCode().c_str();
-		parseInfo.spiralMode = preStr.contains(";Vase Model:true");
-		if (preStr.contains(";machine is belt:true"))
-			parseInfo.beltType = 1;
-		if (preStr.contains("Crealitybelt"))
-			parseInfo.beltType = 2;
-	}
 
 	void GCodeBuilder::implBuild(SliceResultPointer result)
 	{

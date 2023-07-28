@@ -12,8 +12,6 @@ namespace cxsw
 	CXGCODE_API bool cxSaveGCode(const QString& fileName, const QString& previewImageString,
 		const QStringList& layerString, const QString& prefixString, const QString& tailCode);
 
-	CXGCODE_API bool cxLoadGCode(const QString& fileName, QStringList& layerString, QStringList& prefixString, QStringList& tailCode, ccglobal::Tracer* tracer = nullptr);
-
 	CXGCODE_API void image2String(const QImage& image, int width, int height, bool clear, QString& outString);
 	CXGCODE_API QImage* resizeModule(QImage* previewImage);
 

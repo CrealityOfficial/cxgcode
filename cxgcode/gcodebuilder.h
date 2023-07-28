@@ -29,7 +29,6 @@ namespace cxgcode
 		virtual void updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type);
 	protected:
 		virtual void implBuild(SliceResultPointer result);
-		void parseGCodeInfo(SliceResultPointer result);
 	public:
 		gcode::GCodeParseInfo parseInfo;
 		gcode::GCodeStructBaseInfo baseInfo;
