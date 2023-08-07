@@ -877,6 +877,29 @@ namespace cxgcode
 		return flag;
 	}
 
+	void SimpleGCodeBuilder::getPathData(const trimesh::vec3 point, float e, int type)
+	{
+		m_struct.getPathData(point, e, type);
+	}
+	void SimpleGCodeBuilder::setParam(gcode::GCodeParseInfo& pathParam)
+	{
+		m_struct.setParam(pathParam);
+	}
+	void SimpleGCodeBuilder::setLayer(int layer) {
+		m_struct.setLayer(layer);
+	}
+	void SimpleGCodeBuilder::setSpeed(float s) {
+		m_struct.setSpeed(s);
+	}
+	void SimpleGCodeBuilder::setTEMP(float temp) {
+		m_struct.setTEMP(temp);
+	}
+	void SimpleGCodeBuilder::setExtruder(int nr) {
+		m_struct.setExtruder(nr);
+	}
+	void SimpleGCodeBuilder::setFan(float fan) {
+		m_struct.setFan(fan);
+	}
 
 	/*
 	* ∂‡ µ¿˝‰÷»æ£∫

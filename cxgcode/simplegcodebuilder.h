@@ -26,6 +26,14 @@ namespace cxgcode
 		Qt3DRender::QGeometryRenderer* buildZSeamsGeometryRenderer();
 
 		void updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type) override;
+
+		void getPathData(const trimesh::vec3 point, float e, int type);
+		void setParam(gcode::GCodeParseInfo& pathParam);
+		void setLayer(int layer);
+		void setSpeed(float s);
+		void setTEMP(float temp);
+		void setExtruder(int nr);
+		void setFan(float fan);
 	protected:
 		void implBuild(SliceResultPointer result) override;
 		int stepIndex(int layer, int step);
