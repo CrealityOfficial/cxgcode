@@ -28,14 +28,19 @@ namespace cxgcode
 		void updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type) override;
 
 		void getPathData(const trimesh::vec3 point, float e, int type);
+		void getPathDataG2G3(const trimesh::vec3 point, float i, float j, float e, int type, bool isG2 = true);
 		void setParam(gcode::GCodeParseInfo& pathParam);
 		void setLayer(int layer);
 		void setSpeed(float s);
 		void setTEMP(float temp);
 		void setExtruder(int nr);
 		void setFan(float fan);
+		void setZ(float z, float h);
+		void setE(float e);
+		void setTime(float time);
 	protected:
 		void implBuild(SliceResultPointer result) override;
+		void implBuild()override;
 		int stepIndex(int layer, int step);
 
 		void cpuTriSoupBuild();

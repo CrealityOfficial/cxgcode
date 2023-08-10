@@ -23,12 +23,15 @@ namespace cxgcode
 
 		void build(SliceResultPointer result, ccglobal::Tracer* tracer = nullptr);
 
+		void build(ccglobal::Tracer* tracer = nullptr);
+
 		virtual float traitSpeed(int layer, int step);
 		virtual trimesh::vec3 traitPosition(int layer, int step);
 		virtual Qt3DRender::QGeometry* buildGeometry();
 		virtual void updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type);
 	protected:
 		virtual void implBuild(SliceResultPointer result);
+		virtual void implBuild();
 	public:
 		gcode::GCodeParseInfo parseInfo;
 		gcode::GCodeStructBaseInfo baseInfo;

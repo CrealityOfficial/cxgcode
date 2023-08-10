@@ -199,6 +199,27 @@ namespace cxgcode
 #endif
 	}
 
+	void SimpleGCodeBuilder::implBuild()
+	{
+		float step = 0.9f;
+		if (m_tracer)
+			m_tracer->resetProgressScope(0.0f, step);
+
+		m_struct.buildFromResult(parseInfo, baseInfo, m_stepGCodesMaps, m_tracer);
+		//cr30
+		processCr30offset(parseInfo);
+		if (m_tracer)
+			m_tracer->resetProgressScope(step, 1.0f);
+#if SIMPLE_GCODE_IMPL == 0
+		cpuTriSoupBuild();
+#elif SIMPLE_GCODE_IMPL == 1
+		cpuIndicesBuild();
+#elif SIMPLE_GCODE_IMPL == 2
+#elif SIMPLE_GCODE_IMPL == 3
+		gpuIndicesBuild();
+#endif
+	}
+
     void SimpleGCodeBuilder::processCr30offset(gcode::GCodeParseInfo& info)
     {
         const int& beltType = parseInfo.beltType;
@@ -881,6 +902,10 @@ namespace cxgcode
 	{
 		m_struct.getPathData(point, e, type);
 	}
+	void SimpleGCodeBuilder::getPathDataG2G3(const trimesh::vec3 point, float i, float j, float e, int type, bool isG2)
+	{
+		m_struct.getPathDataG2G3(point,i,j,e,type,isG2);
+	}
 	void SimpleGCodeBuilder::setParam(gcode::GCodeParseInfo& pathParam)
 	{
 		m_struct.setParam(pathParam);
@@ -899,6 +924,17 @@ namespace cxgcode
 	}
 	void SimpleGCodeBuilder::setFan(float fan) {
 		m_struct.setFan(fan);
+	}
+	void SimpleGCodeBuilder::setZ(float z,float h){
+		m_struct.setZ(z,h);
+	}
+	void SimpleGCodeBuilder::setE(float e) {
+		m_struct.setE(e);
+	}
+
+	void SimpleGCodeBuilder::setTime(float time)
+	{
+		m_struct.setTime(time);
 	}
 
 	/*

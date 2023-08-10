@@ -27,6 +27,12 @@ namespace cxgcode
 		m_tracer = nullptr;
 	}
 
+	void GCodeBuilder::build(ccglobal::Tracer* tracer)
+	{
+		implBuild();
+		m_tracer = nullptr;
+	}
+
     std::string trim(const std::string& str) {
         std::string::const_iterator it = str.begin();
         while (it != str.end() && std::isspace(*it))
@@ -43,6 +49,9 @@ namespace cxgcode
 	void GCodeBuilder::implBuild(SliceResultPointer result)
 	{
 
+	}
+
+	void GCodeBuilder::implBuild() {
 	}
 
 	float GCodeBuilder::traitSpeed(int layer, int step)
