@@ -12,12 +12,10 @@ void GcodeLayerHightListModel::setRange(double min, double max)
 
     if (min > 0.0 && (max-min) < min / 50.0)
     {
-        QList<QColor> c;
-        c << m_colors[0];
-        setColors(c);
+        setShowColorSize(1);
     }
     else {
-        resetData();
+        setShowAllColorSize();
     }
 }
 

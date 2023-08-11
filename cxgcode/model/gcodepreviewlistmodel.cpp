@@ -29,6 +29,20 @@ namespace cxgcode {
     void GcodePreviewRangeDivideModel::setColors(const QList<QColor>& colors)
     {
         m_colors = colors;
+        m_showColorSize = colors.size();
+        resetData();
+    }
+
+    void GcodePreviewRangeDivideModel::setShowColorSize(int size)
+    {
+        size = std::max(0, size);
+        m_showColorSize = std::min(m_colors.size(), size);
+        resetData();
+    }
+
+    void GcodePreviewRangeDivideModel::setShowAllColorSize()
+    {
+        m_showColorSize = m_colors.size();
         resetData();
     }
 
@@ -75,7 +89,7 @@ namespace cxgcode {
 
         QList<GcodeRangeDivideData> data_list;
 
-        size_t const data_size = m_colors.size();
+        size_t const data_size = m_showColorSize;
         if (data_size == 0) {
             // do nothing
         } else if (data_size == 1) {

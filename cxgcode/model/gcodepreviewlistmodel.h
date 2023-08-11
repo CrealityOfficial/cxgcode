@@ -46,6 +46,9 @@ public:
 	void setColors(const QList<QColor>& colors);
 	virtual void setRange(double min, double max);
 
+	void setShowColorSize(int size);
+	void setShowAllColorSize();
+
 protected:
 	int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
 	QVariant data(const QModelIndex& index, int role = Qt::ItemDataRole::DisplayRole) const override;
@@ -64,6 +67,8 @@ protected:
 	QList<QColor> m_colors;
 	double m_min;
 	double m_max;
+
+	int m_showColorSize;
 };
 
 

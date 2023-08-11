@@ -12,12 +12,10 @@ void GcodeTemperatureListModel::setRange(double min, double max) {
 
     if (max - min <= 0.1)
     {
-        QList<QColor> c;
-        c << m_colors[0];
-        setColors(c);
+        setShowColorSize(1);
     }
     else {
-        resetData();
+        setShowAllColorSize();
     }
 }
 
