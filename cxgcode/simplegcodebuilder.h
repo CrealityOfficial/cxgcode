@@ -38,6 +38,7 @@ namespace cxgcode
 		void setZ(float z, float h);
 		void setE(float e);
 		void setTime(float time);
+		void getNotPath();
 	protected:
 		void implBuild(SliceResultPointer result) override;
 		void implBuild()override;

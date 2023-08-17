@@ -937,6 +937,11 @@ namespace cxgcode
 		m_struct.setTime(time);
 	}
 
+	void SimpleGCodeBuilder::getNotPath()
+	{
+		m_struct.getNotPath();
+	}
+
 	/*
 	* 多实例渲染：
 	* 本例是渲染多个球体，除了球体本身的几何数据之外，增加了每个球体世界坐标及其标识信息
