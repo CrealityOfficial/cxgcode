@@ -533,11 +533,7 @@ namespace cxgcode
 	void SimpleGCodeBuilder::gpuIndicesBuild()
 	{
 #if SIMPLE_GCODE_IMPL == 3
-		float sradius = parseInfo.layerHeight / 2.0f;
-		float lradius = parseInfo.lineWidth / 2.0f;
-		(void)sradius;
-		(void)lradius;
-
+		
 		const std::vector<trimesh::vec3>& structPositions = m_struct.m_positions;
 		const std::vector<gcode::GCodeMove>& structMoves = m_struct.m_moves;
 
