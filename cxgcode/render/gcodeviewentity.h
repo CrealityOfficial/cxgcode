@@ -28,7 +28,6 @@ namespace cxgcode
 		void setLayerShowScope(int startlayer, int endlayer);
 		void clearLayerShowScope();
 
-		void setLayerStartFlagEnable(bool enable);
 		void setModelMatrix(const QMatrix4x4& matrix);
 
 		void setLayerHeight(float height);
@@ -45,7 +44,6 @@ namespace cxgcode
 		Qt3DRender::QParameter* m_typecolorsshow;
 
 		Qt3DRender::QParameter* m_layerShow;
-		Qt3DRender::QParameter* m_layerStartFlagShow;
 
 		Qt3DRender::QParameter* m_layerHeight;
 		//Qt3DRender::QParameter* m_lineWidth;

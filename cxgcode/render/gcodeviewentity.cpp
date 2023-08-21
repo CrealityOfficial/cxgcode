@@ -12,7 +12,6 @@ namespace cxgcode
 		m_showType = setParameter("showType", 0);
 		m_animation = setParameter("animation", 0);
 		m_layerShow = setParameter("layershow", QVector2D(-1.0f, 9999999.0f));
-		m_layerStartFlagShow = setParameter("layerstartflag_show", 1);
 
 		QMatrix4x4 m;
 		m.setToIdentity();
@@ -151,11 +150,6 @@ namespace cxgcode
 	void GCodeViewEntity::clearLayerShowScope()
 	{
 		m_layerShow->setValue(QVector2D(-1.0f, 9999999.0f));
-	}
-
-	void GCodeViewEntity::setLayerStartFlagEnable(bool enable)
-	{
-		m_layerStartFlagShow->setValue(enable ? 1 : 0);
 	}
 
 	void GCodeViewEntity::setModelMatrix(const QMatrix4x4& matrix)
