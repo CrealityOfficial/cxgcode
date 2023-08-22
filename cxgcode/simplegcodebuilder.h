@@ -8,7 +8,7 @@
 
 namespace cxgcode
 {	
-	struct gcode::GCodeParseInfo;
+	struct GCodeParseInfo;
 	class CXGCODE_API SimpleGCodeBuilder : public GCodeBuilder
 	{
 	public:
