@@ -15,6 +15,7 @@ public:
   explicit GcodeLineWidthListModel(QObject* parent = nullptr);
   virtual ~GcodeLineWidthListModel() = default;
 
+  void setRange(double min, double max) override;
 };
 
 }  // namespace cxgcode

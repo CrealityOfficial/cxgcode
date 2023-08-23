@@ -801,7 +801,17 @@ namespace cxgcode
 				//÷ÿ–¬”≥…‰µΩ[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
 				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
-				flag = (l.width - baseInfo.minLineWidth) / (baseInfo.maxLineWidth - baseInfo.minLineWidth);
+
+				float diff = (baseInfo.maxLineWidth - baseInfo.minLineWidth);
+				if (diff <= 0.002)
+				{
+					flag = 0.0;
+				}
+				else {
+					flag = (l.width - baseInfo.minLineWidth) / diff;
+				}
+
+				
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
 			}
