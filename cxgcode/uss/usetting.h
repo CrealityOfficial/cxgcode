@@ -1,0 +1,9 @@
+#ifndef USS_USETTING_1693216858123_H
+#define USS_USETTING_1693216858123_H
+
+namespace uss
+{
+
+}
+
+#endif // USS_USETTING_1693216858123_H
