@@ -2,10 +2,10 @@
 #define SETTINGCACHE_H
 
 #include <QObject>
-#include "us/usettings.h"
+#include "cxgcode/us/usettings.h"
 namespace us
 {
-    class SettingCache : public USettings
+    class SettingCache : public cxgcode::USettings
     {
         Q_OBJECT
     public:
