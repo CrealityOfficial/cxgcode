@@ -37,7 +37,7 @@ namespace uss
 			return nullptr;
 		}
 
-		MachineMeta* meta = new MachineMeta();
+		MachineMeta* meta = new MachineMeta(nullptr);
 		return meta;
 	}
 }
