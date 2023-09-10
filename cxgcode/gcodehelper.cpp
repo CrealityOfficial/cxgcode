@@ -6,7 +6,6 @@
 #include <QtCore/QFileInfo>
 #include <QtGui/QPainter>
 
-#include "qtusercore/string/stringtool.h"
 #include "gcode/thumbnail.h"
 #include <fstream>
 

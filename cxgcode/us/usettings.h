@@ -3,7 +3,6 @@
 #include "cxgcode/interface.h"
 #include "cxgcode/us/usetting.h"
 #include "cxgcode/us/settingdef.h"
-#include "crslice/header.h"
 
 #include <QtCore/QMap>
 #include <QtCore/QHash>
@@ -62,9 +61,6 @@ namespace cxgcode
 	};
 
 	typedef QSharedPointer<USettings> SettingsPointer;
-
-
-	CXGCODE_API SettingsPtr convert(const cxgcode::USettings& settings);
 }
 
 #endif // _CXGCODE_US_USETTINGS_1589354685439_H
