@@ -453,7 +453,7 @@ namespace cxgcode
 
 	SettingsPtr convert(const cxgcode::USettings& settings)
 	{
-		SettingsPtr ptr(new crcommon::Settings());
+		SettingsPtr ptr(new crslice::Settings());
 		const QHash<QString, cxgcode::USetting*>& ss = settings.settings();
 		for (QHash<QString, cxgcode::USetting*>::ConstIterator it = ss.begin();
 			it != ss.end(); ++it)

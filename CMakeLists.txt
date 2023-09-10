@@ -80,7 +80,7 @@ set(ILIBS
 	gcode
 	trimesh2
 	rapidjson
-	crcommon
+	crslice
 )
 
 __add_common_library(cxgcode)

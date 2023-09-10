@@ -3,7 +3,7 @@
 #include "cxgcode/interface.h"
 #include "cxgcode/us/usetting.h"
 #include "cxgcode/us/settingdef.h"
-#include "crcommon/header.h"
+#include "crslice/header.h"
 
 #include <QtCore/QMap>
 #include <QtCore/QHash>
