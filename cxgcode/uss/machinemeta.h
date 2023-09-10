@@ -1,7 +1,7 @@
 #ifndef USS_MACHINEMETA_1693295990409_H
 #define USS_MACHINEMETA_1693295990409_H
 #include "cxgcode/uss/usettings.h"
-#include "crcommon/base/parametermeta.h"
+#include "crslice/base/parametermeta.h"
 
 namespace uss
 {
@@ -9,12 +9,12 @@ namespace uss
 	{
 		Q_OBJECT
 	public:
-		MachineMeta(crcommon::ParameterMetas* metas, QObject* parent = nullptr);
+		MachineMeta(crslice::ParameterMetas* metas, QObject* parent = nullptr);
 		virtual ~MachineMeta();
 
 		uss::USettings* create();
 	protected:
-		crcommon::ParameterMetas* m_metas;  //own it
+		crslice::ParameterMetas* m_metas;  //own it
 	};
 }
 

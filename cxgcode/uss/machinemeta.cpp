@@ -2,7 +2,7 @@
 
 namespace uss
 {
-	MachineMeta::MachineMeta(crcommon::ParameterMetas* metas, QObject* parent)
+	MachineMeta::MachineMeta(crslice::ParameterMetas* metas, QObject* parent)
 		: QObject(parent)
 		, m_metas(metas)
 	{

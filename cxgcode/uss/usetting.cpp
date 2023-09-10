@@ -2,7 +2,7 @@
 
 namespace uss
 {
-	USetting::USetting(const crcommon::ParameterMeta& meta, QObject* parent)
+	USetting::USetting(const crslice::ParameterMeta& meta, QObject* parent)
 		:m_meta(meta)
 	{
 

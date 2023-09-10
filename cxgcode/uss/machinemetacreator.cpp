@@ -1,5 +1,5 @@
 #include "machinemetacreator.h"
-#include "crcommon/base/parametermeta.h"
+#include "crslice/base/parametermeta.h"
 #include "cxgcode/uss/machinemeta.h"
 #include <QtCore/QDebug>
 
@@ -25,7 +25,7 @@ namespace uss
 		}
 
 		m_basePath = path;
-		m_base.reset(new crcommon::ParameterMetas());
+		m_base.reset(new crslice::ParameterMetas());
 		m_base->initializeBase(path.toStdString());
 	}
 

@@ -26,7 +26,7 @@ namespace uss
 		MachineMeta* create(const QString& fileName);
 	protected:
 		QString m_basePath;
-		QSharedPointer<crcommon::ParameterMetas> m_base;
+		QSharedPointer<crslice::ParameterMetas> m_base;
 	};
 }
 
