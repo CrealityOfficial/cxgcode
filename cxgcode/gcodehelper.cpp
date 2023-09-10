@@ -7,7 +7,8 @@
 #include <QtGui/QPainter>
 
 #include "qtusercore/string/stringtool.h"
-#include "thumbnail/thumbnail.h"
+#include "gcode/thumbnail.h"
+#include <fstream>
 
 namespace cxsw
 {
@@ -241,7 +242,7 @@ namespace cxsw
 		imgSize.sprintf("%d*%d", Image->width(), Image->height());
 		QString imgStartEndLine;
 		imgStartEndLine.sprintf("%d %d", getLineStart(Image), getLineEnd(Image));
-		thumbnail_to_gcode(data, imgSize.toStdString(), sPreImgFormat.toStdString(), imgStartEndLine.toStdString(), layers, outStr, layerHeight);
+		gcode::thumbnail_to_gcode(data, imgSize.toStdString(), sPreImgFormat.toStdString(), imgStartEndLine.toStdString(), layers, outStr, layerHeight);
 		int encodeSize = 0;
 		for (size_t i = 0; i < outStr.size(); i++)
 		{

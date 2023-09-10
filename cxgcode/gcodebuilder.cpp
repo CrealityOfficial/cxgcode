@@ -1,6 +1,5 @@
 #include "gcodebuilder.h"
 #include <regex>
-#include "thumbnail/thumbnail.h"
 #include "gcode/gcodedata.h"
 
 namespace cxgcode
@@ -73,32 +72,3 @@ namespace cxgcode
 	{
 	}
 }
-
-//if (preStr.contains(";machine belt offset:"))
-//std::string tag2 = ";machine belt offset:";
-//float offset = 10.0;
-//int pos2 = prevCode.find(tag2);
-//if (pos2 >= 0)
-//{
-//	std::string t = prevCode.substr(pos2 + tag2.length());
-//	pos2 = t.find("\n");
-//	if (pos2 > 0)
-//	{
-//		t = t.substr(0, pos2);
-//		offset = qtuser_core::StrToFloat(t);
-//	}
-//}
-//
-//tag2 = ";machine belt offset Y:";
-//float offsetY = 0.0;
-//pos2 = prevCode.find(tag2);
-//if (pos2 >= 0)
-//{
-//	std::string t = prevCode.substr(pos2 + tag2.length());
-//	pos2 = t.find("\n");
-//	if (pos2 > 0)
-//	{
-//		t = t.substr(0, pos2);
-//		offsetY = qtuser_core::StrToFloat(t);
-//	}
-//}
