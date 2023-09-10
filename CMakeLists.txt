@@ -76,7 +76,6 @@ set(LIBS
 set(ILIBS
 	qtuser_core
 	qtuser_3d
-	qcxutil
 	gcode
 	trimesh2
 	rapidjson

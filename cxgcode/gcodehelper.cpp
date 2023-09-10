@@ -7,8 +7,6 @@
 #include <QtGui/QPainter>
 
 #include "qtusercore/string/stringtool.h"
-#include "qcxutil/trimesh2/conv.h"
-
 #include "thumbnail/thumbnail.h"
 
 namespace cxsw
