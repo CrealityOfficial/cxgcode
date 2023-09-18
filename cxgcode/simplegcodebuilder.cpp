@@ -753,7 +753,23 @@ namespace cxgcode
 		{
 			case gcode::GCodeVisualType::gvt_speed:
 			{
-				flag = (float)move.speed;
+				//重新映射到[0.0, 1.0]
+				float temp = m_struct.m_moves[step].speed;
+
+				float diff = (baseInfo.speedMax - baseInfo.speedMin + 0.01f);
+				if (diff <= 0.1)
+				{
+					flag = 0.0;
+				}
+				else {
+					flag = (temp - baseInfo.speedMin) / diff;
+					if( flag <= 0.1)
+					{
+						flag = 0.0;
+					}
+				}
+
+				//flag = (float)move.speed;
 				//着色器里面把flag < 0.0的线段忽略
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
