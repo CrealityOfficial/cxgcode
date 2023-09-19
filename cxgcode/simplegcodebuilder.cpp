@@ -763,10 +763,6 @@ namespace cxgcode
 				}
 				else {
 					flag = (temp - baseInfo.speedMin) / diff;
-					if( flag <= 0.1)
-					{
-						flag = 0.0;
-					}
 				}
 
 				//flag = (float)move.speed;
