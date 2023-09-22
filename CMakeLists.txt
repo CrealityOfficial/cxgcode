@@ -77,9 +77,10 @@ set(ILIBS
 	qtuser_core
 	qtuser_3d
 	gcode
+  qcxutil
 	trimesh2
 	rapidjson
-	crslice
+  crcommon
 )
 
 __add_common_library(cxgcode)
