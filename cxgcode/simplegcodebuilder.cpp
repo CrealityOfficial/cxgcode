@@ -43,7 +43,7 @@ namespace cxgcode
 	SimpleGCodeBuilder::SimpleGCodeBuilder()
 		:GCodeBuilder()
 	{
-
+		m_visualTypeFlags.name = QString("visualTypeFlags");
 	}
 
 	SimpleGCodeBuilder::~SimpleGCodeBuilder()
@@ -77,10 +77,29 @@ namespace cxgcode
 #if SIMPLE_GCODE_IMPL == 1
 		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_normals, &m_steps, &m_indices);
 #elif SIMPLE_GCODE_IMPL == 3
-		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_endPositions, &m_normals, &m_steps, &m_lineWidths);
+
+		Qt3DRender::QGeometry *geo = qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_endPositions, &m_normals, &m_steps, &m_lineWidths);
+		{
+			Qt3DRender::QBuffer* buffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer);
+			buffer->setData(m_visualTypeFlags.bytes);
+			m_visualTypeFlagsAttribute = new Qt3DRender::QAttribute(buffer, m_visualTypeFlags.name, Qt3DRender::QAttribute::Float, m_visualTypeFlags.stride, m_visualTypeFlags.count);
+			geo->addAttribute(m_visualTypeFlagsAttribute);
+		}
+		return geo;
+
 #else
 		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_normals, &m_steps);
 #endif
+	}
+
+	void SimpleGCodeBuilder::rebuildGeometryVisualTypeData()
+	{
+		if (m_visualTypeFlagsAttribute && m_visualTypeFlagsAttribute->buffer())
+		{
+			Qt3DRender::QBuffer* buffer = m_visualTypeFlagsAttribute->buffer();
+			buffer->setData(m_visualTypeFlags.bytes);
+			m_visualTypeFlagsAttribute->setCount(m_visualTypeFlags.count);
+		}
 	}
 
 	Qt3DRender::QGeometry* SimpleGCodeBuilder::buildRetractionGeometry()
@@ -183,12 +202,11 @@ namespace cxgcode
 
 	void SimpleGCodeBuilder::updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type)
 	{
-		if (!attribute)
-			return;
+		/*if (!attribute)
+			return;*/
 
-		qtuser_3d::AttributeShade steps;
-		steps.name = QString("visualTypeFlags");
-
+		qtuser_3d::AttributeShade& steps = m_visualTypeFlags;
+		
 #if SIMPLE_GCODE_IMPL == 0
 		cpuTriSoupUpdate(steps, type);
 #elif SIMPLE_GCODE_IMPL == 1
@@ -197,12 +215,11 @@ namespace cxgcode
 #elif SIMPLE_GCODE_IMPL == 3
 		gpuIndicesUpdate(steps, type);
 #endif
-
-		attribute->setBuffer(qtuser_3d::GeometryCreateHelper::createBuffer(&steps));
+		/*attribute->setBuffer(qtuser_3d::GeometryCreateHelper::createBuffer(&steps));
 		attribute->setName(steps.name);
 		attribute->setCount(steps.count);
 		attribute->setVertexSize(steps.stride);
-		attribute->setVertexBaseType(Qt3DRender::QAttribute::Float);
+		attribute->setVertexBaseType(Qt3DRender::QAttribute::Float);*/
 	}
 
 	void SimpleGCodeBuilder::implBuild(SliceResultPointer result)

@@ -19,6 +19,7 @@ namespace cxgcode
 		trimesh::vec3 traitPosition(int layer, int step) override;
 
 		Qt3DRender::QGeometry* buildGeometry() override;
+		void rebuildGeometryVisualTypeData();
 		Qt3DRender::QGeometry* buildRetractionGeometry();
 		Qt3DRender::QGeometry* buildZSeamsGeometry();
 
@@ -75,6 +76,9 @@ namespace cxgcode
 #elif SIMPLE_GCODE_IMPL == 3
 		qtuser_3d::AttributeShade m_endPositions;
 #endif
+		qtuser_3d::AttributeShade m_visualTypeFlags;
+
+		Qt3DRender::QAttribute* m_visualTypeFlagsAttribute;
 	};
 }
 
