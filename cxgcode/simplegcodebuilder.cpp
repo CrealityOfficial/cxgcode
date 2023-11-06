@@ -218,7 +218,10 @@ namespace cxgcode
         //cr30
         processCr30offset(parseInfo);
 		if (m_tracer)
+		{
 			m_tracer->resetProgressScope(step, 1.0f);
+			m_tracer->variadicFormatMessage(1);
+		}
 #if SIMPLE_GCODE_IMPL == 0
 		cpuTriSoupBuild();
 #elif SIMPLE_GCODE_IMPL == 1
@@ -239,7 +242,10 @@ namespace cxgcode
 		//cr30
 		processCr30offset(parseInfo);
 		if (m_tracer)
+		{
 			m_tracer->resetProgressScope(step, 1.0f);
+			m_tracer->variadicFormatMessage(1);
+		}
 #if SIMPLE_GCODE_IMPL == 0
 		cpuTriSoupBuild();
 #elif SIMPLE_GCODE_IMPL == 1
