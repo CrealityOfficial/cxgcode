@@ -1,13 +1,17 @@
 #include "gcodestructurelistmodel.h"
-
+#include <qsettings.h>
 namespace cxgcode {
 
 GcodeStructureListModel::GcodeStructureListModel(QObject* parent)
     : GcodePreviewListModel(gcode::GCodeVisualType::gvt_structure, parent) {}
 
 void GcodeStructureListModel::checkItem(int type, bool checked) {
+    QSettings setting;
   for (auto const& data : data_list_) {
     if (data.type == type) {
+        setting.beginGroup(QStringLiteral("GCodePreviw_Struct"));
+        setting.setValue(data.name, checked);
+        setting.endGroup();
       Q_EMIT itemCheckedChanged(type, checked);
     }
   }
@@ -88,7 +92,15 @@ void GcodeStructureListModel::setTimeParts(const gcode::TimeParts& time_parts) {
     { QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Zseam")           , sec2str(0)                      , 0.0                    , 17, true  },
     { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Retraction")      , sec2str(move_retraction_time), move_retraction_percent, 18, false },
   };
-
+  QSettings setting;
+  for (auto &data : data_list) {
+      
+      setting.beginGroup(QStringLiteral("GCodePreviw_Struct"));
+      auto checked = setting.value(data.name, data.checked).toBool();
+      setting.endGroup();
+      data.checked = checked;
+      Q_EMIT itemCheckedChanged(data.type, checked);
+  }
   beginResetModel();
   data_list_ = std::move(data_list);
   endResetModel();
