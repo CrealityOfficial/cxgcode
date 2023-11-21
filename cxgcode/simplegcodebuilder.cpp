@@ -789,7 +789,8 @@ namespace cxgcode
 		{
 			case gcode::GCodeVisualType::gvt_speed:
 			{
-				flag = (float)move.speed;
+				//flag = (float)move.speed;
+				flag = (move.speed - baseInfo.speedMin) / (baseInfo.speedMax - baseInfo.speedMin + 0.01f);
 				//着色器里面把flag < 0.0的线段忽略
 				if (move.type == SliceLineType::Travel)
 					flag = -1.0f;
