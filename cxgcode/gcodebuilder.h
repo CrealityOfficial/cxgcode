@@ -2,9 +2,10 @@
 #define CREATIVE_KERNEL_GCODEBUILDER_1677068549648_H
 
 #include "cxgcode/interface.h"
-#include "gcode/define.h"
-#include "gcode/sliceresult.h"
-#include "gcode/slicemodelbuilder.h"
+#include "crslice/gcode/define.h"
+#include "crslice/gcode/sliceresult.h"
+#include "crslice/gcode/slicemodelbuilder.h"
+#include "crslice/gcode/header.h"
 #include "qtuser3d/geometry/attribute.h"
 #include "trimesh2/Box.h"
 
@@ -22,8 +23,8 @@ namespace cxgcode
 		virtual ~GCodeBuilder();
 
 		void build(SliceResultPointer result, ccglobal::Tracer* tracer = nullptr);
-
 		void build(ccglobal::Tracer* tracer = nullptr);
+		void build_with_image(SliceResultPointer result, ccglobal::Tracer* tracer = nullptr);
 
 		virtual float traitSpeed(int layer, int step);
 		virtual trimesh::vec3 traitPosition(int layer, int step);

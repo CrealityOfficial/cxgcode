@@ -55,7 +55,14 @@ namespace cxgcode
 	{
 		int index = stepIndex(layer, step);
 		if (index >= 0 && index < baseInfo.totalSteps)
-			return m_struct.m_moves[index].speed;
+		{
+			if ((baseInfo.speedMax - baseInfo.speedMin + 0.01f) > 0.0f)
+			{
+				float ratio = (m_struct.m_moves[index].speed - baseInfo.speedMin) / (baseInfo.speedMax - baseInfo.speedMin + 0.01f);		
+				return ratio;
+			}	
+		}
+		
 		return 0.0f;
 	}
 
@@ -955,13 +962,13 @@ namespace cxgcode
 		return flag;
 	}
 
-	void SimpleGCodeBuilder::getPathData(const trimesh::vec3 point, float e, int type)
+	void SimpleGCodeBuilder::getPathData(const trimesh::vec3 point, float e, int type, bool fromGcode)
 	{
-		m_struct.getPathData(point, e, type);
+		m_struct.getPathData(point, e, type, fromGcode);
 	}
-	void SimpleGCodeBuilder::getPathDataG2G3(const trimesh::vec3 point, float i, float j, float e, int type, bool isG2)
+	void SimpleGCodeBuilder::getPathDataG2G3(const trimesh::vec3 point, float i, float j, float e, int type, bool isG2, bool fromGcode)
 	{
-		m_struct.getPathDataG2G3(point,i,j,e,type,isG2);
+		m_struct.getPathDataG2G3(point,i,j,e,type,isG2, fromGcode);
 	}
 	void SimpleGCodeBuilder::setParam(gcode::GCodeParseInfo& pathParam)
 	{
@@ -982,8 +989,11 @@ namespace cxgcode
 	void SimpleGCodeBuilder::setFan(float fan) {
 		m_struct.setFan(fan);
 	}
-	void SimpleGCodeBuilder::setZ(float z,float h){
-		m_struct.setZ(z,h);
+	void SimpleGCodeBuilder::setZ(float z,float h, bool fromGcode){
+		if (fromGcode)
+			m_struct.setZ_from_gcode(z);
+		else
+			m_struct.setZ(z,h);
 	}
 	void SimpleGCodeBuilder::setE(float e) {
 		m_struct.setE(e);

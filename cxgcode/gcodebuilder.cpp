@@ -1,6 +1,6 @@
 #include "gcodebuilder.h"
 #include <regex>
-#include "gcode/gcodedata.h"
+#include "crslice/gcode/gcodedata.h"
 
 namespace cxgcode
 {
@@ -21,13 +21,20 @@ namespace cxgcode
 			return;
 
 		m_tracer = tracer;
-		cxsw::parseGCodeInfo(result.get(), parseInfo);
+		gcode::parseGCodeInfo(result.get(), parseInfo);
 		implBuild(result);
 		m_tracer = nullptr;
 	}
 
 	void GCodeBuilder::build(ccglobal::Tracer* tracer)
 	{
+		implBuild();
+		m_tracer = nullptr;
+	}
+
+	void GCodeBuilder::build_with_image(SliceResultPointer result, ccglobal::Tracer* tracer)
+	{
+		gcode::parseGCodeInfo(result.get(), parseInfo);
 		implBuild();
 		m_tracer = nullptr;
 	}

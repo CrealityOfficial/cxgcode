@@ -1,6 +1,7 @@
 ﻿#include "sliceattain.h"
 #include "cxgcode/gcodehelper.h"
-#include "gcode/gcodedata.h"
+#include "crslice/gcode/gcodedata.h"
+#include "crslice/gcode/header.h"
 
 #include "qtusercore/string/resourcesfinder.h"
 #include "qtusercore/module/systemutil.h"
@@ -432,7 +433,7 @@ namespace cxgcode
 			//cxsw::getImageStr(imageStr, getImageFromGcode(), builder.baseInfo.layers, exportFormat, layerHeight, false, SLICE_PATH);
 		}
 
-		cxsw::_SaveGCode(fileName.toLocal8Bit().data(), imageStr.toLocal8Bit().data(), m_result->layerCode(), m_result->prefixCode(), m_result->tailCode());
+		gcode::_SaveGCode(fileName.toLocal8Bit().data(), imageStr.toLocal8Bit().data(), m_result->layerCode(), m_result->prefixCode(), m_result->tailCode());
 	}
 
 	void SliceAttain::saveTempGCode()
