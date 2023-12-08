@@ -79,8 +79,7 @@ namespace cxgcode
 
 	QString SliceAttain::material_weight()
 	{
-		return QString::number(builder.parseInfo.materialLenth 
-			* builder.parseInfo.materialDensity, 'f', 2);
+		return QString::number(builder.parseInfo.materialLenth);
 	}
 
 	QString SliceAttain::printing_time()
@@ -96,7 +95,7 @@ namespace cxgcode
 	{
 		int nTemp = (builder.parseInfo.materialLenth + 0.005) * 100;
 		float materialLength = nTemp / 100.0f;
-		return QString::number(materialLength * builder.parseInfo.unitPrice, 'f', 2);
+		return QString::number(builder.parseInfo.cost);
 	}
 
 	QString SliceAttain::material_length()
