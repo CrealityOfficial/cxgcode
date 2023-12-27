@@ -1008,7 +1008,15 @@ namespace cxgcode
 	{
 		m_struct.getNotPath();
 	}
+	void SimpleGCodeBuilder::setNozzleColorList(std::string& colorList)
+	{
+		m_struct.setNozzleColorList(colorList);
+	}
 
+	std::vector<std::string> SimpleGCodeBuilder::getNozzleColorList()
+	{
+		return m_struct.m_nozzleColorList;
+	}
 	/*
 	* 多实例渲染：
 	* 本例是渲染多个球体，除了球体本身的几何数据之外，增加了每个球体世界坐标及其标识信息

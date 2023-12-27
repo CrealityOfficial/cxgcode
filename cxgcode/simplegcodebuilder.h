@@ -40,6 +40,9 @@ namespace cxgcode
 		void setE(float e);
 		void setTime(float time);
 		void getNotPath();
+		void setNozzleColorList(std::string& colorList);
+
+		std::vector<std::string> getNozzleColorList();
 	protected:
 		void implBuild(SliceResultPointer result) override;
 		void implBuild()override;
