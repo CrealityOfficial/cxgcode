@@ -813,7 +813,7 @@ namespace cxgcode
 				//flag = (float)move.speed;
 				flag = (move.speed - baseInfo.speedMin) / (baseInfo.speedMax - baseInfo.speedMin + 0.01f);
 				//着色器里面把flag < 0.0的线段忽略
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
 			break;
@@ -827,7 +827,7 @@ namespace cxgcode
 			case gcode::GCodeVisualType::gvt_extruder:
 			{
 				flag = (float)move.extruder;
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
 			break;
@@ -849,7 +849,7 @@ namespace cxgcode
 					flag = (l.layerHight - min) / (max - min);
 				}
 				//qDebug() << "layer height = " << flag;
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
 			break;
@@ -870,7 +870,7 @@ namespace cxgcode
 				}
 
 				
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
 			break;
@@ -881,7 +881,7 @@ namespace cxgcode
 				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 				float flow = l.flow;
 				//qDebug() << "flow = " << flow;
-				if (move.type == SliceLineType::Travel || flow <= 0.0 || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || flow <= 0.0 || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 				else
 				{
@@ -892,7 +892,7 @@ namespace cxgcode
 
 			case gcode::GCodeVisualType::gvt_layerTime:
 			{
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 				else if (step < m_steps.count)
 				{
@@ -928,7 +928,7 @@ namespace cxgcode
 				flag = fminf(fmaxf(fans.fanSpeed / 255.0, 0.0), 1.0);
 
 				//qDebug() << "fan speed = " << flag;
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
 			break;
@@ -950,7 +950,7 @@ namespace cxgcode
 					flag = (temp - baseInfo.minTemperature) / diff;
 				}
 
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
 			break;
