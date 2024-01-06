@@ -229,6 +229,11 @@ namespace cxgcode
 		attribute->setVertexBaseType(Qt3DRender::QAttribute::Float);*/
 	}
 
+	gcode::GCodeStruct& SimpleGCodeBuilder::getGCodeStruct()
+	{
+		return m_struct;
+	}
+
 	void SimpleGCodeBuilder::implBuild(SliceResultPointer result)
 	{
         if (!result)
@@ -962,61 +967,6 @@ namespace cxgcode
 		return flag;
 	}
 
-	void SimpleGCodeBuilder::getPathData(const trimesh::vec3 point, float e, int type, bool fromGcode)
-	{
-		m_struct.getPathData(point, e, type, fromGcode);
-	}
-	void SimpleGCodeBuilder::getPathDataG2G3(const trimesh::vec3 point, float i, float j, float e, int type, bool isG2, bool fromGcode)
-	{
-		m_struct.getPathDataG2G3(point,i,j,e,type,isG2, fromGcode);
-	}
-	void SimpleGCodeBuilder::setParam(gcode::GCodeParseInfo& pathParam)
-	{
-		m_struct.setParam(pathParam);
-	}
-	void SimpleGCodeBuilder::setLayer(int layer) {
-		m_struct.setLayer(layer);
-	}
-	void SimpleGCodeBuilder::setSpeed(float s) {
-		m_struct.setSpeed(s);
-	}
-	void SimpleGCodeBuilder::setTEMP(float temp) {
-		m_struct.setTEMP(temp);
-	}
-	void SimpleGCodeBuilder::setExtruder(int nr) {
-		m_struct.setExtruder(nr);
-	}
-	void SimpleGCodeBuilder::setFan(float fan) {
-		m_struct.setFan(fan);
-	}
-	void SimpleGCodeBuilder::setZ(float z,float h, bool fromGcode){
-		if (fromGcode)
-			m_struct.setZ_from_gcode(z);
-		else
-			m_struct.setZ(z,h);
-	}
-	void SimpleGCodeBuilder::setE(float e) {
-		m_struct.setE(e);
-	}
-
-	void SimpleGCodeBuilder::setTime(float time)
-	{
-		m_struct.setTime(time);
-	}
-
-	void SimpleGCodeBuilder::getNotPath()
-	{
-		m_struct.getNotPath();
-	}
-	void SimpleGCodeBuilder::setNozzleColorList(std::string& colorList)
-	{
-		m_struct.setNozzleColorList(colorList);
-	}
-
-	std::vector<std::string> SimpleGCodeBuilder::getNozzleColorList()
-	{
-		return m_struct.m_nozzleColorList;
-	}
 	/*
 	* 多实例渲染：
 	* 本例是渲染多个球体，除了球体本身的几何数据之外，增加了每个球体世界坐标及其标识信息

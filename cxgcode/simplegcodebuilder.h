@@ -28,21 +28,7 @@ namespace cxgcode
 
 		void updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type) override;
 
-		void getPathData(const trimesh::vec3 point, float e, int type, bool fromGcode = false);
-		void getPathDataG2G3(const trimesh::vec3 point, float i, float j, float e, int type, bool isG2 = true, bool fromGcode = false);
-		void setParam(gcode::GCodeParseInfo& pathParam);
-		void setLayer(int layer);
-		void setSpeed(float s);
-		void setTEMP(float temp);
-		void setExtruder(int nr);
-		void setFan(float fan);
-		void setZ(float z, float h, bool fromGcode = false);
-		void setE(float e);
-		void setTime(float time);
-		void getNotPath();
-		void setNozzleColorList(std::string& colorList);
-
-		std::vector<std::string> getNozzleColorList();
+		gcode::GCodeStruct& getGCodeStruct();
 	protected:
 		void implBuild(SliceResultPointer result) override;
 		void implBuild()override;
