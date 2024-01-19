@@ -55,7 +55,14 @@ namespace cxgcode
 	{
 		int index = stepIndex(layer, step);
 		if (index >= 0 && index < baseInfo.totalSteps)
-			return m_struct.m_moves[index].speed;
+		{
+			if ((baseInfo.speedMax - baseInfo.speedMin + 0.01f) > 0.0f)
+			{
+				float ratio = (m_struct.m_moves[index].speed - baseInfo.speedMin) / (baseInfo.speedMax - baseInfo.speedMin + 0.01f);
+				return ratio;
+			}
+		}
+
 		return 0.0f;
 	}
 
