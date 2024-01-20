@@ -78,7 +78,7 @@ void GcodeStructureListModel::setTimeParts(const gcode::TimeParts& time_parts) {
     }
   };
 
-
+  //mapping from enum class SliceLineType
   QList<GcodeStructureData> data_list{
     { QColor{ QStringLiteral("#772D28") }, QStringLiteral("Outer Perimeter") , sec2str(outer_wall_time)        , outer_wall_percent     , 1 , true  },
     { QColor{ QStringLiteral("#028C05") }, QStringLiteral("Inner Perimeter") , sec2str(inner_wall_time)        , inner_wall_percent     , 2 , true  },
@@ -87,10 +87,11 @@ void GcodeStructureListModel::setTimeParts(const gcode::TimeParts& time_parts) {
     { QColor{ QStringLiteral("#511E54") }, QStringLiteral("SkirtBrim")       , sec2str(skirt_brim_time)        , skirt_brim_percent     , 5 , true  },
     { QColor{ QStringLiteral("#E5DB33") }, QStringLiteral("Infill")          , sec2str(infill_time)            , infill_percent         , 6 , true  },
     { QColor{ QStringLiteral("#B5BC38") }, QStringLiteral("SupportInfill")   , sec2str(support_infill_time)    , support_infill_percent , 7 , true  },
+    { QColor{ QStringLiteral("#D63B12") }, QStringLiteral("SupportInterface"), sec2str(0)                      , 0.0                    , 10, true  },
     { QColor{ QStringLiteral("#339919") }, QStringLiteral("PrimeTower")      , sec2str(prime_tower_time)       , prime_tower_percent    , 11, true  },
     { QColor{ QStringLiteral("#60595F") }, QStringLiteral("Travel")          , sec2str(move_combing_time)      , move_combing_percent   , 13, false },
     { QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Zseam")           , sec2str(0)                      , 0.0                    , 17, true  },
-    { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Retraction")      , sec2str(move_retraction_time), move_retraction_percent, 18, false },
+    { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Retraction")      , sec2str(move_retraction_time)   , move_retraction_percent, 18, false },
   };
   QSettings setting;
   for (auto &data : data_list) {
