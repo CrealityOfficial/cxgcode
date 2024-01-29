@@ -72,7 +72,8 @@ GcodeExtruderTableModel::GcodeExtruderTableModel(QObject* parent)
     m_Materials.append(new ModelItem(this));
 }
 
-void GcodeExtruderTableModel::setDataList(const QList<cxgcode::GcodeExtruderData>& data_list) {
+void GcodeExtruderTableModel::setDataList(const QList<cxgcode::GcodeExtruderData>& data_list) 
+{
     beginResetModel();
     m_ColorsData = data_list;
     endResetModel();

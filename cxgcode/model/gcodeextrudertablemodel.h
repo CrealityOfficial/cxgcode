@@ -29,8 +29,6 @@ public:
     double length;
     double weight;
 };
-Q_DECLARE_METATYPE(MaterialConsume)
-Q_DECLARE_METATYPE(MaterialConsume*)
 
 class ModelItem : public QObject 
 {
@@ -65,13 +63,13 @@ class CXGCODE_API GcodeExtruderTableModel : public QAbstractTableModel
 public:
   explicit GcodeExtruderTableModel(QObject* parent = nullptr);
   virtual ~GcodeExtruderTableModel() = default;
-  void GcodeExtruderTableModel::setDataList(const QList<GcodeExtruderData>& data_list);
+  void setDataList(const QList<GcodeExtruderData>& data_list);
 protected:
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;
   int columnCount(const QModelIndex & = QModelIndex()) const override;
   QVariant data(const QModelIndex& index, int role = Qt::ItemDataRole::DisplayRole) const override;
   QHash<int, QByteArray> roleNames() const override;
-  QVariant GcodeExtruderTableModel::headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 private:
     QList<ModelItem* > m_Materials;
     QList<QColor> m_Colors;
