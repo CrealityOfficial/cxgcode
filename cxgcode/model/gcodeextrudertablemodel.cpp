@@ -96,14 +96,19 @@ QVariant GcodeExtruderTableModel::data(const QModelIndex& index, int role) const
     return result;
   }
 
+  if (m_ColorsData.count() <= index.row())
+  {
+      return result;
+  }
+
   ModelItem* itemData = m_Materials.at(index.row());
 
   switch (role) 
   {
       case ModelItem::CT_Color:
       {
-          MaterialConsume* mc = itemData->getDataByType((ModelItem::ConsumeType)index.column());
-          return QVariant::fromValue(mc);
+          cxgcode::GcodeExtruderData ged = m_ColorsData.at(index.row());
+          return ged.color;
       }
       case ModelItem::CT_Model:
       {
@@ -149,11 +154,11 @@ QVariant GcodeExtruderTableModel::headerData(int section, Qt::Orientation orient
         return QVariant();
 
     if (orientation == Qt::Horizontal) {
-        // 返回水平表头
+        // 路碌禄脴脣庐脝陆卤铆脥路
         return QString("Column %1").arg(section);
     }
     else {
-        // 返回垂直表头
+        // 路碌禄脴麓鹿脰卤卤铆脥路
         return QString("Row %1").arg(section);
     }
 }
