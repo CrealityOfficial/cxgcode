@@ -29,9 +29,9 @@ public:
     Q_INVOKABLE double getMaterialIndex() { return materialIndex; };
     Q_INVOKABLE QColor getMaterialColor() { return materialColor; };
 
-    double length;
-    double weight;
-    int materialIndex;
+    double length = 0.0;
+    double weight = 0.0;
+    int materialIndex = 0;
     QColor materialColor;
 };
 
