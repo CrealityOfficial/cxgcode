@@ -122,7 +122,7 @@ void GcodeExtruderTableModel::setData(std::vector<std::pair<int, double>>& model
             mc_total->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
 
             mc_model->length = model[index].second;
-            if (flush.size() > 0)
+            if (flush.size() > index)
                 mc_flush->length = m_IsSingleColor ? 0 : flush[index].second;
             if(filamentTower.size() > 0)
                 mc_filamentTower->length = m_IsSingleColor ? 0 : filamentTower[index].second;
@@ -130,9 +130,9 @@ void GcodeExtruderTableModel::setData(std::vector<std::pair<int, double>>& model
         }
         else {
             mc_model->weight = model[index].second;
-            if (flush.size() > 0)
+            if (flush.size() > index)
                 mc_flush->weight = m_IsSingleColor ? 0 : flush[index].second;
-            if (filamentTower.size() > 0)
+            if (filamentTower.size() > index)
                 mc_filamentTower->weight = m_IsSingleColor ? 0 : filamentTower[index].second;
             mc_total->weight = mc_model->weight + mc_flush->weight + mc_filamentTower->weight;
         }
