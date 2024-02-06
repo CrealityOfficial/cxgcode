@@ -279,8 +279,16 @@ namespace cxgcode
 		if (_layer >= 0 && _layer < layers())
 		{
 			const std::vector<int>& maps = builder.m_stepGCodesMaps.at(_layer);
-			if (nViewIndex >= maps.size()) return -1;
-			return maps.at(nViewIndex);
+			//if (nViewIndex >= maps.size()) return -1;
+			for (int i = 0; i < maps.size(); i++)
+			{
+				int step = maps[i];
+				if (step >= nViewIndex)
+				{
+					return i;
+				}
+			}
+			//return maps.at(nViewIndex);
 		}
 		return -1;
 	}
