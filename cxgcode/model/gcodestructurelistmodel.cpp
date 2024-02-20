@@ -1,5 +1,5 @@
 #include "gcodestructurelistmodel.h"
-
+#include "gcode/gcode/sliceline.h"
 namespace cxgcode {
 
 GcodeStructureListModel::GcodeStructureListModel(QObject* parent)
@@ -18,7 +18,177 @@ void GcodeStructureListModel::setDataList(const QList<GcodeStructureData>& data_
   data_list_ = data_list;
   endResetModel();
 }
+static const auto sec2str = [](unsigned int secs) {
+    unsigned int const mins = secs / 60;
+    unsigned int const hors = mins / 60;
 
+    unsigned int const sec = secs % 60 % 60;
+    unsigned int const min = mins % 60;
+    unsigned int const hor = hors;
+
+    if (hor != 0) {
+        return QStringLiteral("%1h%2m%3s").arg(hor).arg(min).arg(sec);
+    }
+    else if (min != 0) {
+        return QStringLiteral("%1m%2s").arg(min).arg(sec);
+    }
+    else {
+        return QStringLiteral("%1s").arg(sec);
+    }
+};
+void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>> time_parts)
+{
+    float outer_wall_time = 0;
+    float inner_wall_time = 0;
+    float overhang_time = 0;
+    float solid_infill_time = 0;
+    float internal_infill_time = 0;
+    float top_solid_infill_time = 0;
+    float bottom_solid_infill_time = 0;
+    float support_time = 0;
+    float skirt_brim_time = 0;
+    float infill_time = 0;
+    float bridge_infill = 0;
+    float support_infill_time = 0;
+    float support_material = 0;
+    float support_material_interface = 0;
+    float support_transition = 0;
+    float wipe_tower = 0;
+    float custom = 0;
+    float noop = 0;
+    float retract = 0;
+    float unretract = 0;
+    float seam = 0;
+    float tool_change = 0;
+    float color_change = 0;
+    float pause_Print = 0;
+    float custom_gcode = 0;
+    float travel = 0;
+    float wipe = 0;
+    float extrude = 0;
+    for (int i = 0; i < time_parts.size(); i++)
+    {
+        std::pair<int, float> pair = time_parts[i];
+        
+        switch (static_cast<SliceLineType>(pair.first))
+        {
+           case SliceLineType::erPerimeter:
+               inner_wall_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erExternalPerimeter:
+               outer_wall_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erOverhangPerimeter:
+               overhang_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erInternalInfill:
+               internal_infill_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erSolidInfill:
+               solid_infill_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erTopSolidInfill:
+               top_solid_infill_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erBottomSurface:
+               bottom_solid_infill_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erBridgeInfill:
+               bridge_infill = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erSkirt:
+               skirt_brim_time = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erSupportMaterial:
+               support_material = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erSupportMaterialInterface:
+               support_material_interface = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erSupportTransition:
+               support_transition = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erWipeTower:
+               wipe_tower = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::erCustom:
+               custom = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Noop:
+               noop = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Retract:
+               retract = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Unretract:
+               unretract = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Seam:
+               seam = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Tool_change:
+               tool_change = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Color_change:
+               color_change = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Pause_Print:
+               pause_Print = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Custom_GCode:
+               custom_gcode = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Travel:
+               travel = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Wipe:
+               wipe = static_cast<float>(pair.second);
+               break;
+           case SliceLineType::Extrude:
+               extrude = static_cast<float>(pair.second);
+               break;
+           default:
+               break;
+        }
+    }
+    auto total_time = outer_wall_time + inner_wall_time + overhang_time + internal_infill_time + solid_infill_time + top_solid_infill_time + bottom_solid_infill_time+ bridge_infill+ custom+ travel+ unretract+ wipe+ seam;
+    if (total_time == 0) {
+        total_time = 1;
+    }
+    auto const outer_wall_percent = outer_wall_time / total_time * 100.0;
+    auto const inner_wall_percent = inner_wall_time / total_time * 100.0;
+    auto const overhang_time_percent = overhang_time / total_time * 100.0;
+    auto const internal_infill_time_percent = internal_infill_time / total_time * 100.0;
+    auto const skirt_brim_percent = solid_infill_time / total_time * 100.0;
+    auto const top_solid_infill_percent = top_solid_infill_time / total_time * 100.0;
+    auto const bottom_solid_infill_time_percent = bottom_solid_infill_time / total_time * 100.0;
+    auto const bridge_infill_percent = bridge_infill / total_time * 100.0;
+    auto const custom_percent = custom / total_time * 100.0;
+    auto const travel_percent = travel / total_time * 100.0;
+    auto const unretract_percent = unretract / total_time * 100.0;
+    auto const wipe_percent = wipe / total_time * 100.0;
+    auto const seam_percent = seam / total_time * 100.0;
+    auto const retract_percent = retract / total_time * 100.0;
+    QList<GcodeStructureData> data_list{
+  { QColor{ QStringLiteral("#772D28") }, QStringLiteral("Outer Perimeter") , sec2str(outer_wall_time)        , outer_wall_percent     , static_cast<int>(SliceLineType::erExternalPerimeter) , true  },
+  { QColor{ QStringLiteral("#028C05") }, QStringLiteral("Inner Perimeter") , sec2str(inner_wall_time)        , inner_wall_percent     , static_cast<int>(SliceLineType::erPerimeter) , true  },
+  { QColor{ QStringLiteral("#FFB27F") }, QStringLiteral("Sparse infill")            , sec2str(overhang_time_percent)              , overhang_time           , static_cast<int>(SliceLineType::erOverhangPerimeter) , true  },
+  { QColor{ QStringLiteral("#058C8C") }, QStringLiteral("Internal solid infill")         , sec2str(internal_infill_time)           , internal_infill_time_percent        , static_cast<int>(SliceLineType::erInternalInfill) , true  },
+  { QColor{ QStringLiteral("#511E54") }, QStringLiteral("Top surface")       , sec2str(top_solid_infill_time)        , top_solid_infill_percent     , static_cast<int>(SliceLineType::erTopSolidInfill) , true  },
+  { QColor{ QStringLiteral("#E5DB33") }, QStringLiteral("Bottom surface")          , sec2str(bottom_solid_infill_time)            , bottom_solid_infill_time_percent         , static_cast<int>(SliceLineType::erBottomSurface) , true  },
+  { QColor{ QStringLiteral("#B5BC38") }, QStringLiteral("Internal Bridge")   , sec2str(bridge_infill)    , bridge_infill_percent , static_cast<int>(SliceLineType::erBridgeInfill) , true  },
+  { QColor{ QStringLiteral("#339919") }, QStringLiteral("Custom")      , sec2str(custom)       , custom_percent    , static_cast<int>(SliceLineType::erCustom), true  },
+  { QColor{ QStringLiteral("#60595F") }, QStringLiteral("Travel")          , sec2str(travel)      , travel_percent   , static_cast<int>(SliceLineType::Travel), false },
+  { QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Retract")           , sec2str(retract)                      , retract_percent                    , static_cast<int>(SliceLineType::Retract), true  },
+  { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Unretract")      , sec2str(unretract), unretract_percent, static_cast<int>(SliceLineType::Unretract), false },
+  { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Wipe")      , sec2str(wipe), wipe_percent, static_cast<int>(SliceLineType::Wipe), false },
+  { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Seams")      , sec2str(seam), seam_percent, static_cast<int>(SliceLineType::Seam), false }
+    };
+
+    beginResetModel();
+    data_list_ = std::move(data_list);
+    endResetModel();
+}
 void GcodeStructureListModel::setTimeParts(const gcode::TimeParts& time_parts) {
   auto const outer_wall_time      = static_cast<int>(time_parts.OuterWall);
   auto const inner_wall_time      = static_cast<int>(time_parts.InnerWall);
@@ -57,22 +227,7 @@ void GcodeStructureListModel::setTimeParts(const gcode::TimeParts& time_parts) {
   auto const move_retraction_percent = time_parts.MoveRetraction / total_time * 100.0;
   auto const prime_tower_percent     = time_parts.PrimeTower     / total_time * 100.0;
 
-  static const auto sec2str = [](unsigned int secs) {
-    unsigned int const mins = secs / 60;
-    unsigned int const hors = mins / 60;
-
-    unsigned int const sec = secs % 60 % 60;
-    unsigned int const min = mins % 60;
-    unsigned int const hor = hors;
-
-    if (hor != 0) {
-      return QStringLiteral("%1h%2m%3s").arg(hor).arg(min).arg(sec);
-    } else if (min != 0) {
-      return QStringLiteral("%1m%2s").arg(min).arg(sec);
-    } else {
-      return QStringLiteral("%1s").arg(sec);
-    }
-  };
+  
 
 
   QList<GcodeStructureData> data_list{
