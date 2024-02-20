@@ -182,7 +182,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
   { QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract")           , sec2str(retract)                      , retract_percent                    , static_cast<int>(SliceLineType::Retract), true  },
   { QColor{ QStringLiteral("#49ADCF") }, QStringLiteral("Unretract")      , sec2str(unretract), unretract_percent, static_cast<int>(SliceLineType::Unretract), false },
   { QColor{ QStringLiteral("#FFFF00") }, QStringLiteral("Wipe")      , sec2str(wipe), wipe_percent, static_cast<int>(SliceLineType::Wipe), false },
-  { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Seams")      , sec2str(seam), seam_percent, static_cast<int>(SliceLineType::Seam), false }
+  { QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams")      , sec2str(seam), seam_percent, static_cast<int>(SliceLineType::Seam), false }
     };
 
     beginResetModel();
