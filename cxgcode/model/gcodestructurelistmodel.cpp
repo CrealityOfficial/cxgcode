@@ -159,7 +159,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     auto const inner_wall_percent = inner_wall_time / total_time * 100.0;
     auto const overhang_time_percent = overhang_time / total_time * 100.0;
     auto const internal_infill_time_percent = internal_infill_time / total_time * 100.0;
-    auto const skirt_brim_percent = solid_infill_time / total_time * 100.0;
+    auto const solid_infill_percent = solid_infill_time / total_time * 100.0;
     auto const top_solid_infill_percent = top_solid_infill_time / total_time * 100.0;
     auto const bottom_solid_infill_time_percent = bottom_solid_infill_time / total_time * 100.0;
     auto const bridge_infill_percent = bridge_infill / total_time * 100.0;
@@ -170,18 +170,18 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     auto const seam_percent = seam / total_time * 100.0;
     auto const retract_percent = retract / total_time * 100.0;
     QList<GcodeStructureData> data_list{
-  { QColor{ QStringLiteral("#772D28") }, QStringLiteral("Outer Perimeter") , sec2str(outer_wall_time)        , outer_wall_percent     , static_cast<int>(SliceLineType::erExternalPerimeter) , true  },
-  { QColor{ QStringLiteral("#028C05") }, QStringLiteral("Inner Perimeter") , sec2str(inner_wall_time)        , inner_wall_percent     , static_cast<int>(SliceLineType::erPerimeter) , true  },
-  { QColor{ QStringLiteral("#FFB27F") }, QStringLiteral("Sparse infill")            , sec2str(overhang_time_percent)              , overhang_time           , static_cast<int>(SliceLineType::erOverhangPerimeter) , true  },
-  { QColor{ QStringLiteral("#058C8C") }, QStringLiteral("Internal solid infill")         , sec2str(internal_infill_time)           , internal_infill_time_percent        , static_cast<int>(SliceLineType::erInternalInfill) , true  },
-  { QColor{ QStringLiteral("#511E54") }, QStringLiteral("Top surface")       , sec2str(top_solid_infill_time)        , top_solid_infill_percent     , static_cast<int>(SliceLineType::erTopSolidInfill) , true  },
-  { QColor{ QStringLiteral("#E5DB33") }, QStringLiteral("Bottom surface")          , sec2str(bottom_solid_infill_time)            , bottom_solid_infill_time_percent         , static_cast<int>(SliceLineType::erBottomSurface) , true  },
-  { QColor{ QStringLiteral("#B5BC38") }, QStringLiteral("Internal Bridge")   , sec2str(bridge_infill)    , bridge_infill_percent , static_cast<int>(SliceLineType::erBridgeInfill) , true  },
-  { QColor{ QStringLiteral("#339919") }, QStringLiteral("Custom")      , sec2str(custom)       , custom_percent    , static_cast<int>(SliceLineType::erCustom), true  },
-  { QColor{ QStringLiteral("#60595F") }, QStringLiteral("Travel")          , sec2str(travel)      , travel_percent   , static_cast<int>(SliceLineType::Travel), false },
-  { QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Retract")           , sec2str(retract)                      , retract_percent                    , static_cast<int>(SliceLineType::Retract), true  },
-  { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Unretract")      , sec2str(unretract), unretract_percent, static_cast<int>(SliceLineType::Unretract), false },
-  { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Wipe")      , sec2str(wipe), wipe_percent, static_cast<int>(SliceLineType::Wipe), false },
+  { QColor{ QStringLiteral("#FF7D38") }, QStringLiteral("Outer Perimeter") , sec2str(outer_wall_time)        , outer_wall_percent     , static_cast<int>(SliceLineType::erExternalPerimeter) , true  },
+  { QColor{ QStringLiteral("#FFE64D") }, QStringLiteral("Inner Perimeter") , sec2str(inner_wall_time)        , inner_wall_percent     , static_cast<int>(SliceLineType::erPerimeter) , true  },
+  { QColor{ QStringLiteral("#B03029") }, QStringLiteral("Sparse infill")            , sec2str(internal_infill_time)              , internal_infill_time_percent           , static_cast<int>(SliceLineType::erInternalInfill) , true  },
+  { QColor{ QStringLiteral("#9654CC") }, QStringLiteral("Internal solid infill")         , sec2str(solid_infill_time)           , solid_infill_percent        , static_cast<int>(SliceLineType::erSolidInfill) , true  },
+  { QColor{ QStringLiteral("#F04040") }, QStringLiteral("Top surface")       , sec2str(top_solid_infill_time)        , top_solid_infill_percent     , static_cast<int>(SliceLineType::erTopSolidInfill) , true  },
+  { QColor{ QStringLiteral("#665CC7") }, QStringLiteral("Bottom surface")          , sec2str(bottom_solid_infill_time)            , bottom_solid_infill_time_percent         , static_cast<int>(SliceLineType::erBottomSurface) , true  },
+  { QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Internal Bridge")   , sec2str(bridge_infill)    , bridge_infill_percent , static_cast<int>(SliceLineType::erBridgeInfill) , true  },
+  { QColor{ QStringLiteral("#5ED194") }, QStringLiteral("Custom")      , sec2str(custom)       , custom_percent    , static_cast<int>(SliceLineType::erCustom), true  },
+  { QColor{ QStringLiteral("#38489B") }, QStringLiteral("Travel")          , sec2str(travel)      , travel_percent   , static_cast<int>(SliceLineType::Travel), false },
+  { QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract")           , sec2str(retract)                      , retract_percent                    , static_cast<int>(SliceLineType::Retract), true  },
+  { QColor{ QStringLiteral("#49ADCF") }, QStringLiteral("Unretract")      , sec2str(unretract), unretract_percent, static_cast<int>(SliceLineType::Unretract), false },
+  { QColor{ QStringLiteral("#FFFF00") }, QStringLiteral("Wipe")      , sec2str(wipe), wipe_percent, static_cast<int>(SliceLineType::Wipe), false },
   { QColor{ QStringLiteral("#FF00FF") }, QStringLiteral("Seams")      , sec2str(seam), seam_percent, static_cast<int>(SliceLineType::Seam), false }
     };
 
