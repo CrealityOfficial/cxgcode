@@ -116,10 +116,13 @@ void GcodeExtruderTableModel::setData(std::vector<std::pair<int, double>>& model
             mc_filamentTower->materialIndex = model[index].first;
             mc_total->materialIndex = model[index].first;
 
-            mc_model->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
-            mc_flush->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
-            mc_filamentTower->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
-            mc_total->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
+            if (!m_ColorsData.isEmpty())
+            {
+				mc_model->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
+				mc_flush->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
+				mc_filamentTower->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
+				mc_total->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
+            }
 
             mc_model->length = model[index].second;
             if (flush.size() > index)
