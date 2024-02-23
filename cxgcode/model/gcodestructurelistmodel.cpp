@@ -36,7 +36,7 @@ static const auto sec2str = [](unsigned int secs) {
         return QStringLiteral("%1s").arg(sec);
     }
 };
-void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>> time_parts)
+void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>> time_parts,int total_time)
 {
     float outer_wall_time = 0;
     float inner_wall_time = 0;
@@ -46,7 +46,8 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     float top_solid_infill_time = 0;
     float bottom_solid_infill_time = 0;
     float support_time = 0;
-    float skirt_brim_time = 0;
+    float skirt_time = 0;
+    float brim_time = 0;
     float infill_time = 0;
     float bridge_infill = 0;
     float support_infill_time = 0;
@@ -66,6 +67,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     float travel = 0;
     float wipe = 0;
     float extrude = 0;
+    QList<GcodeStructureData> data_list;
     for (int i = 0; i < time_parts.size(); i++)
     {
         std::pair<int, float> pair = time_parts[i];
@@ -74,57 +76,78 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
         {
            case SliceLineType::erPerimeter:
                inner_wall_time = static_cast<float>(pair.second);
+               data_list.append({QColor{ QStringLiteral("#FFE64D") }, QStringLiteral("Inner Perimeter") , sec2str(inner_wall_time)        , inner_wall_time/total_time * 100.0     , static_cast<int>(SliceLineType::erPerimeter) , true  });
                break;
            case SliceLineType::erExternalPerimeter:
                outer_wall_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#FF7D38") }, QStringLiteral("Outer Perimeter") , sec2str(outer_wall_time)        , outer_wall_time/total_time * 100.0     , static_cast<int>(SliceLineType::erExternalPerimeter) , true  });
                break;
            case SliceLineType::erOverhangPerimeter:
                overhang_time = static_cast<float>(pair.second);
                break;
            case SliceLineType::erInternalInfill:
                internal_infill_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#B03029") }, QStringLiteral("Sparse infill")            , sec2str(internal_infill_time)              , internal_infill_time/total_time * 100.0         , static_cast<int>(SliceLineType::erInternalInfill) , true });
                break;
            case SliceLineType::erSolidInfill:
                solid_infill_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#9654CC") }, QStringLiteral("Internal solid infill")         , sec2str(solid_infill_time)           , solid_infill_time/ total_time * 100.0       , static_cast<int>(SliceLineType::erSolidInfill) , true });
                break;
            case SliceLineType::erTopSolidInfill:
                top_solid_infill_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#F04040") }, QStringLiteral("Top surface"), sec2str(top_solid_infill_time), top_solid_infill_time / total_time * 100.0, static_cast<int>(SliceLineType::erTopSolidInfill), true  });
                break;
            case SliceLineType::erBottomSurface:
                bottom_solid_infill_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#665CC7") }, QStringLiteral("Bottom surface"), sec2str(bottom_solid_infill_time), bottom_solid_infill_time/ total_time * 100.0, static_cast<int>(SliceLineType::erBottomSurface), true });
                break;
            case SliceLineType::erBridgeInfill:
                bridge_infill = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Internal Bridge"), sec2str(bridge_infill), bridge_infill / total_time * 100.0, static_cast<int>(SliceLineType::erBridgeInfill), true });
                break;
            case SliceLineType::erSkirt:
-               skirt_brim_time = static_cast<float>(pair.second);
+               skirt_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#00876E") }, QStringLiteral("Skirt"), sec2str(skirt_time), skirt_time / total_time * 100.0, static_cast<int>(SliceLineType::erSkirt), true });
+               
+               break;
+           case SliceLineType::erBrim:
+               brim_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#003B6E") }, QStringLiteral("Brim"), sec2str(brim_time), brim_time / total_time * 100.0, static_cast<int>(SliceLineType::erBrim), true });
+
                break;
            case SliceLineType::erSupportMaterial:
                support_material = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#00FF00") }, QStringLiteral("Support"), sec2str(support_material), support_material / total_time * 100.0, static_cast<int>(SliceLineType::erSupportMaterial), true });
                break;
            case SliceLineType::erSupportMaterialInterface:
                support_material_interface = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#008000") }, QStringLiteral("Support interface"), sec2str(support_material_interface), support_material_interface / total_time * 100.0, static_cast<int>(SliceLineType::erSupportMaterialInterface), true });
                break;
            case SliceLineType::erSupportTransition:
                support_transition = static_cast<float>(pair.second);
                break;
            case SliceLineType::erWipeTower:
                wipe_tower = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#B3E3AB") }, QStringLiteral("Prime tower"), sec2str(wipe_tower), wipe_tower / total_time * 100.0, static_cast<int>(SliceLineType::erSupportMaterialInterface), true });
                break;
            case SliceLineType::erCustom:
                custom = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#5ED194") }, QStringLiteral("Custom"), sec2str(custom), custom / total_time * 100.0, static_cast<int>(SliceLineType::erCustom), true });
                break;
            case SliceLineType::Noop:
                noop = static_cast<float>(pair.second);
                break;
            case SliceLineType::Retract:
                retract = static_cast<float>(pair.second);
+               
                break;
            case SliceLineType::Unretract:
                unretract = static_cast<float>(pair.second);
+               
                break;
            case SliceLineType::Seam:
                seam = static_cast<float>(pair.second);
+               
                break;
            case SliceLineType::Tool_change:
                tool_change = static_cast<float>(pair.second);
@@ -140,9 +163,11 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
            case SliceLineType::Travel:
                travel = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#38489B") }, QStringLiteral("Travel"), sec2str(travel), travel/ total_time * 100.0, static_cast<int>(SliceLineType::Travel), false });
                break;
            case SliceLineType::Wipe:
                wipe = static_cast<float>(pair.second);
+               
                break;
            case SliceLineType::Extrude:
                extrude = static_cast<float>(pair.second);
@@ -151,43 +176,10 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
         }
     }
-    auto total_time = outer_wall_time + inner_wall_time + overhang_time + internal_infill_time + solid_infill_time + top_solid_infill_time + bottom_solid_infill_time+ bridge_infill+ custom+ travel+ unretract+ wipe+ seam + support_material +support_material_interface;
-    if (total_time == 0) {
-        total_time = 1;
-    }
-    auto const outer_wall_percent = outer_wall_time / total_time * 100.0;
-    auto const inner_wall_percent = inner_wall_time / total_time * 100.0;
-    auto const overhang_time_percent = overhang_time / total_time * 100.0;
-    auto const internal_infill_time_percent = internal_infill_time / total_time * 100.0;
-    auto const solid_infill_percent = solid_infill_time / total_time * 100.0;
-    auto const top_solid_infill_percent = top_solid_infill_time / total_time * 100.0;
-    auto const bottom_solid_infill_time_percent = bottom_solid_infill_time / total_time * 100.0;
-    auto const bridge_infill_percent = bridge_infill / total_time * 100.0;
-    auto const custom_percent = custom / total_time * 100.0;
-    auto const travel_percent = travel / total_time * 100.0;
-    auto const unretract_percent = unretract / total_time * 100.0;
-    auto const wipe_percent = wipe / total_time * 100.0;
-    auto const seam_percent = seam / total_time * 100.0;
-    auto const retract_percent = retract / total_time * 100.0;
-    auto const support_material_interface_percent = support_material_interface / total_time * 100.0;
-    auto const support_material_percent = support_material / total_time * 100.0;
-    QList<GcodeStructureData> data_list{
-  { QColor{ QStringLiteral("#FF7D38") }, QStringLiteral("Outer Perimeter") , sec2str(outer_wall_time)        , outer_wall_percent     , static_cast<int>(SliceLineType::erExternalPerimeter) , true  },
-  { QColor{ QStringLiteral("#FFE64D") }, QStringLiteral("Inner Perimeter") , sec2str(inner_wall_time)        , inner_wall_percent     , static_cast<int>(SliceLineType::erPerimeter) , true  },
-  { QColor{ QStringLiteral("#B03029") }, QStringLiteral("Sparse infill")            , sec2str(internal_infill_time)              , internal_infill_time_percent           , static_cast<int>(SliceLineType::erInternalInfill) , true  },
-  { QColor{ QStringLiteral("#9654CC") }, QStringLiteral("Internal solid infill")         , sec2str(solid_infill_time)           , solid_infill_percent        , static_cast<int>(SliceLineType::erSolidInfill) , true  },
-  { QColor{ QStringLiteral("#F04040") }, QStringLiteral("Top surface")       , sec2str(top_solid_infill_time)        , top_solid_infill_percent     , static_cast<int>(SliceLineType::erTopSolidInfill) , true  },
-  { QColor{ QStringLiteral("#665CC7") }, QStringLiteral("Bottom surface")          , sec2str(bottom_solid_infill_time)            , bottom_solid_infill_time_percent         , static_cast<int>(SliceLineType::erBottomSurface) , true  },
-  { QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Internal Bridge")   , sec2str(bridge_infill)    , bridge_infill_percent , static_cast<int>(SliceLineType::erBridgeInfill) , true  },
-  { QColor{ QStringLiteral("#00FF00") }, QStringLiteral("Support")      , sec2str(support_material)       , support_material_percent    , static_cast<int>(SliceLineType::erSupportMaterial), true  },
-  { QColor{ QStringLiteral("#008000") }, QStringLiteral("Support interface")      , sec2str(support_material_interface)       , support_material_interface_percent    , static_cast<int>(SliceLineType::erSupportMaterialInterface), true  },
- // { QColor{ QStringLiteral("#5ED194") }, QStringLiteral("Custom")      , sec2str(custom)       , custom_percent    , static_cast<int>(SliceLineType::erCustom), true  },
-  { QColor{ QStringLiteral("#38489B") }, QStringLiteral("Travel")          , sec2str(travel)      , travel_percent   , static_cast<int>(SliceLineType::Travel), false },
-  { QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract")           , sec2str(retract)                      , retract_percent                    , static_cast<int>(SliceLineType::Retract), true  },
-  { QColor{ QStringLiteral("#49ADCF") }, QStringLiteral("Unretract")      , sec2str(unretract), unretract_percent, static_cast<int>(SliceLineType::Unretract), false },
-  { QColor{ QStringLiteral("#FFFF00") }, QStringLiteral("Wipe")      , sec2str(wipe), wipe_percent, static_cast<int>(SliceLineType::Wipe), false },
-  { QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams")      , sec2str(seam), seam_percent, static_cast<int>(SliceLineType::Seam), false }
-    };
+    data_list.append({ QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract"), 0, 0, static_cast<int>(SliceLineType::Retract), false });
+    data_list.append({ QColor{ QStringLiteral("#49ADCF") }, QStringLiteral("Unretract"), 0, 0, static_cast<int>(SliceLineType::Unretract), false });
+    data_list.append({ QColor{ QStringLiteral("#FFFF00") }, QStringLiteral("Wipe"), 0, 0, static_cast<int>(SliceLineType::Wipe), false });
+    data_list.append({ QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams"), 0, 0, static_cast<int>(SliceLineType::Seam), false });
 
     beginResetModel();
     data_list_ = std::move(data_list);
