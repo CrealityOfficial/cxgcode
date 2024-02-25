@@ -128,7 +128,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
            case SliceLineType::erWipeTower:
                wipe_tower = static_cast<float>(pair.second);
-               data_list.append({ QColor{ QStringLiteral("#B3E3AB") }, QStringLiteral("Prime tower"), sec2str(wipe_tower), wipe_tower / total_time * 100.0, static_cast<int>(SliceLineType::erSupportMaterialInterface), true });
+               data_list.append({ QColor{ QStringLiteral("#B3E3AB") }, QStringLiteral("Prime tower"), sec2str(wipe_tower), wipe_tower / total_time * 100.0, static_cast<int>(SliceLineType::erWipeTower), true });
                break;
            case SliceLineType::erCustom:
                custom = static_cast<float>(pair.second);
