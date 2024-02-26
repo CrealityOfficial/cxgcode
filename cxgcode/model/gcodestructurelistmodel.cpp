@@ -84,6 +84,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
            case SliceLineType::erOverhangPerimeter:
                overhang_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#0000FF") }, QStringLiteral("Overhang Wall")            , sec2str(overhang_time)              , overhang_time/total_time * 100.0         , static_cast<int>(SliceLineType::erOverhangPerimeter) , true });
                break;
            case SliceLineType::erInternalInfill:
                internal_infill_time = static_cast<float>(pair.second);
