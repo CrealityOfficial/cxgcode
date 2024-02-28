@@ -131,6 +131,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
            case SliceLineType::erSupportTransition:
                support_transition = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#004000") }, QStringLiteral("Support transition"), sec2str(support_transition), support_transition / total_time * 100.0, static_cast<int>(SliceLineType::erSupportTransition), true });
                break;
            case SliceLineType::erWipeTower:
                wipe_tower = static_cast<float>(pair.second);
@@ -182,10 +183,10 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
         }
     }
-    data_list.append({ QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract"), 0, 0, 18, false });
+    data_list.append({ QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract"), 0, 0, static_cast<int>(SliceLineType::Retract), false });
     data_list.append({ QColor{ QStringLiteral("#49ADCF") }, QStringLiteral("Unretract"), 0, 0, static_cast<int>(SliceLineType::Unretract), false });
     data_list.append({ QColor{ QStringLiteral("#FFFF00") }, QStringLiteral("Wipe"), 0, 0, static_cast<int>(SliceLineType::Wipe), false });
-    data_list.append({ QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams"), 0, 0, 17, false });
+    data_list.append({ QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams"), 0, 0, static_cast<int>(SliceLineType::Seam), false });
 
     beginResetModel();
     data_list_ = std::move(data_list);
