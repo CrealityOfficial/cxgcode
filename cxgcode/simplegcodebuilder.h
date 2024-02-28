@@ -22,6 +22,7 @@ namespace cxgcode
 		void rebuildGeometryVisualTypeData();
 		Qt3DRender::QGeometry* buildRetractionGeometry();
 		Qt3DRender::QGeometry* buildZSeamsGeometry();
+		Qt3DRender::QGeometry* buildUnretractGeometry();
 
 		Qt3DRender::QGeometryRenderer* buildRetractionGeometryRenderer();
 		Qt3DRender::QGeometryRenderer* buildZSeamsGeometryRenderer();

@@ -197,6 +197,62 @@ namespace cxgcode
 		return geometry;
 	}
 
+	Qt3DRender::QGeometry* SimpleGCodeBuilder::buildUnretractGeometry()
+	{
+		const std::vector<trimesh::vec3>& positions = m_struct.m_positions;
+		const std::vector<gcode::GCodeMove>& moves = m_struct.m_moves;
+		
+		std::vector<gcode::GCodeMove> unretract;
+		for (size_t i = 0; i < moves.size(); i++)
+		{
+			const gcode::GCodeMove& m = moves.at(i);
+			if (m.type == SliceLineType::Unretract)
+			{
+				unretract.emplace_back(m);
+			}
+		}
+
+		int count = unretract.size();
+
+		trimesh::vec2* stepsFlags = (trimesh::vec2*)m_steps.bytes.data();
+
+		qtuser_3d::AttributeShade* positionAttr = new qtuser_3d::AttributeShade();
+		positionAttr->name = Qt3DRender::QAttribute::defaultPositionAttributeName();
+		positionAttr->stride = 3;
+		positionAttr->count = count;
+		positionAttr->bytes.resize(sizeof(float) * 3 * count);
+
+		qtuser_3d::AttributeShade* stepsAttr = new qtuser_3d::AttributeShade();
+		stepsAttr->name = QString("stepsFlag");
+		stepsAttr->stride = 2;
+		stepsAttr->count = count;
+		stepsAttr->bytes.resize(sizeof(float) * 2 * count);
+
+		{
+			trimesh::vec3* tPosition = (trimesh::vec3*)positionAttr->bytes.data();
+			trimesh::vec2* tSteps = (trimesh::vec2*)stepsAttr->bytes.data();
+
+			for (size_t i = 0; i < count; i++)
+			{
+				const gcode::GCodeMove& m = unretract.at(i);
+				int idx = m.start;
+				if (idx >= positions.size() || idx >= m_steps.count)
+				{
+					continue;
+				}
+				const trimesh::vec3& v = positions.at(idx);
+				tPosition[i] = v;
+				tSteps[i] = stepsFlags[idx];
+			}
+		}
+
+		Qt3DRender::QGeometry* geometry = qtuser_3d::GeometryCreateHelper::create(nullptr, positionAttr, stepsAttr);
+		delete positionAttr;
+		delete stepsAttr;
+
+		return geometry;
+	}
+
 	Qt3DRender::QGeometryRenderer* SimpleGCodeBuilder::buildRetractionGeometryRenderer()
 	{
 		return buildGeometryRenderer(m_struct.m_positions, m_struct.m_retractions, (trimesh::vec2*)m_steps.bytes.data());;
@@ -644,6 +700,8 @@ namespace cxgcode
 		trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
 		float* tlineWidths = (float *)m_lineWidths.bytes.data();
 
+		const gcode::GCodeParseInfo& parseInfo = m_struct.getParam();
+
 		for (int i = 0; i < stepCount; ++i)
 		{
 			const gcode::GCodeMove& move = structMoves.at(i);
@@ -664,9 +722,15 @@ namespace cxgcode
 			{
 				int idx = m_struct.m_layerInfoIndex[i];
 				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
-				*tempLineWidths = l.width;
+				
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
+				{
+					*tempLineWidths = parseInfo.lineWidth * 0.25;
+				}
+				else {
+					*tempLineWidths = l.width;
+				}
 			}
-
 
 			if (m_tracer && (i % 1000 == 0))
 			{
