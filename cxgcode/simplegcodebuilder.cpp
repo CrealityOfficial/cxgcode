@@ -732,6 +732,11 @@ namespace cxgcode
 				}
 			}
 
+			if (move.type == SliceLineType::Wipe)
+			{
+				*tempLineWidths = parseInfo.lineWidth * 0.25;
+			}
+
 			if (m_tracer && (i % 1000 == 0))
 			{
 				m_tracer->progress((float)i / (float)stepCount);
