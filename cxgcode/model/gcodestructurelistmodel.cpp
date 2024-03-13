@@ -68,6 +68,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     float wipe = 0;
     float extrude = 0;
     float ironing = 0;
+    float internalBridge=0;
     QList<GcodeStructureData> data_list;
     for (int i = 0; i < time_parts.size(); i++)
     {
@@ -109,7 +110,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
           case SliceLineType::erBridgeInfill:
                bridge_infill = static_cast<float>(pair.second);
-               data_list.append({ QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Internal Bridge"), sec2str(bridge_infill), bridge_infill / total_time * 100.0, static_cast<int>(SliceLineType::erBridgeInfill), true });
+               data_list.append({ QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Bridge"), sec2str(bridge_infill), bridge_infill / total_time * 100.0, static_cast<int>(SliceLineType::erBridgeInfill), true });
                break;
            case SliceLineType::erSkirt:
                skirt_time = static_cast<float>(pair.second);
@@ -140,6 +141,10 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
            case SliceLineType::erCustom:
                custom = static_cast<float>(pair.second);
                data_list.append({ QColor{ QStringLiteral("#5ED194") }, QStringLiteral("Custom"), sec2str(custom), custom / total_time * 100.0, static_cast<int>(SliceLineType::erCustom), true });
+               break;
+           case SliceLineType::erInternalBridgeInfill:
+               internalBridge = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Internal Bridge"), sec2str(internalBridge), internalBridge / total_time * 100.0, static_cast<int>(SliceLineType::erInternalBridgeInfill), true });
                break;
            case SliceLineType::Noop:
                noop = static_cast<float>(pair.second);
