@@ -110,7 +110,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
                break;
           case SliceLineType::erBridgeInfill:
                bridge_infill = static_cast<float>(pair.second);
-               data_list.append({ QColor{ QStringLiteral("#4D80BA") }, QStringLiteral("Bridge"), sec2str(bridge_infill), bridge_infill / total_time * 100.0, static_cast<int>(SliceLineType::erBridgeInfill), true });
+               data_list.append({ QColor{ QStringLiteral("#4D66A1") }, QStringLiteral("Bridge"), sec2str(bridge_infill), bridge_infill / total_time * 100.0, static_cast<int>(SliceLineType::erBridgeInfill), true });
                break;
            case SliceLineType::erSkirt:
                skirt_time = static_cast<float>(pair.second);
