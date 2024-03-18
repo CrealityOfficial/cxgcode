@@ -69,6 +69,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     float extrude = 0;
     float ironing = 0;
     float internalBridge=0;
+    float gapfill_time=0;
     QList<GcodeStructureData> data_list;
     for (int i = 0; i < time_parts.size(); i++)
     {
@@ -120,6 +121,11 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
            case SliceLineType::erBrim:
                brim_time = static_cast<float>(pair.second);
                data_list.append({ QColor{ QStringLiteral("#003B6E") }, QStringLiteral("Brim"), sec2str(brim_time), brim_time / total_time * 100.0, static_cast<int>(SliceLineType::erBrim), true });
+
+               break;
+           case SliceLineType::erGapFill:
+               gapfill_time = static_cast<float>(pair.second);
+               data_list.append({ QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Gap Fill"), sec2str(brim_time), brim_time / total_time * 100.0, static_cast<int>(SliceLineType::erGapFill), true });
 
                break;
            case SliceLineType::erSupportMaterial:
