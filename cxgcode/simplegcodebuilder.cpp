@@ -85,7 +85,7 @@ namespace cxgcode
 		return qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_normals, &m_steps, &m_indices);
 #elif SIMPLE_GCODE_IMPL == 3
 
-		Qt3DRender::QGeometry *geo = qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_endPositions, &m_normals, &m_steps, &m_lineWidths);
+		Qt3DRender::QGeometry *geo = qtuser_3d::GeometryCreateHelper::create(nullptr, &m_positions, &m_endPositions, &m_normals, &m_steps, &m_lineWidthAndLayerHeights);
 		{
 			Qt3DRender::QBuffer* buffer = new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer);
 			buffer->setData(m_visualTypeFlags.bytes);
@@ -689,16 +689,17 @@ namespace cxgcode
 		m_steps.count = count;
 		m_steps.bytes.resize(sizeof(float) * 2 * count);
 
-		m_lineWidths.name = QString("lineWidth");
-		m_lineWidths.stride = 1;
-		m_lineWidths.count = count;
-		m_lineWidths.bytes.resize(sizeof(float) * 1 * count);
+		m_lineWidthAndLayerHeights.name = QString("lineWidth_layerHeight");
+		m_lineWidthAndLayerHeights.stride = 2;
+		m_lineWidthAndLayerHeights.count = count;
+		m_lineWidthAndLayerHeights.bytes.resize(sizeof(float) * 2 * count);
+
 
 		trimesh::vec3* tposition = (trimesh::vec3*)m_positions.bytes.data();
 		trimesh::vec3* tEndPosition = (trimesh::vec3*)m_endPositions.bytes.data();
 		trimesh::vec3* tnormals = (trimesh::vec3*)m_normals.bytes.data();
 		trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
-		float* tlineWidths = (float *)m_lineWidths.bytes.data();
+		trimesh::vec2* tlineWidthHeight = (trimesh::vec2*)m_lineWidthAndLayerHeights.bytes.data();
 
 		const gcode::GCodeParseInfo& parseInfo = m_struct.getParam();
 
@@ -709,7 +710,7 @@ namespace cxgcode
 			trimesh::vec3* tempEndPosition = tEndPosition + stride * i;
 			trimesh::vec3* tempNormals = tnormals + stride * i;
 			trimesh::vec2* tempSteps = tsteps + stride * i;
-			float* tempLineWidths = tlineWidths + stride * i;
+			trimesh::vec2* tempLineWidthHeight = tlineWidthHeight + stride * i;
 
 			trimesh::vec3 start = structPositions.at(move.start);
 			trimesh::vec3 end = structPositions.at(move.start + 1);
@@ -719,23 +720,33 @@ namespace cxgcode
 			*(tempNormals) = positionsNormals.at(i);
 			*(tempSteps) = layerSteps.at(i);
 			
-			{
-				int idx = m_struct.m_layerInfoIndex[i];
-				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
-				
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
-				{
-					*tempLineWidths = parseInfo.lineWidth * 0.25;
-				}
-				else {
-					*tempLineWidths = l.width;
-				}
-			}
+			int idx = m_struct.m_layerInfoIndex[i];
+			const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 
-			if (move.type == SliceLineType::Wipe)
+			const SliceLineType& linetype = move.type;
+			float tempLineWidth;
+			if (linetype == SliceLineType::Travel || linetype == SliceLineType::MoveCombing || linetype == SliceLineType::React)
 			{
-				*tempLineWidths = parseInfo.lineWidth * 0.25;
+				tempLineWidth = parseInfo.lineWidth * 0.25;
+			} 
+			else if (linetype == SliceLineType::Wipe)
+			{
+				tempLineWidth = parseInfo.lineWidth * 0.25;
 			}
+			else if (linetype == SliceLineType::erIroning)
+			{
+				tempLineWidth = parseInfo.lineWidth * 0.15;
+			}
+			/*else if (linetype == SliceLineType::erInternalBridgeInfill) 
+			{
+				tempLineWidth = l.width;
+			}*/
+			else
+			{
+				tempLineWidth = l.width;
+			}
+			
+			*tempLineWidthHeight = trimesh::vec2(tempLineWidth, l.layerHight);
 
 			if (m_tracer && (i % 1000 == 0))
 			{
