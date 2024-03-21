@@ -53,6 +53,9 @@ namespace cxgcode
         //cr30 offset
         void processCr30offset(gcode::GCodeParseInfo& info);
 		
+		//计算两条线段衔接处的拐角补偿
+		float calculateCornelCompensate(const std::vector<trimesh::vec3>& positions, const std::vector<gcode::GCodeMove>& moves, int index);
+
 		Qt3DRender::QGeometryRenderer* buildGeometryRenderer(const std::vector<trimesh::vec3>& positions, const std::vector<int>& index, trimesh::vec2* pStepsFlag);
 
 	protected:

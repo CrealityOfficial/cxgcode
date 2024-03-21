@@ -667,8 +667,7 @@ namespace cxgcode
 		std::vector<trimesh::ivec2> layerSteps;
 		processSteps(layerSteps);
 
-		int stride = 1;
-		int count = stride * stepCount;
+		int count = stepCount;
 		m_positions.name = Qt3DRender::QAttribute::defaultPositionAttributeName();
 		m_positions.stride = 3;
 		m_positions.count = count;
@@ -690,27 +689,27 @@ namespace cxgcode
 		m_steps.bytes.resize(sizeof(float) * 2 * count);
 
 		m_lineWidthAndLayerHeights.name = QString("lineWidth_layerHeight");
-		m_lineWidthAndLayerHeights.stride = 2;
+		m_lineWidthAndLayerHeights.stride = 4;
 		m_lineWidthAndLayerHeights.count = count;
-		m_lineWidthAndLayerHeights.bytes.resize(sizeof(float) * 2 * count);
+		m_lineWidthAndLayerHeights.bytes.resize(sizeof(float) * 4 * count);
 
 
 		trimesh::vec3* tposition = (trimesh::vec3*)m_positions.bytes.data();
 		trimesh::vec3* tEndPosition = (trimesh::vec3*)m_endPositions.bytes.data();
 		trimesh::vec3* tnormals = (trimesh::vec3*)m_normals.bytes.data();
 		trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
-		trimesh::vec2* tlineWidthHeight = (trimesh::vec2*)m_lineWidthAndLayerHeights.bytes.data();
+		trimesh::vec4* tlineWidthHeight = (trimesh::vec4*)m_lineWidthAndLayerHeights.bytes.data();
 
 		const gcode::GCodeParseInfo& parseInfo = m_struct.getParam();
 
 		for (int i = 0; i < stepCount; ++i)
 		{
 			const gcode::GCodeMove& move = structMoves.at(i);
-			trimesh::vec3* tempPosition = tposition + stride * i;
-			trimesh::vec3* tempEndPosition = tEndPosition + stride * i;
-			trimesh::vec3* tempNormals = tnormals + stride * i;
-			trimesh::vec2* tempSteps = tsteps + stride * i;
-			trimesh::vec2* tempLineWidthHeight = tlineWidthHeight + stride * i;
+			trimesh::vec3* tempPosition = tposition + i;
+			trimesh::vec3* tempEndPosition = tEndPosition + i;
+			trimesh::vec3* tempNormals = tnormals + i;
+			trimesh::vec2* tempSteps = tsteps + i;
+			trimesh::vec4* tempLineWidthHeight = tlineWidthHeight + i;
 
 			trimesh::vec3 start = structPositions.at(move.start);
 			trimesh::vec3 end = structPositions.at(move.start + 1);
@@ -746,7 +745,9 @@ namespace cxgcode
 				tempLineWidth = l.width;
 			}
 			
-			*tempLineWidthHeight = trimesh::vec2(tempLineWidth, l.layerHight);
+			float compensate0 = calculateCornelCompensate(structPositions, structMoves, move.start);
+			float compensate1 = calculateCornelCompensate(structPositions, structMoves, move.start + 1);
+			*tempLineWidthHeight = trimesh::vec4(tempLineWidth, l.layerHight, compensate0, compensate1);
 
 			if (m_tracer && (i % 1000 == 0))
 			{
@@ -1099,5 +1100,55 @@ namespace cxgcode
 		renderer->setInstanceCount(count);
 
 		return renderer;
+	}
+
+	float SimpleGCodeBuilder::calculateCornelCompensate(const std::vector<trimesh::vec3>& positions, const std::vector<gcode::GCodeMove>& moves, int index)
+	{
+		float compensate = 0.0f;
+		if (0 < index && index < positions.size()-1)
+		{
+			const gcode::GCodeMove& curmove = moves.at(index);
+			const gcode::GCodeMove& premove = moves.at(index - 1);
+
+			auto f = [](SliceLineType linetype) {
+
+				bool exceptLineWidth = false;
+				if (linetype == SliceLineType::Travel ||
+					linetype == SliceLineType::MoveCombing ||
+					linetype == SliceLineType::React ||
+					linetype == SliceLineType::Wipe ||
+					linetype == SliceLineType::erIroning)
+				{
+					exceptLineWidth = true;
+				}
+				return exceptLineWidth;
+			};
+
+			bool preExcept = f(premove.type);
+			bool curExcept = f(curmove.type);
+			if (preExcept != curExcept)
+			{
+				return compensate;
+			}
+
+			//相邻的两个线段，计算出衔接处的拐角补偿因子
+			trimesh::vec3 currentDir = trimesh::normalized(positions[index-1] - positions[index]);
+			trimesh::vec3 nextDir = trimesh::normalized(positions[index + 1] - positions[index]);
+
+			float d = trimesh::dot(currentDir, nextDir);
+			float theta = acos(d) / 2.0;
+			
+			trimesh::vec3 crs = trimesh::cross(nextDir, currentDir);
+			float sign = trimesh::sign(trimesh::dot(crs, trimesh::vec3(0.0f, 0.0f, 1.0f)));
+
+			compensate = sign / tanf(theta);
+
+			if (compensate > 5.0f || compensate < -5.0f)
+			{
+				compensate = 0.0f;
+			}
+		}
+
+		return compensate;
 	}
 }
