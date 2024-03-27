@@ -1136,6 +1136,10 @@ namespace cxgcode
 			trimesh::vec3 nextDir = trimesh::normalized(positions[index + 1] - positions[index]);
 
 			float d = trimesh::dot(currentDir, nextDir);
+			if (d >= 0.999 || d <= -0.999)
+			{
+				return compensate;
+			}
 			float theta = acos(d) / 2.0;
 			
 			trimesh::vec3 crs = trimesh::cross(nextDir, currentDir);
