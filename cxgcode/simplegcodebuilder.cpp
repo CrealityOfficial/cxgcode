@@ -1147,7 +1147,7 @@ namespace cxgcode
 
 			compensate = sign / tanf(theta);
 
-			if (compensate > 5.0f || compensate < -5.0f)
+			if (compensate > 2.50f || compensate < -2.50f)
 			{
 				compensate = 0.0f;
 			}
