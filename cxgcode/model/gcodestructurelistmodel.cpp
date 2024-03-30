@@ -197,7 +197,7 @@ void GcodeStructureListModel::setOrcaTimeParts(std::vector<std::pair<int, float>
     data_list.append({ QColor{ QStringLiteral("#CD22D6") }, QStringLiteral("Retract"), 0, 0, static_cast<int>(SliceLineType::Retract), false });
     data_list.append({ QColor{ QStringLiteral("#49ADCF") }, QStringLiteral("Unretract"), 0, 0, static_cast<int>(SliceLineType::Unretract), false });
     data_list.append({ QColor{ QStringLiteral("#FFFF00") }, QStringLiteral("Wipe"), 0, 0, static_cast<int>(SliceLineType::Wipe), false });
-    data_list.append({ QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams"), 0, 0, static_cast<int>(SliceLineType::Seam), false });
+    data_list.append({ QColor{ QStringLiteral("#FFFFFF") }, QStringLiteral("Seams"), 0, 0, static_cast<int>(SliceLineType::Seam), true });
 
     beginResetModel();
     data_list_ = std::move(data_list);
