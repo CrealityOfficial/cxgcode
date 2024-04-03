@@ -730,11 +730,13 @@ namespace cxgcode
 			} 
 			else if (linetype == SliceLineType::Wipe)
 			{
-				tempLineWidth = parseInfo.lineWidth * 0.25;
+				tempLineWidth = parseInfo.lineWidth * 0.15;
 			}
 			else if (linetype == SliceLineType::erIroning)
 			{
-				tempLineWidth = parseInfo.lineWidth * 0.15;
+				tempLineWidth = l.width;
+				*(tempPosition) = start + trimesh::vec3(0.0f, 0.0f, 1.0f) * (parseInfo.layerHeight * 0.5);
+				*(tempEndPosition) = end + trimesh::vec3(0.0f, 0.0f, 1.0f) * (parseInfo.layerHeight * 0.5);
 			}
 			/*else if (linetype == SliceLineType::erInternalBridgeInfill) 
 			{
