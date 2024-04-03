@@ -1013,7 +1013,8 @@ namespace cxgcode
 				assert(0 <= idx && idx < m_struct.m_fans.size());
 #endif // DEBUG
 				gcode::GcodeFan& fans = m_struct.m_fans[idx];
-				flag = fminf(fmaxf(fans.fanSpeed / 255.0, 0.0), 1.0);
+
+				flag = fminf(fmaxf(fans.fanSpeed / 100.0, 0.0), 1.0);
 
 				//qDebug() << "fan speed = " << flag;
 				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
