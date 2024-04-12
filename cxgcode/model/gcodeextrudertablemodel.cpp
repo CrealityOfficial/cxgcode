@@ -82,6 +82,9 @@ void GcodeExtruderTableModel::setData(QList<ModelItem*> dataList)
 void GcodeExtruderTableModel::setData(std::vector<std::pair<int, double>>& model, 
     std::vector<std::pair<int, double>>& flush, std::vector<std::pair<int, double>>& filamentTower)
 {
+
+    beginResetModel();
+
     m_IsSingleColor = false;
     if (!flush.size() && !filamentTower.size())
     {
@@ -147,7 +150,6 @@ void GcodeExtruderTableModel::setData(std::vector<std::pair<int, double>>& model
         }
     }
 
-    beginResetModel();
     endResetModel();
     emit isSingleColorChanged();
 }
