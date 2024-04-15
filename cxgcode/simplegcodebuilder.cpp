@@ -79,6 +79,19 @@ namespace cxgcode
 		return trimesh::vec3();
 	}
 
+	float SimpleGCodeBuilder::layerHeight(int layer)
+	{
+		int index = stepIndex(layer + 1, 1) - 1; // get last step
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int i = m_struct.m_moves[index].start;
+			int layerIndex = m_struct.m_layerInfoIndex.at(i);
+			float  height = m_struct.m_gcodeLayerInfos.at(layerIndex).layerHight;
+			return height;
+		}
+		return -1;
+	}
+
 	Qt3DRender::QGeometry* SimpleGCodeBuilder::buildGeometry()
 	{
 #if SIMPLE_GCODE_IMPL == 1
@@ -900,7 +913,7 @@ namespace cxgcode
 			{
 				//flag = (float)move.speed;
 				flag = (move.speed - baseInfo.speedMin) / (baseInfo.speedMax - baseInfo.speedMin + 0.01f);
-				//×ÅÉ«Æ÷ÀïÃæ°Ñflag < 0.0µÄÏß¶ÎºöÂÔ
+				//ç€è‰²å™¨é‡Œé¢æŠŠflag < 0.0çš„çº¿æ®µå¿½ç•¥
 				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
 					flag = -1.0f;
 			}
@@ -922,7 +935,7 @@ namespace cxgcode
 
 			case gcode::GCodeVisualType::gvt_layerHight:
 			{
-				//ÖØĞÂÓ³Éäµ½[0.0, 1.0]
+				//é‡æ–°æ˜ å°„åˆ°[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
 				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 
@@ -944,7 +957,7 @@ namespace cxgcode
 
 			case gcode::GCodeVisualType::gvt_lineWidth:
 			{
-				//ÖØĞÂÓ³Éäµ½[0.0, 1.0]
+				//é‡æ–°æ˜ å°„åˆ°[0.0, 1.0]
 				int idx = m_struct.m_layerInfoIndex[step];
 				const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
 
@@ -1025,7 +1038,7 @@ namespace cxgcode
 
 			case gcode::GCodeVisualType::gvt_temperature:
 			{
-				//ÖØĞÂÓ³Éäµ½[0.0, 1.0]
+				//é‡æ–°æ˜ å°„åˆ°[0.0, 1.0]
 				int idx = m_struct.m_temperatureIndex[step];
 				gcode::GcodeTemperature& t = m_struct.m_temperatures[idx];
 				float temp = t.temperature ;
@@ -1052,9 +1065,9 @@ namespace cxgcode
 	}
 
 	/*
-	* ¶àÊµÀıäÖÈ¾£º
-	* ±¾ÀıÊÇäÖÈ¾¶à¸öÇòÌå£¬³ıÁËÇòÌå±¾ÉíµÄ¼¸ºÎÊı¾İÖ®Íâ£¬Ôö¼ÓÁËÃ¿¸öÇòÌåÊÀ½ç×ø±ê¼°Æä±êÊ¶ĞÅÏ¢
-	* ²Î¿¼£ºhttps://github.com/qt/qt3d/tree/dev/examples/qt3d/instanced-arrays-qml
+	* å¤šå®ä¾‹æ¸²æŸ“ï¼š
+	* æœ¬ä¾‹æ˜¯æ¸²æŸ“å¤šä¸ªçƒä½“ï¼Œé™¤äº†çƒä½“æœ¬èº«çš„å‡ ä½•æ•°æ®ä¹‹å¤–ï¼Œå¢åŠ äº†æ¯ä¸ªçƒä½“ä¸–ç•Œåæ ‡åŠå…¶æ ‡è¯†ä¿¡æ¯
+	* å‚è€ƒï¼šhttps://github.com/qt/qt3d/tree/dev/examples/qt3d/instanced-arrays-qml
 	*/
 	Qt3DRender::QGeometryRenderer* SimpleGCodeBuilder::buildGeometryRenderer(const std::vector<trimesh::vec3>& positions, const std::vector<int>& index, trimesh::vec2* pStepsFlag)
 	{
@@ -1134,7 +1147,7 @@ namespace cxgcode
 				return compensate;
 			}
 
-			//ÏàÁÚµÄÁ½¸öÏß¶Î£¬¼ÆËã³öÏÎ½Ó´¦µÄ¹Õ½Ç²¹³¥Òò×Ó
+			//ç›¸é‚»çš„ä¸¤ä¸ªçº¿æ®µï¼Œè®¡ç®—å‡ºè¡”æ¥å¤„çš„æ‹è§’è¡¥å¿å› å­
 			trimesh::vec3 currentDir = trimesh::normalized(positions[index-1] - positions[index]);
 			trimesh::vec3 nextDir = trimesh::normalized(positions[index + 1] - positions[index]);
 
