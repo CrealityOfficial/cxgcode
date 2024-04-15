@@ -17,7 +17,7 @@ namespace cxgcode
 
 		float traitSpeed(int layer, int step) override;
 		trimesh::vec3 traitPosition(int layer, int step) override;
-		float SimpleGCodeBuilder::layerHeight(int layer);
+		float layerHeight(int layer);
 
 		Qt3DRender::QGeometry* buildGeometry() override;
 		void rebuildGeometryVisualTypeData();
@@ -54,7 +54,7 @@ namespace cxgcode
         //cr30 offset
         void processCr30offset(gcode::GCodeParseInfo& info);
 		
-		//¼ÆËãÁ½ÌõÏß¶ÎÏÎ½Ó´¦µÄ¹Õ½Ç²¹³¥
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½Î½Ó´ï¿½ï¿½Ä¹Õ½Ç²ï¿½ï¿½ï¿½
 		float calculateCornelCompensate(const std::vector<trimesh::vec3>& positions, const std::vector<gcode::GCodeMove>& moves, int index);
 
 		Qt3DRender::QGeometryRenderer* buildGeometryRenderer(const std::vector<trimesh::vec3>& positions, const std::vector<int>& index, trimesh::vec2* pStepsFlag);
