@@ -280,12 +280,12 @@ namespace cxgcode
 		{
 			const std::vector<int>& maps = builder.m_stepGCodesMaps.at(_layer);
 			//if (nViewIndex >= maps.size()) return -1;
-			for (int i = 0; i < maps.size(); i++)
+			for (int step = 0; step < maps.size(); step++)
 			{
-				int step = maps[i];
-				if (step >= nViewIndex)
+				int viewIndex = maps[step];
+				if (viewIndex == nViewIndex)
 				{
-					return i;
+					return step;
 				}
 			}
 			//return maps.at(nViewIndex);
