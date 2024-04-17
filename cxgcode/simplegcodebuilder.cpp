@@ -51,6 +51,29 @@ namespace cxgcode
 
 	}
 
+
+	float SimpleGCodeBuilder::traitDuration(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int i = m_struct.m_moves[index].start;
+			trimesh::vec3 p0 = m_struct.m_positions.at(i);
+			trimesh::vec3 p1 = m_struct.m_positions.at(i + 1);
+			float length = trimesh::length(p1 - p0);
+			float currentSpeed = m_struct.m_moves[index].speed;
+			if (length > 0.0f && currentSpeed > 0.0f)
+			{
+				//time use as millisecond
+				float time = length * 60 * 1000 / currentSpeed;  
+
+				return std::max(time, 10.0f);
+			}
+		}
+
+		return 10.0f; //ms
+	}
+
 	float SimpleGCodeBuilder::traitSpeed(int layer, int step)
 	{
 		int index = stepIndex(layer, step);

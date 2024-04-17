@@ -17,6 +17,7 @@ namespace cxgcode
 
 		float traitSpeed(int layer, int step) override;
 		trimesh::vec3 traitPosition(int layer, int step) override;
+		float traitDuration(int layer, int step);
 		float layerHeight(int layer);
 
 		Qt3DRender::QGeometry* buildGeometry() override;
