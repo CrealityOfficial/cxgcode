@@ -32,6 +32,7 @@ namespace cxgcode
 		void updateFlagAttribute(Qt3DRender::QAttribute* attribute, gcode::GCodeVisualType type) override;
 
 		gcode::GCodeStruct& getGCodeStruct();
+		trimesh::box3 pathBox();
 	protected:
 		void implBuild(SliceResultPointer result) override;
 		void implBuild()override;
@@ -75,6 +76,8 @@ namespace cxgcode
 		qtuser_3d::AttributeShade m_visualTypeFlags;
 
 		Qt3DRender::QAttribute* m_visualTypeFlagsAttribute;
+
+		trimesh::box3 m_path_box;
 	};
 }
 

@@ -322,6 +322,18 @@ namespace cxgcode
 		return m_struct;
 	}
 
+	trimesh::box3 SimpleGCodeBuilder::pathBox()
+	{
+		if (!m_path_box.valid)
+		{
+			for (const trimesh::vec3& pos : m_struct.m_positions)
+			{
+				m_path_box += pos;
+			}
+		}
+		return m_path_box;
+	}
+
 	void SimpleGCodeBuilder::implBuild(SliceResultPointer result)
 	{
         if (!result)
