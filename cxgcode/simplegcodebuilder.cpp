@@ -104,13 +104,9 @@ namespace cxgcode
 
 	float SimpleGCodeBuilder::layerHeight(int layer)
 	{
-		int index = stepIndex(layer + 1, 1) - 1; // get last step
-		if (index >= 0 && index < baseInfo.totalSteps)
+		if (!m_struct.m_layerHeights.empty() && m_struct.m_layerHeights.size() >= layer && layer > 0)
 		{
-			int i = m_struct.m_moves[index].start;
-			int layerIndex = m_struct.m_layerInfoIndex.at(i);
-			float  height = m_struct.m_gcodeLayerInfos.at(layerIndex).layerHight;
-			return height;
+			return m_struct.m_layerHeights[layer - 1];
 		}
 		return -1;
 	}
