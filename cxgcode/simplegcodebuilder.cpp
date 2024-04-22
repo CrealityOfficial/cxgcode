@@ -981,7 +981,7 @@ namespace cxgcode
 					flag = (l.layerHight - min) / (max - min);
 				}
 				//qDebug() << "layer height = " << flag;
-				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React || move.type == SliceLineType::erWipeTower || move.type == SliceLineType::Wipe || move.type == SliceLineType::Unretract)
 					flag = -1.0f;
 			}
 			break;
