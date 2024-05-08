@@ -950,6 +950,14 @@ namespace cxgcode
 			}
 			break;
 
+			case gcode::GCodeVisualType::gvt_acc:
+			{
+				flag = (move.acc - baseInfo.minAcc) / (baseInfo.maxAcc - baseInfo.minAcc + 0.01f);
+				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
+					flag = -1.0f;
+			}
+			break;
+
 			case gcode::GCodeVisualType::gvt_structure:
 			{
 				flag = (float)move.type;
