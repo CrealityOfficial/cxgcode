@@ -968,7 +968,24 @@ namespace cxgcode
 			{
 				flag = (float)move.extruder;
 				if (move.type == SliceLineType::Travel || move.type == SliceLineType::MoveCombing || move.type == SliceLineType::React)
+				{
 					flag = -1.0f;
+				}
+				else if (step < m_steps.count)
+				{
+					// find pause layers and set flag(16)
+					int stride = 1;
+					trimesh::vec2* tsteps = (trimesh::vec2*)m_steps.bytes.data();
+					trimesh::vec2 layerAndStepAtOne = *(tsteps + stride * step);
+					int layer = layerAndStepAtOne.x - INDEX_START_AT_ONE;
+
+					const std::vector<int>& pauseLayers = m_struct.m_pause;
+					std::vector<int>::const_iterator it = std::find(pauseLayers.begin(), pauseLayers.end(), layer);
+					if (it != pauseLayers.end())
+					{
+						flag = 16.0f;
+					}
+				}
 			}
 			break;
 
