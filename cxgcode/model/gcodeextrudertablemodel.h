@@ -11,7 +11,7 @@
 
 namespace cxgcode {
 
-class MaterialConsume : public QObject //ÖØÁ¿£¬³¤¶È
+class MaterialConsume : public QObject //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     Q_OBJECT
 public:
@@ -39,7 +39,7 @@ class ModelItem : public QObject
 {
     Q_OBJECT
     public:
-    enum ConsumeType //ÏûºÄµÄÀàÐÍ
+    enum ConsumeType //ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½
     {
         CT_Color,
         CT_ColorIndex,
@@ -84,6 +84,8 @@ public:
 
   bool isSingleColor();
   void setIsSingleColor(bool isSingle);
+
+  int getFirstItemMaterialIndex();
 
 protected:
   int rowCount(const QModelIndex& parent = QModelIndex{}) const override;

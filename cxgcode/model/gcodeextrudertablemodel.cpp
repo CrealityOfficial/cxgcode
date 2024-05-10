@@ -164,6 +164,19 @@ void GcodeExtruderTableModel::setIsSingleColor(bool isSingle)
     m_IsSingleColor = isSingle;
 }
 
+int GcodeExtruderTableModel::getFirstItemMaterialIndex()
+{
+    int index = 0;
+    if (m_Materials.size() > 0)
+    {
+        MaterialConsume item = m_Materials.at(0);
+        index = item.getMaterialIndex() + 1;
+    }
+    return index;
+}
+
+
+
 int GcodeExtruderTableModel::rowCount(const QModelIndex& parent) const 
 {
   return m_Materials.count();
