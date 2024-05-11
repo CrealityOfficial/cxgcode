@@ -169,8 +169,8 @@ int GcodeExtruderTableModel::getFirstItemMaterialIndex()
     int index = 0;
     if (m_Materials.size() > 0)
     {
-        MaterialConsume item = m_Materials.at(0);
-        index = item.getMaterialIndex() + 1;
+        ModelItem* item = m_Materials.at(0);
+        index = item->getMaterialIndex();
     }
     return index;
 }

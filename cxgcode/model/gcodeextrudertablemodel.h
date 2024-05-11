@@ -55,6 +55,7 @@ class ModelItem : public QObject
 
    MaterialConsume* getDataByType(ModelItem::ConsumeType type);
 
+   int getMaterialIndex() { return m_Model->getMaterialIndex();  }
 private:
     MaterialConsume* modelMaterial() const;
     MaterialConsume* flushMaterial() const;
