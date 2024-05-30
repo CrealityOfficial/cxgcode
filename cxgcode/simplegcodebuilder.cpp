@@ -326,11 +326,38 @@ namespace cxgcode
 	{
 		if (!m_path_box.valid)
 		{
-			for (const trimesh::vec3& pos : m_struct.m_positions)
+			int pCount = (int)m_struct.m_positions.size();
+			int stepCount = (int)m_struct.m_moves.size();
+			if (pCount < 2 || stepCount < 1)
+				return trimesh::box3();
+
+			for (int i = 0; i < stepCount; ++i)
 			{
-				m_path_box += pos;
+				const gcode::GCodeMove& move = m_struct.m_moves.at(i);
+
+				if (move.type == SliceLineType::erCustom || move.type == SliceLineType::NoneType || move.type == SliceLineType::Travel)
+					continue;
+
+				if (move.start >= 0 && move.start < m_struct.m_positions.size())
+				{
+					m_path_box += m_struct.m_positions[move.start];
+
+				}
+
+
+				if ((move.start + 1) >= 0 && (move.start + 1) < m_struct.m_positions.size())
+				{
+					m_path_box += m_struct.m_positions[move.start + 1];
+				}
+
+				if (m_path_box.size().x > 256.0f)
+				{
+					qInfo() << "move.type is : " << int(move.type);
+				}
+
 			}
 		}
+
 		return m_path_box;
 	}
 
