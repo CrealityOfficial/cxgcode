@@ -335,24 +335,19 @@ namespace cxgcode
 			{
 				const gcode::GCodeMove& move = m_struct.m_moves.at(i);
 
-				if (move.type == SliceLineType::erCustom || move.type == SliceLineType::NoneType || move.type == SliceLineType::Travel)
-					continue;
-
-				if (move.start >= 0 && move.start < m_struct.m_positions.size())
+				if (SliceLineType::OuterWall == move.type || SliceLineType::erSkirt == move.type || SliceLineType::erBrim == move.type ||
+					SliceLineType::erSupportMaterial == move.type ||
+					SliceLineType::erSupportMaterialInterface == move.type || SliceLineType::erSupportTransition == move.type || SliceLineType::erWipeTower == move.type)
 				{
-					m_path_box += m_struct.m_positions[move.start];
+					if (move.start >= 0 && move.start < m_struct.m_positions.size())
+					{
+						m_path_box += m_struct.m_positions[move.start];
+					}
 
-				}
-
-
-				if ((move.start + 1) >= 0 && (move.start + 1) < m_struct.m_positions.size())
-				{
-					m_path_box += m_struct.m_positions[move.start + 1];
-				}
-
-				if (m_path_box.size().x > 256.0f)
-				{
-					qInfo() << "move.type is : " << int(move.type);
+					if ((move.start + 1) >= 0 && (move.start + 1) < m_struct.m_positions.size())
+					{
+						m_path_box += m_struct.m_positions[move.start + 1];
+					}
 				}
 
 			}
