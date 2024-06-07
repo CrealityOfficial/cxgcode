@@ -15,10 +15,18 @@ namespace cxgcode
 		SimpleGCodeBuilder();
 		virtual ~SimpleGCodeBuilder();
 
-		float traitSpeed(int layer, int step) override;
-		trimesh::vec3 traitPosition(int layer, int step) override;
-		float traitDuration(int layer, int step);
 		float layerHeight(int layer);
+
+		float traitDuration(int layer, int step);
+		trimesh::vec3 traitPosition(int layer, int step) override;
+		float traitSpeed(int layer, int step) override;
+		float traitLayerHeight(int layer, int step);
+		float traitAcc(int layer, int step);
+		float traitLineWidth(int layer, int step);
+		float traitFlow(int layer, int step);
+		float traitLayerTime(int layer, int step);
+		float traitFanSpeed(int layer, int step);
+		float traitTemperature(int layer, int step);
 
 		Qt3DRender::QGeometry* buildGeometry() override;
 		void rebuildGeometryVisualTypeData();

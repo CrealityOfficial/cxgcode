@@ -81,8 +81,7 @@ namespace cxgcode
 		{
 			if ((baseInfo.speedMax - baseInfo.speedMin + 0.01f) > 0.0f)
 			{
-				float ratio = (m_struct.m_moves[index].speed - baseInfo.speedMin) / (baseInfo.speedMax - baseInfo.speedMin + 0.01f);		
-				return ratio;
+				return m_struct.m_moves[index].speed;
 			}	
 		}
 		
@@ -109,6 +108,106 @@ namespace cxgcode
 			return m_struct.m_layerHeights[layer - 1];
 		}
 		return -1;
+	}
+
+
+	float SimpleGCodeBuilder::traitLayerHeight(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int idx = m_struct.m_layerInfoIndex[index];
+			const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+			
+			float min = baseInfo.minLayerHeight;
+			float max = baseInfo.maxLayerHeight;
+
+			if ((max - min + 0.01f) > 0.0f)
+			{
+				return l.layerHight;
+			}
+		}
+		return layerHeight(layer);
+	}
+
+	float SimpleGCodeBuilder::traitAcc(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			if ((baseInfo.maxAcc - baseInfo.minAcc + 0.01f) > 0.0f)
+			{
+				return m_struct.m_moves[index].acc;
+			}
+		}
+
+		return 0.0f;
+	}
+
+	float SimpleGCodeBuilder::traitLineWidth(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int idx = m_struct.m_layerInfoIndex[index];
+			const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+			return l.width;
+		}
+		return 0.0f;
+	}
+
+	float SimpleGCodeBuilder::traitFlow(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int idx = m_struct.m_layerInfoIndex[index];
+			const gcode::GcodeLayerInfo& l = m_struct.m_gcodeLayerInfos[idx];
+			return l.flow;
+		}
+
+		return 0.0f;
+	}
+
+	float SimpleGCodeBuilder::traitLayerTime(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			std::map<int, float>::iterator it = m_struct.m_layerTimes.find(layer);
+			if (it != m_struct.m_layerTimes.end())
+			{
+				float time = it->second;
+				return time;
+			}
+		}
+
+		return 0.0f;
+	}
+
+	float SimpleGCodeBuilder::traitFanSpeed(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int idx = m_struct.m_fanIndex[index];
+			gcode::GcodeFan& fans = m_struct.m_fans[idx];
+			return fans.fanSpeed;
+		}
+		return 0.0f;
+	}
+
+	float SimpleGCodeBuilder::traitTemperature(int layer, int step)
+	{
+		int index = stepIndex(layer, step);
+		if (index >= 0 && index < baseInfo.totalSteps)
+		{
+			int idx = m_struct.m_temperatureIndex[index];
+			gcode::GcodeTemperature& t = m_struct.m_temperatures[idx];
+			return t.temperature;
+		}
+
+		return 0.0f;
 	}
 
 	Qt3DRender::QGeometry* SimpleGCodeBuilder::buildGeometry()
