@@ -81,8 +81,9 @@ namespace cxgcode
 		{
 			if ((baseInfo.speedMax - baseInfo.speedMin + 0.01f) > 0.0f)
 			{
-				return m_struct.m_moves[index].speed;
-			}	
+				//reference:void GcodeSpeedListModel::resetData()
+				return m_struct.m_moves[index].speed / 60.0f;
+			}
 		}
 		
 		return 0.0f;
