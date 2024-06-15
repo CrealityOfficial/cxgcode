@@ -175,7 +175,7 @@ namespace cxgcode
 		int index = stepIndex(layer, step);
 		if (index >= 0 && index < baseInfo.totalSteps)
 		{
-			std::map<int, float>::iterator it = m_struct.m_layerTimes.find(layer);
+			std::map<int, float>::iterator it = m_struct.m_layerTimes.find(layer - INDEX_START_AT_ONE);
 			if (it != m_struct.m_layerTimes.end())
 			{
 				float time = it->second;
