@@ -69,9 +69,9 @@ GcodeExtruderTableModel::GcodeExtruderTableModel(QObject* parent)
 void GcodeExtruderTableModel::setColorList(const QList<GcodeExtruderData>& data_list)
 {
     assert(data_list.count() > 0);
-    beginResetModel();
+    //beginResetModel();
     m_ColorsData = data_list;
-    endResetModel();
+    //endResetModel();
 }
 
 void GcodeExtruderTableModel::setData(QList<ModelItem*> dataList)
@@ -114,33 +114,33 @@ void GcodeExtruderTableModel::setData(std::vector<std::pair<int, double>>& model
 
         if (!(index % 2))
         {
-            mc_model->materialIndex = model[index].first;
-            mc_flush->materialIndex = model[index].first;
-            mc_filamentTower->materialIndex = model[index].first;
-            mc_total->materialIndex = model[index].first;
+            mc_model->m_MaterialIndex = model[index].first;
+            mc_flush->m_MaterialIndex = model[index].first;
+            mc_filamentTower->m_MaterialIndex = model[index].first;
+            mc_total->m_MaterialIndex = model[index].first;
 
             if (!m_ColorsData.isEmpty())
             {
-				mc_model->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
-				mc_flush->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
-				mc_filamentTower->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
-				mc_total->materialColor = m_ColorsData.at(mc_filamentTower->materialIndex).color;
+				mc_model->m_MaterialColor = m_ColorsData.at(mc_filamentTower->m_MaterialIndex).color;
+				mc_flush->m_MaterialColor = m_ColorsData.at(mc_filamentTower->m_MaterialIndex).color;
+				mc_filamentTower->m_MaterialColor = m_ColorsData.at(mc_filamentTower->m_MaterialIndex).color;
+				mc_total->m_MaterialColor = m_ColorsData.at(mc_filamentTower->m_MaterialIndex).color;
             }
 
-            mc_model->length = model[index].second;
+            mc_model->m_Length = model[index].second;
             if (flush.size() > index)
-                mc_flush->length = m_IsSingleColor ? 0 : flush[index].second;
+                mc_flush->m_Length = m_IsSingleColor ? 0 : flush[index].second;
             if(filamentTower.size() > index)
-                mc_filamentTower->length = m_IsSingleColor ? 0 : filamentTower[index].second;
-            mc_total->length = mc_model->length + mc_flush->length + mc_filamentTower->length;
+                mc_filamentTower->m_Length = m_IsSingleColor ? 0 : filamentTower[index].second;
+            mc_total->m_Length = mc_model->m_Length + mc_flush->m_Length + mc_filamentTower->m_Length;
         }
         else {
-            mc_model->weight = model[index].second;
+            mc_model->m_Weight = model[index].second;
             if (flush.size() > index)
-                mc_flush->weight = m_IsSingleColor ? 0 : flush[index].second;
+                mc_flush->m_Weight = m_IsSingleColor ? 0 : flush[index].second;
             if (filamentTower.size() > index)
-                mc_filamentTower->weight = m_IsSingleColor ? 0 : filamentTower[index].second;
-            mc_total->weight = mc_model->weight + mc_flush->weight + mc_filamentTower->weight;
+                mc_filamentTower->m_Weight = m_IsSingleColor ? 0 : filamentTower[index].second;
+            mc_total->m_Weight = mc_model->m_Weight + mc_flush->m_Weight + mc_filamentTower->m_Weight;
         }
 
         if (!(index % 2))

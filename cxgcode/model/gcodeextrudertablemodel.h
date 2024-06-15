@@ -11,35 +11,36 @@
 
 namespace cxgcode {
 
-class MaterialConsume : public QObject //����������
+class MaterialConsume : public QObject 
 {
     Q_OBJECT
 public:
-    //Q_PROPERTY(double length READ getLength)
-    //Q_PROPERTY(double weight READ getLength)
+    Q_PROPERTY(double length READ getLength)
+    Q_PROPERTY(double weight READ getLength)
+    Q_PROPERTY(double materialIndex READ getMaterialIndex)
+    Q_PROPERTY(QColor materialColor READ getMaterialColor)
+    Q_PROPERTY(double weight READ getLength)
     
-    //double getLength() { return length;  }
-    //double getWeight() { return weight;  }
     MaterialConsume(QObject* parent = nullptr):QObject(parent){ }
     ~MaterialConsume() {}
     MaterialConsume(const MaterialConsume& modelItem) {};
 
-    Q_INVOKABLE double getLength() { return length; };
-    Q_INVOKABLE double getWeight() { return weight; };
-    Q_INVOKABLE double getMaterialIndex() { return materialIndex; };
-    Q_INVOKABLE QColor getMaterialColor() { return materialColor; };
+    Q_INVOKABLE double getLength() { return m_Length; };
+    Q_INVOKABLE double getWeight() { return m_Weight; };
+    Q_INVOKABLE double getMaterialIndex() { return m_MaterialIndex; };
+    Q_INVOKABLE QColor getMaterialColor() { return m_MaterialColor; };
 
-    double length = 0.0;
-    double weight = 0.0;
-    int materialIndex = 0;
-    QColor materialColor;
+    double m_Length = 0.0;
+    double m_Weight = 0.0;
+    int m_MaterialIndex = 0;
+    QColor m_MaterialColor;
 };
 
 class ModelItem : public QObject 
 {
     Q_OBJECT
     public:
-    enum ConsumeType //���ĵ�����
+    enum ConsumeType
     {
         CT_Color,
         CT_ColorIndex,
