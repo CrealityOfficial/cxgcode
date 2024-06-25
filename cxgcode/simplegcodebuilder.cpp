@@ -111,6 +111,20 @@ namespace cxgcode
 		return -1;
 	}
 
+	int SimpleGCodeBuilder::layerIndex(float layerValue)
+	{
+		for (int i = 0; i < m_struct.m_layerHeights.size(); i++)
+		{
+			float layHeight = m_struct.m_layerHeights[i];
+			if (qFuzzyCompare(layerValue, layHeight))
+			{
+				return i+1;
+			}
+		}
+
+		return 0;
+	}
+
 
 	float SimpleGCodeBuilder::traitLayerHeight(int layer, int step)
 	{

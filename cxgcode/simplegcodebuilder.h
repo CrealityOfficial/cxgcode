@@ -16,6 +16,7 @@ namespace cxgcode
 		virtual ~SimpleGCodeBuilder();
 
 		float layerHeight(int layer);
+		int layerIndex(float layerValue);
 
 		float traitDuration(int layer, int step);
 		trimesh::vec3 traitPosition(int layer, int step) override;
