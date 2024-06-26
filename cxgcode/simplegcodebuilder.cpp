@@ -115,14 +115,19 @@ namespace cxgcode
 	{
 		for (int i = 0; i < m_struct.m_layerHeights.size(); i++)
 		{
-			float layHeight = m_struct.m_layerHeights[i];
-			if (qFuzzyCompare(layerValue, layHeight))
+			float layHeight_1 = m_struct.m_layerHeights[i];
+			float layHeight_2 = layHeight_1;
+			if (i + 1 < m_struct.m_layerHeights.size())
+			{
+				layHeight_2 = m_struct.m_layerHeights[i + 1];
+			}
+			if (qFuzzyCompare(layerValue, layHeight_1) || (layerValue > layHeight_1 && layerValue < layHeight_2) )
 			{
 				return i+1;
 			}
 		}
 
-		return 0;
+		return 1;
 	}
 
 
