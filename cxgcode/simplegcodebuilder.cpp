@@ -1124,7 +1124,8 @@ namespace cxgcode
 					std::vector<int>::const_iterator it = std::find(pauseLayers.begin(), pauseLayers.end(), layer);
 					if (it != pauseLayers.end())
 					{
-						flag = 16.0f;
+						//喷嘴颜色使用前面50个，第51个作为暂停层的标志位
+						flag = 50.0f;
 					}
 				}
 			}
